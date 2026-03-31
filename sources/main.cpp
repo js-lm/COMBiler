@@ -54,26 +54,26 @@ int main()
     // layout_name: controls initialization
     //----------------------------------------------------------------------------------
     // Const text
-    // const char *SystemActionsGroupBoxText = "";    // GROUPBOX: SystemActionsGroupBox
+    const char *SystemActionsGroupBoxText = nullptr;    // GROUPBOX: SystemActionsGroupBox
     const char *MenuButtonText = "#214#Menu";    // BUTTON: MenuButton
     const char *NewFileButtonText = "#008#";    // BUTTON: NewFileButton
     const char *Button005Text = "#001#";    // BUTTON: Button005
     const char *SaveFileButtonText = "#002#";    // BUTTON: SaveFileButton
     const char *ExportFileButtonText = "#007#";    // BUTTON: ExportFileButton
-    // const char *StateControlGroupBoxText = "";    // GROUPBOX: StateControlGroupBox
+    const char *StateControlGroupBoxText = nullptr;    // GROUPBOX: StateControlGroupBox
     const char *MusicSettingButtonText = "#140#";    // BUTTON: MusicSettingButton
     const char *UndoButtonText = "#072#";    // BUTTON: UndoButton
     const char *RedoButtonText = "#073#";    // BUTTON: RedoButton
     const char *ActionHistoryDropdownBoxText = "Delete Note";    // DROPDOWNBOX: ActionHistoryDropdownBox
-    // const char *ToolPaletteGroupBoxText = "";    // GROUPBOX: ToolPaletteGroupBox
+    const char *ToolPaletteGroupBoxText = nullptr;    // GROUPBOX: ToolPaletteGroupBox
     const char *ToolsToggleGroupText = "#021#;#023#;#028#;#124#";    // TOGGLEGROUP: ToolsToggleGroup
     const char *ToolsLabelText = "Tools:";    // LABEL: ToolsLabel
     const char *CutNoteButtonText = "#017#";    // BUTTON: CutNoteButton
     const char *CopyNoteButtonText = "#016#";    // BUTTON: CopyNoteButton
     const char *PasteNoteButtonText = "#018#";    // BUTTON: PasteNoteButton
-    // const char *ToolOptionsGroupBoxText = "";    // GROUPBOX: ToolOptionsGroupBox
-    // const char *InspectorGroupBoxText = "";    // GROUPBOX: InspectorGroupBox
-    // const char *TransportControlsGroupBoxText = "";    // GROUPBOX: TransportControlsGroupBox
+    const char *ToolOptionsGroupBoxText = nullptr;    // GROUPBOX: ToolOptionsGroupBox
+    const char *InspectorGroupBoxText = nullptr;    // GROUPBOX: InspectorGroupBox
+    const char *TransportControlsGroupBoxText = nullptr;    // GROUPBOX: TransportControlsGroupBox
     const char *PreviousPageButtonText = "#129#";    // BUTTON: PreviousPageButton
     const char *NextPageButtonText = "#134#";    // BUTTON: NextPageButton
     const char *StopButtonText = "#133#";    // BUTTON: StopButton
@@ -81,34 +81,45 @@ int main()
     const char *PageRepeatToggleText = "#061#";    // TOGGLE: PageRepeatToggle
     const char *ChannelListViewText = "All;Instrument 1;Instrument 2;Instrument 3;Chord;Setting";    // LISTVIEW: ChannelListView
     const char *ChannelLabelText = "Channel";    // LABEL: ChannelLabel
-    // const char *TimelineGroupBoxText = "";    // GROUPBOX: TimelineGroupBox
+    const char *TimelineGroupBoxText = nullptr;    // GROUPBOX: TimelineGroupBox
     const char *TimelineLabelText = "Timeline:";    // LABEL: TimelineLabel
     const char *PageNumberLabelText = "Page: 16/64";    // LABEL: PageNumberLabel
     const char *PageCopyButtonText = "#016#";    // BUTTON: PageCopyButton
     const char *PagePasteButtonText = "#018#";    // BUTTON: PagePasteButton
     const char *PageCutButtonText = "#017#";    // BUTTON: PageCutButton
     const char *PageSelectToggleText = "#109#";    // TOGGLE: PageSelectToggle
-    // const char *PerPageSettingsGroupBoxText = "";    // GROUPBOX: PerPageSettingsGroupBox
-    // const char *StatusGoupBoxText = "";    // GROUPBOX: StatusGoupBox
-    // const char *NoteCanvasGroupBoxText = "";    // GROUPBOX: NoteCanvasGroupBox
-    const char *StrcutureLineText{"Structure"};
+    const char *PerPageSettingsGroupBoxText = nullptr;    // GROUPBOX: PerPageSettingsGroupBox
+    const char *StatusGroupBoxText = nullptr;    // GROUPBOX: StatusGoupBox
+    const char *NoteCanvasGroupBoxText = nullptr;    // GROUPBOX: NoteCanvasGroupBox
+    const char *StructureLineText{"Structure"};
     const char *NotePerPageSpinnerText{"Note Per Page:"};
     const char *TempoValueBoxText{"Tempo: "};
     const char *NotesValueBoxText{"Notes: "};
     const char *BarsValueBoxText{"Bars: "};
-    
+
+
+
     // Define anchors
+    // toolbar
     Vector2 SystemActionsAnchor = { 0, 0 };            // ANCHOR ID:1
     Vector2 StateControlAnchor = { 248, 0 };            // ANCHOR ID:2
     Vector2 ToolPaletteAnchor = { 448, 0 };            // ANCHOR ID:3
     Vector2 ToolOptionsAnchor = { 784, 0 };            // ANCHOR ID:4
+
+    // sidebar
     Vector2 InspectAnchor = { 0, 40 };            // ANCHOR ID:5
+
+    // navigation bar
     Vector2 TransportControlsAnchor = { 416, 408 };            // ANCHOR ID:6
     Vector2 TimelineAnchor = { 0, 448 };            // ANCHOR ID:7
     Vector2 PerPageSettingsAnchor = { 648, 408 };            // ANCHOR ID:8
     Vector2 StatusAnchor = { 112, 408 };            // ANCHOR ID:9
+
+    // note canvas
     Vector2 NoteCanvasAnchor = { 112, 40 };            // ANCHOR ID:10
-    
+
+
+
     // Define controls variables
     bool ActionHistoryDropdownBoxEditMode = false;
     int ActionHistoryDropdownBoxActive = 0;            // DropdownBox: ActionHistoryDropdownBox
@@ -149,6 +160,9 @@ int main()
         (Rectangle){ ToolPaletteAnchor.x + 268, ToolPaletteAnchor.y + 8, 24, 24 },    // Button: CopyNoteButton
         (Rectangle){ ToolPaletteAnchor.x + 296, ToolPaletteAnchor.y + 8, 24, 24 },    // Button: PasteNoteButton
         (Rectangle){ ToolOptionsAnchor.x + 0, ToolOptionsAnchor.y + 0, 176, 40 },    // GroupBox: ToolOptionsGroupBox
+
+
+        
         (Rectangle){ InspectAnchor.x + 0, InspectAnchor.y + 0, 112, 408 },    // GroupBox: InspectorGroupBox
         (Rectangle){ TransportControlsAnchor.x + 0, TransportControlsAnchor.y + 0, 232, 40 },    // GroupBox: TransportControlsGroupBox
         (Rectangle){ TransportControlsAnchor.x + 32, TransportControlsAnchor.y + 8, 24, 24 },    // Button: PreviousPageButton
@@ -199,25 +213,25 @@ int main()
             // Draw controls
             if (ActionHistoryDropdownBoxEditMode) GuiLock();
 
-            GuiGroupBox(layoutRecs[0], nullptr);
+            GuiGroupBox(layoutRecs[0], SystemActionsGroupBoxText);
             if (GuiButton(layoutRecs[1], MenuButtonText)) MenuButton(); 
             if (GuiButton(layoutRecs[2], NewFileButtonText)) NewFileButton(); 
             if (GuiButton(layoutRecs[3], Button005Text)) Button005(); 
             if (GuiButton(layoutRecs[4], SaveFileButtonText)) SaveFileButton(); 
             if (GuiButton(layoutRecs[5], ExportFileButtonText)) ExportFileButton(); 
-            GuiGroupBox(layoutRecs[6], nullptr);
+            GuiGroupBox(layoutRecs[6], StateControlGroupBoxText);
             if (GuiButton(layoutRecs[7], MusicSettingButtonText)) MusicSettingButton(); 
             if (GuiButton(layoutRecs[8], UndoButtonText)) UndoButton(); 
             if (GuiButton(layoutRecs[9], RedoButtonText)) RedoButton(); 
-            GuiGroupBox(layoutRecs[11], nullptr);
+            GuiGroupBox(layoutRecs[11], ToolPaletteGroupBoxText);
             GuiToggleGroup(layoutRecs[12], ToolsToggleGroupText, &ToolsToggleGroupActive);
             GuiLabel(layoutRecs[13], ToolsLabelText);
             if (GuiButton(layoutRecs[14], CutNoteButtonText)) CutNoteButton(); 
             if (GuiButton(layoutRecs[15], CopyNoteButtonText)) CopyNoteButton(); 
             if (GuiButton(layoutRecs[16], PasteNoteButtonText)) PasteNoteButton(); 
-            GuiGroupBox(layoutRecs[17], nullptr);
-            GuiGroupBox(layoutRecs[18], nullptr);
-            GuiGroupBox(layoutRecs[19], nullptr);
+            GuiGroupBox(layoutRecs[17], ToolOptionsGroupBoxText);
+            GuiGroupBox(layoutRecs[18], InspectorGroupBoxText);
+            GuiGroupBox(layoutRecs[19], TransportControlsGroupBoxText);
             if (GuiButton(layoutRecs[20], PreviousPageButtonText)) PreviousPageButton(); 
             if (GuiButton(layoutRecs[21], NextPageButtonText)) NextPageButton(); 
             if (GuiButton(layoutRecs[22], StopButtonText)) StopButton(); 
@@ -225,8 +239,8 @@ int main()
             GuiToggle(layoutRecs[24], PageRepeatToggleText, &PageRepeatToggleActive);
             GuiListView(layoutRecs[25], ChannelListViewText, &ChannelListViewScrollIndex, &ChannelListViewActive);
             GuiLabel(layoutRecs[26], ChannelLabelText);
-            GuiLine(layoutRecs[27], StrcutureLineText);
-            GuiGroupBox(layoutRecs[28], nullptr);
+            GuiLine(layoutRecs[27], StructureLineText);
+            GuiGroupBox(layoutRecs[28], TimelineGroupBoxText);
             GuiScrollPanel((Rectangle){layoutRecs[29].x, layoutRecs[29].y, layoutRecs[29].width - TimelineScrollPanelBoundsOffset.x, layoutRecs[29].height - TimelineScrollPanelBoundsOffset.y }, nullptr, layoutRecs[29], &TimelineScrollPanelScrollOffset, &TimelineScrollPanelScrollView);
             GuiLabel(layoutRecs[30], TimelineLabelText);
             GuiLabel(layoutRecs[31], PageNumberLabelText);
@@ -234,13 +248,13 @@ int main()
             if (GuiButton(layoutRecs[33], PagePasteButtonText)) PagePasteButton(); 
             if (GuiButton(layoutRecs[34], PageCutButtonText)) PageCutButton(); 
             GuiToggle(layoutRecs[35], PageSelectToggleText, &PageSelectToggleActive);
-            GuiGroupBox(layoutRecs[36], nullptr);
+            GuiGroupBox(layoutRecs[36], PerPageSettingsGroupBoxText);
             if (GuiSpinner(layoutRecs[37], NotePerPageSpinnerText, &NotePerPageSpinnerValue, 0, 100, NotePerPageSpinnerEditMode)) NotePerPageSpinnerEditMode = !NotePerPageSpinnerEditMode;
-            GuiGroupBox(layoutRecs[38], nullptr);
+            GuiGroupBox(layoutRecs[38], StatusGroupBoxText);
             if (GuiValueBox(layoutRecs[39], TempoValueBoxText, &TempoValueBoxValue, 0, 100, TempoValueBoxEditMode)) TempoValueBoxEditMode = !TempoValueBoxEditMode;
             if (GuiValueBox(layoutRecs[40], NotesValueBoxText, &NotesValueBoxValue, 0, 100, NotesValueBoxEditMode)) NotesValueBoxEditMode = !NotesValueBoxEditMode;
             if (GuiValueBox(layoutRecs[41], BarsValueBoxText, &BarsValueBoxValue, 0, 100, BarsValueBoxEditMode)) BarsValueBoxEditMode = !BarsValueBoxEditMode;
-            GuiGroupBox(layoutRecs[42], nullptr);
+            GuiGroupBox(layoutRecs[42], NoteCanvasGroupBoxText);
             if (GuiDropdownBox(layoutRecs[10], ActionHistoryDropdownBoxText, &ActionHistoryDropdownBoxActive, ActionHistoryDropdownBoxEditMode)) ActionHistoryDropdownBoxEditMode = !ActionHistoryDropdownBoxEditMode;
             
             GuiUnlock();
