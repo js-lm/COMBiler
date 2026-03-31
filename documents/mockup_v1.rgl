@@ -1,0 +1,46 @@
+#
+# rgl layout text file (v4.0) - raygui layout file generated using rGuiLayout
+#
+# Number of controls:     35
+#
+# Ref. window:    r <x> <y> <width> <height>
+# Anchor info:    a <id> <name> <posx> <posy> <enabled>
+# Control info:   c <id> <type> <name> <rectangle> <anchor_id> <text>
+#
+r 0 40 -1 -1
+a 001 Origin 0 0 1
+c 000 0 MainWindow 0 0 1000 656 1 Paper Strip Generator
+c 001 3 MainMenuPanelBox 0 24 216 40 1 
+c 002 5 NewFileButton 88 32 24 24 1 #008#
+c 003 5 LoadFileButton 116 32 24 24 1 #001#
+c 004 5 SaveFileButton 144 32 24 24 1 #002#
+c 005 5 ExportFileButton 172 32 24 24 1 #007#
+c 006 5 MenuButton 16 32 56 24 1 #214#Menu
+c 007 3 ToolsPanelBox 376 24 312 40 1 
+c 008 9 ToolsToggleGroup 432 32 32 24 1 #021#;#023#;#028#;#124#
+c 009 21 ChannelListView 136 64 80 192 1 All;Instrument 1;Instrument 2;Instrument 3;Chord;Setting
+c 010 20 TimelineScrollPanel 0 64 136 592 1 
+c 011 3 SubPanelBox 216 24 160 40 1 
+c 012 3 TimelineToolsPanelBox 136 256 80 400 1 
+c 013 5 CopyPageButton 144 509 64 24 1 #016#Copy
+c 014 5 PastePageButton 144 536 64 24 1 #018#Paste
+c 015 5 UndoButton 232 32 24 24 1 #072#
+c 016 5 RedoButton 260 32 24 24 1 #073#
+c 017 4 ToolsLabel 392 32 40 24 1 Tools:
+c 018 8 SelectPageToggle 144 576 64 24 1 #109#Select
+c 019 5 SettingButton 296 32 64 24 1 #142#Setting
+c 020 3 ControlPanelBox 216 616 248 40 1 
+c 021 5 GotoPreviousPageButton 256 624 24 24 1 #129#
+c 022 5 GotoNextPageButton 284 624 24 24 1 #134#
+c 023 8 PauseToggle 356 624 24 24 1 #133#
+c 024 8 PlayToggle 328 624 24 24 1 #131#
+c 025 8 PageRepeatToggle 400 624 24 24 1 #060#
+c 026 3 MiscPanelBox 464 616 536 40 1 
+c 027 15 NotePerPageSpinner 904 624 88 24 1 Note Per Page:
+c 028 5 CutNoteButton 584 32 24 24 1 #017#
+c 029 5 CopyNoteButton 612 32 24 24 1 #016#
+c 030 5 PasteNoteButton 640 32 24 24 1 #018#
+c 031 3 ToolOptionPanelBox 688 24 312 40 1 
+c 032 7 ShowPageNumberCheckBox 144 272 24 24 1 Show #
+c 033 5 Button033 144 616 64 24 1 #143#Delete
+c 034 8 PageLockToggle 144 304 64 24 1 #137#Page
