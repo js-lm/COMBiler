@@ -5,14 +5,11 @@
 namespace interface{
 
     class Sidebar{
-    private:
-        SystemState &systemState_;
-
     public:
-        Sidebar(SystemState &systemState);
-        ~Sidebar() = default;
+        static void draw(SystemState &systemState);
 
-        void draw();
+    private:
+        static void drawInspector(SystemState &systemState);
     };
 
 } // namespace interface

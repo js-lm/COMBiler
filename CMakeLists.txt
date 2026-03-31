@@ -44,6 +44,7 @@ target_compile_definitions(${PROJECT_TARGET} PRIVATE
 )
 
 target_include_directories(${PROJECT_TARGET} PRIVATE
+	${CMAKE_CURRENT_LIST_DIR}/sources
 	${raygui_SOURCE_DIR}/src
 )
 

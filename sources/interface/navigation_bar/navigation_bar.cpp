@@ -2,12 +2,9 @@
 
 using namespace interface;
 
-NavigationBar::NavigationBar(SystemState &systemState)
-	: systemState_{systemState}
-{}
-
-void NavigationBar::draw(){
-
-    
+void NavigationBar::draw(SystemState &systemState){
+	drawTransportControls(systemState);
+	drawTimeline(systemState);
+	drawPerPageSettings(systemState);
+	drawStatus(systemState);
 }
-

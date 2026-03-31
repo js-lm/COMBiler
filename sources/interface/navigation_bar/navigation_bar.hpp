@@ -5,14 +5,14 @@
 namespace interface{
 
     class NavigationBar{
-    private:
-        SystemState &systemState_;
-
     public:
-        NavigationBar(SystemState &systemState);
-        ~NavigationBar() = default;
+        static void draw(SystemState &systemState);
 
-        void draw();
+    private:
+        static void drawTransportControls(SystemState &systemState);
+        static void drawTimeline(SystemState &systemState);
+        static void drawPerPageSettings(SystemState &systemState);
+        static void drawStatus(SystemState &systemState);
     };
 
 } // namespace interface
