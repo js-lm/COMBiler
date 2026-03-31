@@ -2,15 +2,20 @@
 
 #include <raygui.h>
 
-#include "layout.hpp"
 #include "labels.hpp"
 
+#include "interface/utilities.hpp"
+
 using namespace interface;
-using namespace constants::layout::note_canvas;
 using namespace constants::labels::note_canvas;
 
-void NoteCanvas::draw(SystemState &systemState){
-	GuiGroupBox(NoteCanvasGroupBox, NoteCanvasGroupBoxText);
+void NoteCanvas::draw(program_states::Context &context){
+	const auto anchor{context.layout.anchor.noteCanvas.noteCanvas};
+	const auto &bounds{context.layout.bounds.noteCanvas};
+
+	const auto groupBox{calculateBoundsAtAnchor(anchor, bounds.groupBox)};
+
+	GuiGroupBox(groupBox, NoteCanvasGroupBoxText);
 
 }
 

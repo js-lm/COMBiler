@@ -1,20 +1,19 @@
 #pragma once
 
-#include "system_states.hpp"
+#include "program_states/interface.hpp"
+#include "program_states/system.hpp"
+#include "program_states/layout.hpp"
 
 #include <raylib.h>
 
 class MainWindow{
 private:
-    SystemState systemState_;
+    program_states::System      systemState_{};
+    program_states::Interface   interfaceState_{};
+    program_states::Layout      layoutState_{};
 
 private:
     RenderTexture2D interfaceRenderTexture_{};
-    int interfaceRenderTextureWidth_{0};
-    int interfaceRenderTextureHeight_{0};
-
-    
-
 
 public:
     MainWindow() = default;

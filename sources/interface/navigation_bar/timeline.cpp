@@ -2,31 +2,36 @@
 
 #include <raygui.h>
 
-#include "layout.hpp"
 #include "labels.hpp"
 
+#include "interface/utilities.hpp"
+
 using namespace interface;
-using namespace constants::layout::navigation_bar;
 using namespace constants::labels::navigation_bar;
 
-void NavigationBar::drawTimeline(SystemState &systemState){
-	GuiGroupBox(TimelineGroupBox, TimelineGroupBoxText);
+void NavigationBar::drawTimeline(program_states::Context &context){
+	const auto anchor{context.layout.anchor.navigationBar.timeline};
+	const auto &bounds{context.layout.bounds.navigationBar.timeline};
+
+	const auto timelineScrollPanel{calculateBoundsAtAnchor(anchor, bounds.scrollPanel)};
+
+	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.groupBox), TimelineGroupBoxText);
 	GuiScrollPanel(
 		Rectangle{
-			TimelineScrollPanel.x,
-			TimelineScrollPanel.y,
-			TimelineScrollPanel.width - systemState.navigationBar.timelineScrollPanelBoundsOffset.x,
-			TimelineScrollPanel.height - systemState.navigationBar.timelineScrollPanelBoundsOffset.y
+			timelineScrollPanel.x,
+			timelineScrollPanel.y,
+			timelineScrollPanel.width - context.interface.navigationBar.timelineScrollPanelBoundsOffset.x,
+			timelineScrollPanel.height - context.interface.navigationBar.timelineScrollPanelBoundsOffset.y
 		},
 		nullptr,
-		TimelineScrollPanel,
-		&systemState.navigationBar.timelineScrollPanelScrollOffset,
-		&systemState.navigationBar.timelineScrollPanelScrollView
+		timelineScrollPanel,
+		&context.interface.navigationBar.timelineScrollPanelScrollOffset,
+		&context.interface.navigationBar.timelineScrollPanelScrollView
 	);
-	GuiLabel(TimelineLabel, TimelineLabelText);
-	GuiLabel(PageNumberLabel, PageNumberLabelText);
-	systemState.navigationBar.isPageCopyButtonPressed = GuiButton(PageCopyButton, PageCopyButtonText);
-	systemState.navigationBar.isPagePasteButtonPressed = GuiButton(PagePasteButton, PagePasteButtonText);
-	systemState.navigationBar.isPageCutButtonPressed = GuiButton(PageCutButton, PageCutButtonText);
-	GuiToggle(PageSelectToggle, PageSelectToggleText, &systemState.navigationBar.isPageSelectEnabled);
+	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.timelineLabel), TimelineLabelText);
+	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.pageNumberLabel), PageNumberLabelText);
+	context.interface.navigationBar.isPageCopyButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.pageCopyButton), PageCopyButtonText);
+	context.interface.navigationBar.isPagePasteButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.pagePasteButton), PagePasteButtonText);
+	context.interface.navigationBar.isPageCutButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.pageCutButton), PageCutButtonText);
+	GuiToggle(calculateBoundsAtAnchor(anchor, bounds.pageSelectToggle), PageSelectToggleText, &context.interface.navigationBar.isPageSelectEnabled);
 }

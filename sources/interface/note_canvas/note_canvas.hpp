@@ -1,12 +1,12 @@
 #pragma once
 
-#include "system_states.hpp"
+#include "program_states/context.hpp"
 
 namespace interface{
 
     class NoteCanvas{
     public:
-        static void draw(SystemState &systemState);
+        static void draw(program_states::Context &context);
     };
 
 } // namespace interface

@@ -2,23 +2,26 @@
 
 #include <raygui.h>
 
-#include "layout.hpp"
 #include "labels.hpp"
 
+#include "interface/utilities.hpp"
+
 using namespace interface;
-using namespace constants::layout::navigation_bar;
 using namespace constants::labels::navigation_bar;
 
-void NavigationBar::drawPerPageSettings(SystemState &systemState){
-	GuiGroupBox(PerPageSettingsGroupBox, PerPageSettingsGroupBoxText);
+void NavigationBar::drawPerPageSettings(program_states::Context &context){
+	const auto anchor{context.layout.anchor.navigationBar.perPageSettings};
+	const auto &bounds{context.layout.bounds.navigationBar.perPageSettings};
+
+	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.groupBox), PerPageSettingsGroupBoxText);
 	if(GuiSpinner(
-		NotePerPageSpinner,
+		calculateBoundsAtAnchor(anchor, bounds.notePerPageSpinner),
 		NotePerPageSpinnerText,
-		&systemState.navigationBar.notePerPageSpinnerValue,
+		&context.interface.navigationBar.notePerPageSpinnerValue,
 		0,
 		100, // TODO: magic numbers
-		systemState.navigationBar.notePerPageSpinnerEditMode
+		context.interface.navigationBar.notePerPageSpinnerEditMode
 	)){
-		systemState.navigationBar.notePerPageSpinnerEditMode = !systemState.navigationBar.notePerPageSpinnerEditMode;
+		context.interface.navigationBar.notePerPageSpinnerEditMode = !context.interface.navigationBar.notePerPageSpinnerEditMode;
 	}
 }

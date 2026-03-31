@@ -7,6 +7,8 @@
 
 #include "interface/interface.hpp"
 
+#include "program_states/context.hpp"
+
 int MainWindow::run(){
 
     initialize();
@@ -51,15 +53,20 @@ void MainWindow::update(){
 }
 
 void MainWindow::draw(){
+    program_states::Context context{
+        .system     {systemState_},
+        .layout     {layoutState_},
+        .interface  {interfaceState_}
+    };
 
     BeginTextureMode(interfaceRenderTexture_); {
         // ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
         ClearBackground(BLANK);
 
-        interface::Toolbar::draw(systemState_);
-        interface::Sidebar::draw(systemState_);
-        interface::NavigationBar::draw(systemState_);
-        interface::NoteCanvas::draw(systemState_);
+        interface::Toolbar::draw(context);
+        interface::Sidebar::draw(context);
+        interface::NavigationBar::draw(context);
+        interface::NoteCanvas::draw(context);
     } EndTextureMode();
 
     BeginDrawing(); {
@@ -77,9 +84,12 @@ void MainWindow::draw(){
 }
 
 void MainWindow::initializeInterfaceRenderTexture(){
-    interfaceRenderTextureWidth_ = GetScreenWidth();
-    interfaceRenderTextureHeight_ = GetScreenHeight();
-    interfaceRenderTexture_ = LoadRenderTexture(interfaceRenderTextureWidth_, interfaceRenderTextureHeight_);
+    systemState_.window.interfaceRenderTextureWidth = GetScreenWidth();
+    systemState_.window.interfaceRenderTextureHeight = GetScreenHeight();
+    interfaceRenderTexture_ = LoadRenderTexture(
+        systemState_.window.interfaceRenderTextureWidth, 
+        systemState_.window.interfaceRenderTextureHeight
+    );
 }
 
 void MainWindow::unloadInterfaceRenderTexture(){

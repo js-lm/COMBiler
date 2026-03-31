@@ -2,9 +2,9 @@
 
 using namespace interface;
 
-void NavigationBar::draw(SystemState &systemState){
-	drawTransportControls(systemState);
-	drawTimeline(systemState);
-	drawPerPageSettings(systemState);
-	drawStatus(systemState);
+void NavigationBar::draw(program_states::Context &context){
+	drawTransportControls(context);
+	drawTimeline(context);
+	drawPerPageSettings(context);
+	drawStatus(context);
 }

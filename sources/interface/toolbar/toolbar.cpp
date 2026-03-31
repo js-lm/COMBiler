@@ -2,14 +2,9 @@
 
 using namespace interface;
 
-// Toolbar::Toolbar(SystemState &systemState)
-//     : systemState_{systemState}
-// {}
-
-
-void Toolbar::draw(SystemState &systemState){
-    drawSystemAction(systemState);
-    drawStateControl(systemState);
-    drawToolPalette(systemState);
-    drawOption(systemState);
+void Toolbar::draw(program_states::Context &context){
+    drawSystemAction(context);
+    drawStateControl(context);
+    drawToolPalette(context);
+    drawOption(context);
 }

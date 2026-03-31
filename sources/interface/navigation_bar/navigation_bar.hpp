@@ -1,18 +1,18 @@
 #pragma once
 
-#include "system_states.hpp"
+#include "program_states/context.hpp"
 
 namespace interface{
 
     class NavigationBar{
     public:
-        static void draw(SystemState &systemState);
+        static void draw(program_states::Context &context);
 
     private:
-        static void drawTransportControls(SystemState &systemState);
-        static void drawTimeline(SystemState &systemState);
-        static void drawPerPageSettings(SystemState &systemState);
-        static void drawStatus(SystemState &systemState);
+        static void drawTransportControls(program_states::Context &context);
+        static void drawTimeline(program_states::Context &context);
+        static void drawPerPageSettings(program_states::Context &context);
+        static void drawStatus(program_states::Context &context);
     };
 
 } // namespace interface

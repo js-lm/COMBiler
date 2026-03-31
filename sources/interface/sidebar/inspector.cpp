@@ -2,54 +2,57 @@
 
 #include <raygui.h>
 
-#include "layout.hpp"
 #include "labels.hpp"
 
+#include "interface/utilities.hpp"
+
 using namespace interface;
-using namespace constants::layout::sidebar;
 using namespace constants::labels::sidebar;
 
-void Sidebar::drawInspector(SystemState &systemState){
-	GuiGroupBox(InspectorGroupBox, InspectorGroupBoxText);
+void Sidebar::drawInspector(program_states::Context &context){
+	const auto anchor{context.layout.anchor.sidebar.inspect};
+	const auto &bounds{context.layout.bounds.sidebar.inspector};
+
+	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.groupBox), InspectorGroupBoxText);
 	GuiListView(
-		ChannelListView,
+		calculateBoundsAtAnchor(anchor, bounds.channelListView),
 		ChannelListViewText,
-		&systemState.sidebar.selectedChannelListViewScrollIndex,
-		&systemState.sidebar.selectedChannelListViewIndex
+		&context.interface.sidebar.selectedChannelListViewScrollIndex,
+		&context.interface.sidebar.selectedChannelListViewIndex
 	);
-	GuiLabel(ChannelLabel, ChannelLabelText);
-	GuiLine(StructureLine, StructureLineText);
+	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.channelLabel), ChannelLabelText);
+	GuiLine(calculateBoundsAtAnchor(anchor, bounds.structureLine), StructureLineText);
 
 	if(GuiValueBox(
-		TempoValueBox,
+		calculateBoundsAtAnchor(anchor, bounds.tempoValueBox),
 		TempoValueBoxText,
-		&systemState.sidebar.tempoValue,
+		&context.interface.sidebar.tempoValue,
 		0,
 		100, // TODO: magic numbers
-		systemState.sidebar.tempoValueBoxEditMode
+		context.interface.sidebar.tempoValueBoxEditMode
 	)){
-		systemState.sidebar.tempoValueBoxEditMode = !systemState.sidebar.tempoValueBoxEditMode;
+		context.interface.sidebar.tempoValueBoxEditMode = !context.interface.sidebar.tempoValueBoxEditMode;
 	}
 
 	if(GuiValueBox(
-		NotesValueBox,
+		calculateBoundsAtAnchor(anchor, bounds.notesValueBox),
 		NotesValueBoxText,
-		&systemState.sidebar.notesValue,
+		&context.interface.sidebar.notesValue,
 		0,
 		100, // TODO: magic numbers
-		systemState.sidebar.notesValueBoxEditMode
+		context.interface.sidebar.notesValueBoxEditMode
 	)){
-		systemState.sidebar.notesValueBoxEditMode = !systemState.sidebar.notesValueBoxEditMode;
+		context.interface.sidebar.notesValueBoxEditMode = !context.interface.sidebar.notesValueBoxEditMode;
 	}
 
 	if(GuiValueBox(
-		BarsValueBox,
+		calculateBoundsAtAnchor(anchor, bounds.barsValueBox),
 		BarsValueBoxText,
-		&systemState.sidebar.barsValue,
+		&context.interface.sidebar.barsValue,
 		0,
 		100, // TODO: magic numbers
-		systemState.sidebar.barsValueBoxEditMode
+		context.interface.sidebar.barsValueBoxEditMode
 	)){
-		systemState.sidebar.barsValueBoxEditMode = !systemState.sidebar.barsValueBoxEditMode;
+		context.interface.sidebar.barsValueBoxEditMode = !context.interface.sidebar.barsValueBoxEditMode;
 	}
 }

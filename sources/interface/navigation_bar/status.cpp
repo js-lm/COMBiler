@@ -2,13 +2,18 @@
 
 #include <raygui.h>
 
-#include "layout.hpp"
 #include "labels.hpp"
 
+#include "interface/utilities.hpp"
+
 using namespace interface;
-using namespace constants::layout::navigation_bar;
 using namespace constants::labels::navigation_bar;
 
-void NavigationBar::drawStatus(SystemState &systemState){
-	GuiGroupBox(StatusGroupBox, StatusGroupBoxText);
+void NavigationBar::drawStatus(program_states::Context &context){
+	const auto anchor{context.layout.anchor.navigationBar.status};
+	const auto &bounds{context.layout.bounds.navigationBar.status};
+
+	const auto groupBox{calculateBoundsAtAnchor(anchor, bounds.groupBox)};
+
+	GuiGroupBox(groupBox, StatusGroupBoxText);
 }

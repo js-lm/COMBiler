@@ -2,18 +2,21 @@
 
 #include <raygui.h>
 
-#include "layout.hpp"
 #include "labels.hpp"
 
+#include "interface/utilities.hpp"
+
 using namespace interface;
-using namespace constants::layout::navigation_bar;
 using namespace constants::labels::navigation_bar;
 
-void NavigationBar::drawTransportControls(SystemState &systemState){
-	GuiGroupBox(TransportControlsGroupBox, TransportControlsGroupBoxText);
-	systemState.navigationBar.isPreviousPageButtonPressed = GuiButton(PreviousPageButton, PreviousPageButtonText);
-	systemState.navigationBar.isNextPageButtonPressed = GuiButton(NextPageButton, NextPageButtonText);
-	systemState.navigationBar.isPlayButtonPressed = GuiButton(PlayButton, PlayButtonText);
-	systemState.navigationBar.isStopButtonPressed = GuiButton(StopButton, StopButtonText);
-	GuiToggle(PageRepeatToggle, PageRepeatToggleText, &systemState.navigationBar.isPageRepeatEnabled);
+void NavigationBar::drawTransportControls(program_states::Context &context){
+	const auto anchor{context.layout.anchor.navigationBar.transportControls};
+	const auto &bounds{context.layout.bounds.navigationBar.transportControls};
+
+	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.groupBox), TransportControlsGroupBoxText);
+	context.interface.navigationBar.isPreviousPageButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.previousPageButton), PreviousPageButtonText);
+	context.interface.navigationBar.isNextPageButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.nextPageButton), NextPageButtonText);
+	context.interface.navigationBar.isPlayButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.playButton), PlayButtonText);
+	context.interface.navigationBar.isStopButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.stopButton), StopButtonText);
+	GuiToggle(calculateBoundsAtAnchor(anchor, bounds.pageRepeatToggle), PageRepeatToggleText, &context.interface.navigationBar.isPageRepeatEnabled);
 }

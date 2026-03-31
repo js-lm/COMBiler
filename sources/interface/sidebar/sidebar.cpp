@@ -2,6 +2,6 @@
 
 using namespace interface;
 
-void Sidebar::draw(SystemState &systemState){
-    drawInspector(systemState);
+void Sidebar::draw(program_states::Context &context){
+    drawInspector(context);
 }

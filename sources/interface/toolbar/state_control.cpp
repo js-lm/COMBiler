@@ -2,27 +2,29 @@
 
 #include <raygui.h>
 
-#include "layout.hpp"
 #include "labels.hpp"
 
+#include "interface/utilities.hpp"
+
 using namespace interface;
-using namespace constants::layout::toolbar;
 using namespace constants::labels::toolbar;
 
-void Toolbar::drawStateControl(SystemState &systemState){
+void Toolbar::drawStateControl(program_states::Context &context){
+	const auto anchor{context.layout.anchor.toolbar.stateControl};
+	const auto &bounds{context.layout.bounds.toolbar.stateControl};
 
-	GuiGroupBox(StateControlGroupBox, StateControlGroupBoxText);
+	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.groupBox), StateControlGroupBoxText);
     
-	systemState.toolbar.isUndoButtonPressed = GuiButton(UndoButton, UndoButtonText);
-	systemState.toolbar.isRedoButtonPressed = GuiButton(RedoButton, RedoButtonText);
+	context.interface.toolbar.isUndoButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.undoButton), UndoButtonText);
+	context.interface.toolbar.isRedoButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.redoButton), RedoButtonText);
 
 	if(GuiDropdownBox(
-        ActionHistoryDropdownBox,
+        calculateBoundsAtAnchor(anchor, bounds.actionHistoryDropdownBox),
         ActionHistoryDropdownBoxText,
-        &systemState.toolbar.actionHistoryDropdownActive,
-        systemState.toolbar.actionHistoryDropdownEditMode
+		&context.interface.toolbar.actionHistoryDropdownActive,
+		context.interface.toolbar.actionHistoryDropdownEditMode
     )){
-		systemState.toolbar.actionHistoryDropdownEditMode = !systemState.toolbar.actionHistoryDropdownEditMode;
+		context.interface.toolbar.actionHistoryDropdownEditMode = !context.interface.toolbar.actionHistoryDropdownEditMode;
 	}
 
     

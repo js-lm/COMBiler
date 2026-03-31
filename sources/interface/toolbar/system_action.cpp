@@ -2,22 +2,25 @@
 
 #include <raygui.h>
 
-#include "layout.hpp"
 #include "labels.hpp"
 
+#include "interface/utilities.hpp"
+
 using namespace interface;
-using namespace constants::layout::toolbar;
 using namespace constants::labels::toolbar;
 
-void Toolbar::drawSystemAction(SystemState &systemState){
-	GuiGroupBox(SystemActionsGroupBox, SystemActionsGroupBoxText);
+void Toolbar::drawSystemAction(program_states::Context &context){
+	const auto anchor{context.layout.anchor.toolbar.systemAction};
+	const auto &bounds{context.layout.bounds.toolbar.systemAction};
 
-	systemState.toolbar.isMenuButtonPressed = GuiButton(MenuButton, MenuButtonText);
-	systemState.toolbar.isNewFileButtonPressed = GuiButton(NewFileButton, NewFileButtonText);
-	systemState.toolbar.isLoadFileButtonPressed = GuiButton(LoadFileButton, LoadFileButtonText);
-	systemState.toolbar.isSaveFileButtonPressed = GuiButton(SaveFileButton, SaveFileButtonText);
-	systemState.toolbar.isExportFileButtonPressed = GuiButton(ExportFileButton, ExportFileButtonText);
+	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.groupBox), SystemActionsGroupBoxText);
 
-	systemState.toolbar.isMusicSettingButtonPressed = GuiButton(MusicSettingButton, MusicSettingButtonText);
+	context.interface.toolbar.isMenuButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.menuButton), MenuButtonText);
+	context.interface.toolbar.isNewFileButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.newFileButton), NewFileButtonText);
+	context.interface.toolbar.isLoadFileButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.loadFileButton), LoadFileButtonText);
+	context.interface.toolbar.isSaveFileButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.saveFileButton), SaveFileButtonText);
+	context.interface.toolbar.isExportFileButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.exportFileButton), ExportFileButtonText);
+
+	context.interface.toolbar.isMusicSettingButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.musicSettingButton), MusicSettingButtonText);
     
 }
