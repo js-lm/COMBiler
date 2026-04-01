@@ -32,9 +32,17 @@ private:
     void initializeInterfaceRenderTexture();
     void unloadInterfaceRenderTexture();
 
-    void handleEvents();
-
-    void handleWindowSizeChangeEvent();
     
+private:
+    void handleEvents();
+    
+    void handleWindowSizeChangeEvent();
+    void handleKeyboardEvent();
 
+private:
+    float calculateMaximumScaleFactor() const;
+    float calculateScaleFactor() const;
+
+    bool isScaleFactorIntegral() const;
+    void applyTextureFilter();
 };

@@ -10,6 +10,10 @@ namespace program_states{
             int interfaceRenderTextureWidth{0};
             int interfaceRenderTextureHeight{0};
 
+            float scaleFactor{1.0f};
+
+            bool isAlwaysScalingToMaximum{false};
+            bool isIntegerScaling{false};
         } window{};
 
 

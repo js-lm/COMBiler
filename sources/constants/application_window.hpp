@@ -12,6 +12,9 @@ namespace constants::application_window{
 
     constexpr int DefaultFPS{60};
 
+    constexpr float MinimumScaleFactor{1.0f};
+    constexpr float MaximumScaleFactor{4.0f};
+
     constexpr const char *Title{"COMBiler"};
 
     constexpr Vector2 Origin{.0f, .0f};

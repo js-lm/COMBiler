@@ -73,14 +73,38 @@ void MainWindow::draw(){
     BeginDrawing(); {
         ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
 
+        const auto &window{systemState_.window};
+
         const Rectangle sourceRectangle{
             constants::application_window::Origin.x,
             constants::application_window::Origin.y,
             static_cast<float>(interfaceRenderTexture_.texture.width),
             -static_cast<float>(interfaceRenderTexture_.texture.height)
         };
-        
-        DrawTextureRec(interfaceRenderTexture_.texture, sourceRectangle, constants::application_window::Origin, WHITE);
+
+        const Rectangle destinationRectangle{
+            window.isIntegerScaling
+                ? (static_cast<float>(GetScreenWidth()) - (static_cast<float>(window.interfaceRenderTextureWidth) * window.scaleFactor)) / 2.0f
+                : constants::application_window::Origin.x,
+            window.isIntegerScaling
+                ? (static_cast<float>(GetScreenHeight()) - (static_cast<float>(window.interfaceRenderTextureHeight) * window.scaleFactor)) / 2.0f
+                : constants::application_window::Origin.y,
+            window.isIntegerScaling
+                ? static_cast<float>(window.interfaceRenderTextureWidth) * window.scaleFactor
+                : static_cast<float>(GetScreenWidth()),
+            window.isIntegerScaling
+                ? static_cast<float>(window.interfaceRenderTextureHeight) * window.scaleFactor
+                : static_cast<float>(GetScreenHeight())
+        };
+
+        DrawTexturePro(
+            interfaceRenderTexture_.texture,
+            sourceRectangle,
+            destinationRectangle,
+            constants::application_window::Origin,
+            .0f,
+            WHITE
+        );
     } EndDrawing();
 }
 
@@ -91,6 +115,8 @@ void MainWindow::initializeInterfaceRenderTexture(){
         systemState_.window.interfaceRenderTextureWidth, 
         systemState_.window.interfaceRenderTextureHeight
     );
+
+    applyTextureFilter();
 }
 
 void MainWindow::unloadInterfaceRenderTexture(){

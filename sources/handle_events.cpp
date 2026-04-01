@@ -2,9 +2,14 @@
 
 #include "constants.hpp"
 
-void MainWindow::handleEvents(){
-    if(IsWindowResized()) handleWindowSizeChangeEvent();
+#include <algorithm>
+#include <cmath>
 
+void MainWindow::handleEvents(){
+    
+    handleKeyboardEvent();
+
+    if(IsWindowResized()) handleWindowSizeChangeEvent();
 
 }
 
@@ -12,16 +17,35 @@ void MainWindow::handleWindowSizeChangeEvent(){
     using namespace constants::interface_layout;
 
     auto &window{systemState_.window};
+    const int screenWidth{GetScreenWidth()};
+    const int screenHeight{GetScreenHeight()};
 
-    window.interfaceRenderTextureWidth  = GetScreenWidth();
-    window.interfaceRenderTextureHeight = GetScreenHeight();
+    window.scaleFactor = calculateScaleFactor();
 
-    UnloadRenderTexture(interfaceRenderTexture_);
+    SetMouseScale(1.0f / window.scaleFactor, 1.0f / window.scaleFactor);
+
+    const int scaledRenderWidth{std::max(1,
+        window.isIntegerScaling
+            ? static_cast<int>(std::floor(static_cast<float>(screenWidth) / window.scaleFactor))
+            : static_cast<int>(std::round(static_cast<float>(screenWidth) / window.scaleFactor))
+    )};
+    const int scaledRenderHeight{std::max(1,
+        window.isIntegerScaling
+            ? static_cast<int>(std::floor(static_cast<float>(screenHeight) / window.scaleFactor))
+            : static_cast<int>(std::round(static_cast<float>(screenHeight) / window.scaleFactor))
+    )};
+
+    window.interfaceRenderTextureWidth  = scaledRenderWidth;
+    window.interfaceRenderTextureHeight = scaledRenderHeight;
+
+    if(interfaceRenderTexture_.id != 0) UnloadRenderTexture(interfaceRenderTexture_);
 
     interfaceRenderTexture_ = LoadRenderTexture(
         window.interfaceRenderTextureWidth, 
         window.interfaceRenderTextureHeight
     );
+
+    applyTextureFilter();
 
 
     auto &anchor{layoutState_.anchor};
@@ -87,5 +111,37 @@ void MainWindow::handleWindowSizeChangeEvent(){
         bounds.noteCanvas.groupBox.height = anchor.navigationBar.status.y - anchor.noteCanvas.noteCanvas.y;
 
     } /* note canvas */
+
+}
+
+void MainWindow::handleKeyboardEvent(){
+
+    const bool isControlDown{IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)};
+    const bool isShiftDown{IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)};
+    auto &window{systemState_.window};
+
+    const float previousScaleFactor{window.scaleFactor};
+
+    const bool isZoomInPressed{IsKeyPressed(KEY_KP_ADD) || IsKeyPressed(KEY_EQUAL)};
+    const bool isZoomOutPressed{IsKeyPressed(KEY_KP_SUBTRACT) || IsKeyPressed(KEY_MINUS)};
+
+    if(isControlDown && isShiftDown){
+        if(isZoomInPressed){
+            window.scaleFactor = std::min(std::max(
+                constants::application_window::MinimumScaleFactor, std::floor(calculateMaximumScaleFactor())
+            ), std::floor(window.scaleFactor) + 1.0f);
+        }
+        if(isZoomOutPressed) window.scaleFactor = std::max(constants::application_window::MinimumScaleFactor, std::ceil(window.scaleFactor) - 1.0f);
+    }else if(isControlDown){
+        if(isZoomInPressed) window.scaleFactor += .1f;
+        if(isZoomOutPressed) window.scaleFactor -= .1f;
+    }
+
+    // if(IsKeyPressed(KEY_UP)) window.scaleFactor += .1f;
+    // if(IsKeyPressed(KEY_DOWN)) window.scaleFactor -= .1f;
+
+    window.scaleFactor = calculateScaleFactor();
+
+    if(window.scaleFactor != previousScaleFactor) handleWindowSizeChangeEvent();
 
 }
