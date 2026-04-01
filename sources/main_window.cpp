@@ -43,6 +43,7 @@ void MainWindow::initialize(){
 
     initializeInterfaceRenderTexture();
 
+    handleWindowSizeChangeEvent();
 }
 
 void MainWindow::update(){

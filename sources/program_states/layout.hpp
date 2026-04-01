@@ -22,8 +22,9 @@ namespace program_states{
             struct NavigationBar{
                 Vector2 transportControls   {416, 408};
                 Vector2 perPageSettings     {648, 408};
-                Vector2 timeline            {  0, 448};
                 Vector2 status              {112, 408};
+                
+                Vector2 timeline            {  0, 448};
             } navigationBar{};
 
             struct NoteCanvas{
