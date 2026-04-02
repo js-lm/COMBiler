@@ -6,6 +6,8 @@
 
 #include "interface/utilities.hpp"
 
+#include <cmath>
+
 using namespace interface;
 using namespace constants::labels::sidebar;
 
@@ -20,6 +22,7 @@ void Sidebar::drawInspector(program_states::Context &context){
 		&context.interface.sidebar.selectedChannelListViewScrollIndex,
 		&context.interface.sidebar.selectedChannelListViewIndex
 	);
+	context.interface.sidebar.selectedChannelListViewIndex = std::max(0, context.interface.sidebar.selectedChannelListViewIndex);
 	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.channelLabel), ChannelLabelText);
 	GuiLine(calculateBoundsAtAnchor(anchor, bounds.structureLine), StructureLineText);
 

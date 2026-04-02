@@ -9,6 +9,12 @@
 
 #include "program_states/context.hpp"
 
+#include <cstdlib>
+#include <cstring>
+
+#include "resources/styles/chromesthesia.h"
+#include "resources/icons/iconset.h"
+
 int MainWindow::run(){
 
     initialize();
@@ -41,6 +47,9 @@ void MainWindow::initialize(){
 
     SetTargetFPS(constants::application_window::DefaultFPS);
 
+    std::memcpy(GuiGetIcons(), guiIcons, sizeof(guiIcons));
+    GuiLoadStyleChromesthesia();
+    
     initializeInterfaceRenderTexture();
 
     handleWindowSizeChangeEvent();

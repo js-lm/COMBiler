@@ -12,8 +12,8 @@ namespace program_states{
 
             float scaleFactor{1.0f};
 
-            bool isAlwaysScalingToMaximum{false};
-            bool isIntegerScaling{false};
+            bool isAlwaysScalingToMaximum{true};
+            bool isIntegerScaling{true};
         } window{};
 
 
