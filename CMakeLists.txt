@@ -30,7 +30,13 @@ FetchContent_Declare(
 	GIT_TAG v0.9.7
 )
 
-FetchContent_MakeAvailable(raylib raygui magic_enum)
+FetchContent_Declare(
+	fmt
+	GIT_REPOSITORY https://github.com/fmtlib/fmt
+	GIT_TAG 12.1.0
+)
+
+FetchContent_MakeAvailable(raylib raygui magic_enum fmt)
 
 file(GLOB_RECURSE PROJECT_SOURCES
 	CONFIGURE_DEPENDS
@@ -51,4 +57,5 @@ target_include_directories(${PROJECT_TARGET} PRIVATE
 target_link_libraries(${PROJECT_TARGET}
 	raylib
 	magic_enum::magic_enum
+	fmt::fmt
 )
