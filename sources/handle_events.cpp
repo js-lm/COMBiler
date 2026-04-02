@@ -110,6 +110,13 @@ void MainWindow::handleWindowSizeChangeEvent(){
         bounds.noteCanvas.groupBox.width = window.interfaceRenderTextureWidth - anchor.noteCanvas.noteCanvas.x;
         bounds.noteCanvas.groupBox.height = anchor.navigationBar.status.y - anchor.noteCanvas.noteCanvas.y;
 
+        systemState_.noteCanvas.gridCamera.offset = anchor.noteCanvas.noteCanvas;
+        // systemState_.noteCanvas.gridCamera.target = {.0f, .0f};
+        // systemState_.noteCanvas.gridCamera.rotation = .0f;
+        // systemState_.noteCanvas.gridCamera.zoom = 1.0f;
+        
+		interfaceState_.noteCanvas.isGridLayoutDirty = true;
+
     } /* note canvas */
 
 }
