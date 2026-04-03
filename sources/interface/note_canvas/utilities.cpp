@@ -10,7 +10,7 @@
 #include "debug_utilities.hpp"
 
 using namespace interface;
-using namespace constants::note_canvas;
+using namespace constants::interface_layout::note_canvas;
 
 bool NoteCanvas::isBlackKey(int pitchClass){
     return std::find(
@@ -22,9 +22,8 @@ bool NoteCanvas::isBlackKey(int pitchClass){
 
 float NoteCanvas::rowEdgeY(program_states::Context &context, int rowLineIndex){
     auto &state{context.interface.noteCanvas};
-    return state.gridArea.y + static_cast<float>((rowLineIndex * state.totalHeightInPixels) / NumberOfRow);
+    return state.gridArea.y - state.verticalScrollInPixels + static_cast<float>((rowLineIndex * state.totalHeightInPixels) / NumberOfRow);
 }
-
 
 int NoteCanvas::semitoneFromRowIndex(int rowIndex){
     return FirstNoteOffsetFromC0 + (NumberOfRow - 1 - rowIndex);
@@ -47,6 +46,7 @@ bool NoteCanvas::isOctaveBoundaryBetweenRows(int upperRowIndex, int lowerRowInde
 void NoteCanvas::cleanGridLayout(program_states::Context &context){
 	const auto &bounds{context.layout.bounds.noteCanvas};
 	const auto &groupBox{bounds.groupBox};
+    const auto &anchor{context.layout.anchor.noteCanvas.noteCanvas};
 
 	auto &state{context.interface.noteCanvas};
 
@@ -64,12 +64,7 @@ void NoteCanvas::cleanGridLayout(program_states::Context &context){
     //     state.drawableArea.height
     // );
 
-    state.pitchLabelArea = {
-        state.drawableArea.x,
-        state.drawableArea.y,
-        std::min(static_cast<float>(layouts::PitchLabelColumnWidth), state.drawableArea.width),
-        state.drawableArea.height
-    };
+    state.pitchLabelArea = {0, 0, layouts::PitchLabelColumnWidth, groupBox.height};
 
     state.gridArea = {
         state.pitchLabelArea.x + state.pitchLabelArea.width,
@@ -79,8 +74,40 @@ void NoteCanvas::cleanGridLayout(program_states::Context &context){
     };
 
     state.activeColumnCount 	= context.interface.navigationBar.notePerPageSpinnerValue;
-    state.totalHeightInPixels 	= static_cast<int>(std::round(state.gridArea.height));
+    const float maximumAllowedVerticalZoomFactor{maximumVerticalZoomFactorForSquareCell(context)};
+    state.maximumAllowedVerticalZoomFactor = maximumAllowedVerticalZoomFactor;
+    state.verticalZoomFactor = std::clamp(
+        state.verticalZoomFactor,
+        zoom::MinimumVerticalFactor,
+        maximumAllowedVerticalZoomFactor
+    );
+    state.totalHeightInPixels 	= static_cast<int>(std::round(state.gridArea.height * state.verticalZoomFactor));
     state.columnWidth 			= state.gridArea.width / static_cast<float>(state.activeColumnCount);
+    state.rowHeightInPixels     = static_cast<float>(state.totalHeightInPixels) / static_cast<float>(NumberOfRow);
+    state.shouldDrawEveryPitchLabel = state.rowHeightInPixels >= layouts::FullPitchLabelMinimumRowHeight;
+
+    state.maximumVerticalScrollInPixels = static_cast<float>(state.totalHeightInPixels) - state.gridArea.height;
+    state.verticalScrollInPixels = std::clamp(
+        state.verticalScrollInPixels,
+        .0f,
+        state.maximumVerticalScrollInPixels
+    );
+    state.isVerticalScrollBarVisible = state.maximumVerticalScrollInPixels > .0f;
+
+    const float defaultBorderWidth{static_cast<float>(GuiGetStyle(DEFAULT, BORDER_WIDTH))};
+    const float listViewScrollBarWidth{static_cast<float>(GuiGetStyle(LISTVIEW, SCROLLBAR_WIDTH))};
+    const float scrollPanelWidth{listViewScrollBarWidth + (defaultBorderWidth * 2.0f)};
+    const float groupBoxToGridHeightOffset{groupBox.height - state.gridArea.height};
+    state.verticalScrollBarBounds = {
+        anchor.x + groupBox.width - scrollPanelWidth,
+        anchor.y,
+        scrollPanelWidth,
+        groupBox.height
+    };
+    state.verticalScrollBarContentBounds = {
+        0, 0, 0,
+        static_cast<float>(state.totalHeightInPixels) + groupBoxToGridHeightOffset - defaultBorderWidth
+    };
 
     state.frameColor 			= GetColor(GuiGetStyle(LISTVIEW, BORDER_COLOR_NORMAL));
     state.strongGridColor 		= Fade(state.frameColor, layouts::StrongGridLineAlpha);
@@ -88,14 +115,18 @@ void NoteCanvas::cleanGridLayout(program_states::Context &context){
     state.octaveLineColor 		= Fade(state.frameColor, layouts::OctaveGridLineAlpha);
     state.blackKeyLaneColor 	= Fade(state.frameColor, layouts::BlackKeyLaneAlpha);
     state.pitchLabelBackgroundColor = Fade(state.frameColor, layouts::PitchLabelBackgroundAlpha);
+    state.basePitchLabelColor   = GetColor(GuiGetStyle(DEFAULT, TEXT_COLOR_NORMAL));
+    state.softerPitchLabelColor = Fade(state.basePitchLabelColor, layouts::NonCPitchLabelAlpha);
+
+    state.gridAreaTopScreenPositionY = anchor.y + state.gridArea.y;
 
     state.scissorAnchorY = state.drawableArea.y + context.system.noteCanvas.gridCamera.offset.y;
 
     state.scissorBounds = {
-        std::floor(state.drawableArea.x + context.system.noteCanvas.gridCamera.offset.x) - layouts::ScissorExtraPadding,
-        std::floor(state.scissorAnchorY - context.system.noteCanvas.gridCamera.target.y) - layouts::ScissorExtraPadding,
-        std::ceil(state.drawableArea.width) + layouts::ScissorExtraPadding * 2,
-        std::ceil(state.drawableArea.height) + layouts::ScissorExtraPadding * 2
+        context.system.noteCanvas.gridCamera.offset.x,
+        context.layout.anchor.noteCanvas.noteCanvas.y + context.system.noteCanvas.gridCamera.target.y,
+        groupBox.width,
+        groupBox.height
     };
 
     // DEBUG_PRINT(
@@ -113,4 +144,22 @@ void NoteCanvas::cleanGridLayout(program_states::Context &context){
     // );
 
     state.isGridLayoutDirty = false;
+}
+
+float NoteCanvas::maximumVerticalZoomFactorForSquareCell(program_states::Context &context){
+    auto &state{context.interface.noteCanvas};
+
+    const float columnWidth{
+        state.gridArea.width / static_cast<float>(state.activeColumnCount)
+    };
+    const float squareCellVerticalZoomFactor{
+        (columnWidth * static_cast<float>(NumberOfRow)) / state.gridArea.height
+    };
+
+
+    return std::max(
+        zoom::MinimumVerticalFactor,
+        std::min(zoom::MaximumVerticalFactor, squareCellVerticalZoomFactor)
+    );
+    
 }

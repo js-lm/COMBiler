@@ -2,10 +2,10 @@
 
 #include <array>
 
-namespace constants::note_canvas{
+namespace constants::interface_layout::note_canvas{
 
     constexpr int NumberOfRow{75};
-    constexpr int FirstNoteOffsetFromC0{12}; // C1
+    constexpr int FirstNoteOffsetFromC0{11}; // B0
 
     constexpr int NumberOfSemitoneInOctave{12};
 
@@ -13,8 +13,8 @@ namespace constants::note_canvas{
 
         constexpr int LeftPadding           {1};
         constexpr int RightPadding          {12};
-        constexpr int TopPadding            {12};
-        constexpr int BottomPadding         {12};
+        constexpr int TopPadding            {20};
+        constexpr int BottomPadding         {20};
         constexpr int PitchLabelColumnWidth {42};
 
         constexpr int ScissorExtraPadding{2};
@@ -28,10 +28,12 @@ namespace constants::note_canvas{
         constexpr float OctaveGridLineAlpha     {.65f};
         constexpr float BlackKeyLaneAlpha       {.14f};
         constexpr float PitchLabelBackgroundAlpha{.12f};
+        constexpr float NonCPitchLabelAlpha     {.55f};
 
         constexpr int PitchLabelHorizontalPadding   {3};
         constexpr int PitchLabelVerticalOffset      {3};
         constexpr int PitchLabelHeight              {11};
+        constexpr float FullPitchLabelMinimumRowHeight{14.0f};
 
     } // namespace layouts
 
@@ -40,5 +42,13 @@ namespace constants::note_canvas{
     constexpr std::array<const char*, 12> PitchNames{
         "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
     };
+
+    namespace zoom{
+        constexpr float MinimumVerticalFactor{1.0f};
+        constexpr float MaximumVerticalFactor{8.0f};
+        constexpr float MouseWheelStep{.5f};
+
+        constexpr float MouseWheelPixelStep{100.0f};
+    } // namespace scroll
 
 } // namespace constants::note_canvas

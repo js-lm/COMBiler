@@ -9,7 +9,7 @@
 #include "debug_utilities.hpp"
 
 using namespace interface;
-using namespace constants::note_canvas;
+using namespace constants::interface_layout::note_canvas;
 
 void NoteCanvas::drawPitchLabels(program_states::Context &context){
     auto &state{context.interface.noteCanvas};
@@ -18,19 +18,43 @@ void NoteCanvas::drawPitchLabels(program_states::Context &context){
         const int semitoneFromC0{semitoneFromRowIndex(rowIndex)};
         const int pitchClass{pitchClassFromSemitone(semitoneFromC0)};
 
-        if(pitchClass != 0) continue;
+        const bool isNaturalPitchClass{
+            pitchClass == 0
+         || pitchClass == 2
+         || pitchClass == 4
+         || pitchClass == 5
+         || pitchClass == 7
+         || pitchClass == 9
+         || pitchClass == 11
+        };
+
+        if(state.shouldDrawEveryPitchLabel){
+            if(!isNaturalPitchClass) continue;
+        }else{
+            if(pitchClass != 0) continue;
+
+        }
 
         const int octaveNumber{semitoneFromC0 / NumberOfSemitoneInOctave};
         const float snappedRowTopY{rowEdgeY(context, rowIndex)};
+        const float snappedRowBottomY{rowEdgeY(context, rowIndex + 1)};
+        const Color pitchLabelColor{
+            pitchClass == 0 ? state.basePitchLabelColor : state.softerPitchLabelColor
+        };
 
-
-        GuiLabel({
-			state.pitchLabelArea.x + layouts::PitchLabelHorizontalPadding,
-			snappedRowTopY - layouts::PitchLabelVerticalOffset,
-			state.pitchLabelArea.width - (layouts::PitchLabelHorizontalPadding * 2.0f),
-			layouts::PitchLabelHeight
-		},
-		TextFormat("%s%d", PitchNames.at(pitchClass), octaveNumber));
+        const int previousTextColorStyleValue{GuiGetStyle(DEFAULT, TEXT_COLOR_NORMAL)};
+        GuiSetStyle(DEFAULT, TEXT_COLOR_NORMAL, ColorToInt(pitchLabelColor));
+        GuiLabel(
+            
+            Rectangle{
+                state.pitchLabelArea.x + layouts::PitchLabelHorizontalPadding,
+                snappedRowTopY,
+                state.pitchLabelArea.width - (layouts::PitchLabelHorizontalPadding * 2.0f),
+                snappedRowBottomY - snappedRowTopY
+            },
+            TextFormat("%s%d", PitchNames.at(pitchClass), octaveNumber)
+        );
+        GuiSetStyle(DEFAULT, TEXT_COLOR_NORMAL, previousTextColorStyleValue);
         
     }
 
@@ -96,6 +120,9 @@ void NoteCanvas::drawHorizontalGridLines(program_states::Context &context){
 void NoteCanvas::drawVerticalGridLines(program_states::Context &context){
     auto &state{context.interface.noteCanvas};
 
+    const float topLinePositionY{rowEdgeY(context, NumberOfRow)};
+    const float bottomLinePositionY{rowEdgeY(context, 0)};
+
 
     for(int columnLineIndex{0}; columnLineIndex <= state.activeColumnCount; columnLineIndex++){
 
@@ -121,8 +148,8 @@ void NoteCanvas::drawVerticalGridLines(program_states::Context &context){
         };
 
         DrawLineEx(
-            Vector2{linePositionX, state.gridArea.y},
-            Vector2{linePositionX, state.gridArea.y + state.gridArea.height},
+            Vector2{linePositionX, topLinePositionY},
+            Vector2{linePositionX, bottomLinePositionY},
             layouts::GridLineThickness,
             lineColor
         );

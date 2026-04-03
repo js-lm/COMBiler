@@ -77,16 +77,30 @@ namespace program_states{
             int totalHeightInPixels{1};
 
             Rectangle scissorBounds{0, 0, 1, 1};
+            Rectangle verticalScrollBarBounds{0, 0, 1, 1};
+            Rectangle verticalScrollBarContentBounds{0, 0, 1, 1};
 
-            float scissorAnchorY{.0f};
-            float columnWidth   {1.0f};
+            float scissorAnchorY        {.0f};
+            float columnWidth           {1.0f};
+            float verticalZoomFactor    {1.0f};
+            float verticalScrollInPixels{.0f};
+            float maximumVerticalScrollInPixels{.0f};
+            // float maximumVerticalScrollPanelOffsetInPixels{.0f};
+            float maximumAllowedVerticalZoomFactor{1.0f};
+            float gridAreaTopScreenPositionY{.0f};
+            float rowHeightInPixels{1.0f};
+            bool shouldDrawEveryPitchLabel{true};
 
-            Color frameColor        {0, 0, 0, 255};
-            Color strongGridColor   {0, 0, 0, 255};
-            Color softGridColor     {0, 0, 0, 255};
-            Color octaveLineColor   {0, 0, 0, 255};
-            Color blackKeyLaneColor {0, 0, 0, 255};
-            Color pitchLabelBackgroundColor{0, 0, 0, 255};
+            bool isVerticalScrollBarVisible{false};
+
+            Color frameColor            {BLANK};
+            Color strongGridColor       {BLANK};
+            Color softGridColor         {BLANK};
+            Color octaveLineColor       {BLANK};
+            Color blackKeyLaneColor     {BLANK};
+            Color pitchLabelBackgroundColor{BLANK};
+            Color basePitchLabelColor   {BLANK};
+            Color softerPitchLabelColor {BLANK};
 
             bool isGridLayoutDirty{true};
 

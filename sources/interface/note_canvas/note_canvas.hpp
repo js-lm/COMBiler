@@ -14,6 +14,10 @@ namespace interface{
         static void drawBlackKeyRows(program_states::Context &context);
         static void drawHorizontalGridLines(program_states::Context &context);
         static void drawVerticalGridLines(program_states::Context &context);
+        static void drawScrollBar(program_states::Context &context);
+
+    private:
+        static void handleZoom(program_states::Context &context);
 
     private:
         static bool isBlackKey(int pitchClass);
@@ -24,6 +28,8 @@ namespace interface{
         static bool isOctaveBoundaryBetweenRows(int upperRowIndex, int lowerRowIndex);
 
         static void cleanGridLayout(program_states::Context &context);
+
+        static float maximumVerticalZoomFactorForSquareCell(program_states::Context &context);
     };
 
 } // namespace interface

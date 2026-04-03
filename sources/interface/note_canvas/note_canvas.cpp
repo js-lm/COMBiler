@@ -16,6 +16,9 @@ void NoteCanvas::draw(program_states::Context &context){
 	const auto &bounds{context.layout.bounds.noteCanvas};
 
 	const auto groupBox{calculateBoundsAtAnchor(anchor, bounds.groupBox)};
+	auto &state{context.interface.noteCanvas};
+
+	if(state.isGridLayoutDirty) cleanGridLayout(context);
 
 	// DEBUG_PRINT_IF_CHANGED(
 	// 	"dirtyLayout: {}",
@@ -27,6 +30,8 @@ void NoteCanvas::draw(program_states::Context &context){
 	// );
 
 	GuiGroupBox(groupBox, NoteCanvasGroupBoxText);
+	handleZoom(context);
 
 	drawGrid(context);
+	drawScrollBar(context);
 }

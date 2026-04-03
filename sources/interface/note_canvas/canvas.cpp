@@ -14,8 +14,6 @@ using namespace interface;
 void NoteCanvas::drawGrid(program_states::Context &context){
 	auto &state{context.interface.noteCanvas};
 
-	if(state.isGridLayoutDirty) cleanGridLayout(context);
-
 	const auto &camera{context.system.noteCanvas.gridCamera};
 	const Rectangle translatedPitchLabelArea{
 		state.pitchLabelArea.x + camera.target.x,
@@ -52,7 +50,7 @@ void NoteCanvas::drawGrid(program_states::Context &context){
 				translatedPitchLabelArea.x + translatedPitchLabelArea.width,
 				translatedPitchLabelArea.y + translatedPitchLabelArea.height
 			},
-			constants::note_canvas::layouts::GridLineThickness,
+			constants::interface_layout::note_canvas::layouts::GridLineThickness,
 			state.octaveLineColor
 		);
 
