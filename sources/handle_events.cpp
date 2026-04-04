@@ -8,8 +8,16 @@
 void MainWindow::handleEvents(){
     
     handleKeyboardEvent();
+    handleButtonPressEvents();
 
     if(IsWindowResized()) handleWindowSizeChangeEvent();
+
+
+}
+
+void MainWindow::handleButtonPressEvents(){
+
+    handlePageChangeButtonsEvents();
 
 }
 

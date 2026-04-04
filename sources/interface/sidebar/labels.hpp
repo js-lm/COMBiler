@@ -3,7 +3,7 @@
 namespace constants::labels::sidebar{
 
     constexpr const char *InspectorGroupBoxText {nullptr};
-    constexpr const char *ChannelListViewText   {"All;Instrument 1;Instrument 2;Instrument 3;Chord;Setting"};
+    constexpr const char *ChannelListViewText   {"All;Channel C;Channel O;Channel M;Channel B;System"};
     constexpr const char *ChannelLabelText      {"Channel"};
     constexpr const char *StructureLineText     {"Structure"};
 

@@ -10,11 +10,16 @@ namespace interface{
 
     private:
         static void drawGrid(program_states::Context &context);
+
         static void drawPitchLabels(program_states::Context &context);
         static void drawBlackKeyRows(program_states::Context &context);
+
         static void drawHorizontalGridLines(program_states::Context &context);
         static void drawVerticalGridLines(program_states::Context &context);
+
         static void drawScrollBar(program_states::Context &context);
+
+        static void drawNotes(program_states::Context &context);
 
     private:
         static void handleZoom(program_states::Context &context);
@@ -30,6 +35,12 @@ namespace interface{
         static void cleanGridLayout(program_states::Context &context);
 
         static float maximumVerticalZoomFactorForSquareCell(program_states::Context &context);
+
+        static music_data::Instrument instrumentAtPageStart(
+            const program_states::ProjectData &projectData, 
+            size_t instrumentChannelIndex, 
+            int currentPageIndex
+        );
     };
 
 } // namespace interface

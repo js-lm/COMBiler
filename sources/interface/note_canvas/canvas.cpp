@@ -39,6 +39,7 @@ void NoteCanvas::drawGrid(program_states::Context &context){
 		drawPitchLabels(context);
 		drawHorizontalGridLines(context);
 		drawVerticalGridLines(context);
+		drawNotes(context);
 
 
 		DrawLineEx(

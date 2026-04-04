@@ -73,7 +73,7 @@ void NoteCanvas::cleanGridLayout(program_states::Context &context){
         state.drawableArea.height
     };
 
-    state.activeColumnCount 	= context.interface.navigationBar.notePerPageSpinnerValue;
+    state.activeColumnCount = context.interface.navigationBar.notePerPageSpinnerValue;
     const float maximumAllowedVerticalZoomFactor{maximumVerticalZoomFactorForSquareCell(context)};
     state.maximumAllowedVerticalZoomFactor = maximumAllowedVerticalZoomFactor;
     state.verticalZoomFactor = std::clamp(
@@ -161,5 +161,27 @@ float NoteCanvas::maximumVerticalZoomFactorForSquareCell(program_states::Context
         zoom::MinimumVerticalFactor,
         std::min(zoom::MaximumVerticalFactor, squareCellVerticalZoomFactor)
     );
+    
+}
+
+music_data::Instrument NoteCanvas::instrumentAtPageStart(const program_states::ProjectData &projectData, size_t instrumentChannelIndex, int currentPageIndex){
+	auto instrument{constants::DefaultInstrumentByChannel[instrumentChannelIndex]};
+
+	for(int pageIndex{0}; pageIndex < currentPageIndex; pageIndex++){
+		const auto &channel{projectData.pages[pageIndex].instrumentChannels[instrumentChannelIndex]};
+
+		for(int columnIndex{0}; columnIndex < projectData.metadata.noteInThisPage; columnIndex++){
+
+			if(!channel[columnIndex].has_value()) continue;
+			
+
+			if(std::holds_alternative<music_data::Instrument>(channel[columnIndex].value())){
+				instrument = std::get<music_data::Instrument>(channel[columnIndex].value());
+			}
+		}
+	}
+
+
+	return instrument;
     
 }

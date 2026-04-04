@@ -39,6 +39,11 @@ private:
     void handleWindowSizeChangeEvent();
     void handleKeyboardEvent();
 
+
+private:
+    void handleButtonPressEvents();
+    void handlePageChangeButtonsEvents();
+
 private:
     float calculateMaximumScaleFactor() const;
     float calculateScaleFactor() const;

@@ -24,7 +24,9 @@ namespace program_states{
 
             int currentPage{1};
 
-            // std::unique_ptr<ProjectData> data{&DEBUG_preset::projectData};
+            std::shared_ptr<ProjectData> DEBUG_thePreset{std::make_shared<ProjectData>(DEBUG_preset::projectData)};
+
+            std::weak_ptr<ProjectData> data{DEBUG_thePreset};
 
         } project{};
 

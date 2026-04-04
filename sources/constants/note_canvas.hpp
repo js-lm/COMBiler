@@ -2,12 +2,19 @@
 
 #include <array>
 
+#include <raylib.h>
+
+// #include "resources/icons/iconset.h"
+
 namespace constants::interface_layout::note_canvas{
 
     constexpr int NumberOfRow{75};
     constexpr int FirstNoteOffsetFromC0{11}; // B0
 
     constexpr int NumberOfSemitoneInOctave{12};
+
+    constexpr int IconSize{16};
+    constexpr int InstrumentIconPadding{1};
 
     namespace layouts{
 
@@ -46,9 +53,33 @@ namespace constants::interface_layout::note_canvas{
     namespace zoom{
         constexpr float MinimumVerticalFactor{1.0f};
         constexpr float MaximumVerticalFactor{8.0f};
-        constexpr float MouseWheelStep{.5f};
+        constexpr float MouseWheelStep       {.5f};
 
         constexpr float MouseWheelPixelStep{100.0f};
     } // namespace scroll
+
+    namespace notes{
+        constexpr float BorderThicknessInPixels{1.0f};
+
+        constexpr int AllChannelsListViewIndex{0};
+        constexpr int SystemChannelListViewIndex{5};
+
+        constexpr float SelectedChannelAlpha    {1.0f};
+        constexpr float UnselectedChannelAlpha  {.4f};
+        constexpr float AllChannelsAlpha        {.8f};
+
+        // TODO: use enum map
+        constexpr std::array<Color, 4> ChannelNoteColors{
+            Color{250, 176, 5, 255},
+            Color{51, 154, 240, 255},
+            Color{32, 201, 151, 255},
+            Color{190, 75, 219, 255}
+        };
+
+        constexpr Color NoteBorderColor{0, 0, 0, 255};
+        constexpr int InstrumentIndexMarkerRowIndex{0};
+        constexpr float InstrumentIndexColorDarkeningFactor{.35f};
+        constexpr Color InstrumentIndexIconColor{245, 245, 245, 255};
+    } // namespace notes
 
 } // namespace constants::note_canvas

@@ -18,7 +18,7 @@ namespace constants::labels::navigation_bar{
     constexpr const char *PageSelectToggleText  {"#060#"};
 
     constexpr const char *PerPageSettingsGroupBoxText   {nullptr};
-    constexpr const char *NotePerPageSpinnerText        {"Note Per Page:"};
+    constexpr const char *NotePerPageSpinnerText        {"Note In This Page:"};
 
     constexpr const char *StatusGroupBoxText{nullptr};
 
