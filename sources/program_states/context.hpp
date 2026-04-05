@@ -6,11 +6,18 @@
 
 namespace program_states{
 
-    struct Context{
+    struct InterfaceContext{
         const System &system;
         const Layout &layout;
         
         Interface &interface;
+    };
+
+    struct ReadOnlyContext{
+        const System &system;
+        const Layout &layout;
+        
+        const Interface &interface;
     };
 
 } // namespace program_states

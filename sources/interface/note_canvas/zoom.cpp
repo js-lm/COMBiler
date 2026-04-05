@@ -16,7 +16,7 @@
 using namespace interface;
 using namespace constants::interface_layout::note_canvas;
 
-void NoteCanvas::drawScrollBar(program_states::Context &context){
+void NoteCanvas::drawScrollBar(program_states::InterfaceContext &context){
 	auto &state{context.interface.noteCanvas};
 
 	if(!state.isVerticalScrollBarVisible) return;
@@ -40,7 +40,7 @@ void NoteCanvas::drawScrollBar(program_states::Context &context){
 
 }
 
-void NoteCanvas::handleZoom(program_states::Context &context){
+void NoteCanvas::handleZoom(program_states::InterfaceContext &context){
 	// const auto anchor{context.layout.anchor.noteCanvas.noteCanvas};
 	auto &state{context.interface.noteCanvas};
 

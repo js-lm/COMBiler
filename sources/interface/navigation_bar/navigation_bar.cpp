@@ -2,7 +2,7 @@
 
 using namespace interface;
 
-void NavigationBar::draw(program_states::Context &context){
+void NavigationBar::draw(program_states::InterfaceContext &context){
 	drawTransportControls(context);
 	drawTimeline(context);
 	drawPerPageSettings(context);

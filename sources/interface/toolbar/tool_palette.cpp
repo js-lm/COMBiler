@@ -9,7 +9,7 @@
 using namespace interface;
 using namespace constants::labels::toolbar;
 
-void Toolbar::drawToolPalette(program_states::Context &context){
+void Toolbar::drawToolPalette(program_states::InterfaceContext &context){
 	const auto anchor{context.layout.anchor.toolbar.toolPalette};
 	const auto &bounds{context.layout.bounds.toolbar.toolPalette};
 

@@ -52,3 +52,19 @@ void MainWindow::applyTextureFilter(){
         isScaleFactorIntegral() ? TEXTURE_FILTER_POINT : TEXTURE_FILTER_BILINEAR
     );
 }
+
+program_states::InterfaceContext MainWindow::getInterfaceContext(){
+    return program_states::InterfaceContext{
+        .system     {systemState_},
+        .layout     {layoutState_},
+        .interface  {interfaceState_}
+    };
+}
+
+program_states::ReadOnlyContext MainWindow::getReadOnlyContext(){
+    return program_states::ReadOnlyContext{
+        .system     {systemState_},
+        .layout     {layoutState_},
+        .interface  {interfaceState_}
+    };
+}

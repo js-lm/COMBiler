@@ -6,10 +6,10 @@ namespace interface{
 
     class Sidebar{
     public:
-        static void draw(program_states::Context &context);
+        static void draw(program_states::InterfaceContext &context);
 
     private:
-        static void drawInspector(program_states::Context &context);
+        static void drawInspector(program_states::InterfaceContext &context);
     };
 
 } // namespace interface

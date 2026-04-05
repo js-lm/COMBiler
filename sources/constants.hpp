@@ -5,3 +5,4 @@
 #include "constants/application_window.hpp"
 #include "constants/instruments.hpp"
 #include "constants/note_canvas.hpp"
+#include "constants/action_center.hpp"

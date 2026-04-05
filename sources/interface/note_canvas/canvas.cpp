@@ -11,7 +11,7 @@
 
 using namespace interface;
 
-void NoteCanvas::drawGrid(program_states::Context &context){
+void NoteCanvas::drawGrid(program_states::InterfaceContext &context){
 	auto &state{context.interface.noteCanvas};
 
 	const auto &camera{context.system.noteCanvas.gridCamera};
@@ -31,7 +31,7 @@ void NoteCanvas::drawGrid(program_states::Context &context){
 	);
 
 	BeginMode2D(camera); {
-		context.interface.noteCanvas.pressedPianoKeyIndex = std::nullopt;
+		// context.interface.noteCanvas.pressedPianoKeyIndex = std::nullopt;
 
 		DrawRectangleRec(translatedPitchLabelArea, state.pitchLabelBackgroundColor);
 

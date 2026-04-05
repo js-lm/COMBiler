@@ -4,6 +4,8 @@
 
 #include <optional>
 
+#include "aliases.hpp"
+
 namespace program_states{
 
     struct Interface{
@@ -102,9 +104,17 @@ namespace program_states{
 
             bool isGridLayoutDirty{true};
 
-            std::optional<int> pressedPianoKeyIndex{};
+            // std::optional<int> pressedPianoKeyIndex{};
+
+            struct CursorPosition{
+                int noteIndex;
+                music_data::Note note;
+            };
+            std::optional<CursorPosition> cursorPosition{};
+
 
         } noteCanvas{};
+
 
     };
 

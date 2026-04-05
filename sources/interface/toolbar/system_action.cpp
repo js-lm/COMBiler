@@ -9,7 +9,7 @@
 using namespace interface;
 using namespace constants::labels::toolbar;
 
-void Toolbar::drawSystemAction(program_states::Context &context){
+void Toolbar::drawSystemAction(program_states::InterfaceContext &context){
 	const auto anchor{context.layout.anchor.toolbar.systemAction};
 	const auto &bounds{context.layout.bounds.toolbar.systemAction};
 

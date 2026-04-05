@@ -39,7 +39,7 @@ void ActionCenter::commit(){
 }
 
 void ActionCenter::redo(){
-    if(!canRedo()) return;
+    if(!canRedo() || isInAction_) return;
     
     cursorIndex_ = (cursorIndex_ + 1) % constants::action_center::MaximumHistory;
     
@@ -49,7 +49,7 @@ void ActionCenter::redo(){
 }
 
 void ActionCenter::undo(){
-    if(!canUndo()) return;
+    if(!canUndo() || isInAction_) return;
 
     if(cursorIndex_ == 0){
         cursorIndex_ = constants::action_center::MaximumHistory - 1;
@@ -65,4 +65,5 @@ void ActionCenter::undo(){
 
 void ActionCenter::finishAction(){
     commit();
+    isInAction_ = false;
 }

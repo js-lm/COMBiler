@@ -5,9 +5,12 @@
 
 #include "program_states/project_data.hpp"
 
-#include "constants/action_center.hpp"
+#include "constants.hpp"
 
 class ActionCenter{
+public:
+    struct StagedSlot{ std::shared_ptr<program_states::ProjectData> data;};
+
 private:
     std::vector<std::shared_ptr<program_states::ProjectData>> commits_;
 
@@ -16,9 +19,11 @@ private:
     size_t cursorIndex_{0};
     size_t historyStackSize_{0};
 
-    struct StagedSlot{ std::shared_ptr<program_states::ProjectData> data;};
+    std::shared_ptr<StagedSlot> stagedSlot_{std::make_shared<StagedSlot>(
+        std::make_shared<program_states::ProjectData>(program_states::DEBUG_preset::projectData)
+    )};
 
-    std::shared_ptr<StagedSlot> stagedSlot_;
+    bool isInAction_{false};
 
 public:
     ActionCenter(){
@@ -36,8 +41,8 @@ public:
     bool canRedo() const{ return historyStackSize_ > 1 && cursorIndex_ != historyHead_;}
     bool canUndo() const{ return historyStackSize_ > 1 && cursorIndex_ != historyTail_;}
 
-    void addNote();
-    void removeNote();
+    void addNote(int pageNumber, int noteIndex, music_data::Note note);
+    void removeNote(int pageNumber, int noteIndex);
     void copyNote();
     void pasteNote();
 

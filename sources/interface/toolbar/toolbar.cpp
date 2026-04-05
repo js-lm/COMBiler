@@ -2,7 +2,7 @@
 
 using namespace interface;
 
-void Toolbar::draw(program_states::Context &context){
+void Toolbar::draw(program_states::InterfaceContext &context){
     drawSystemAction(context);
     drawStateControl(context);
     drawToolPalette(context);

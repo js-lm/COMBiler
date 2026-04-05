@@ -53,6 +53,13 @@ void MainWindow::initialize(){
     initializeInterfaceRenderTexture();
 
     handleWindowSizeChangeEvent();
+
+    actionCenter_ = std::make_unique<ActionCenter>();
+    canvasManager_ = std::make_unique<CanvasManager>(getReadOnlyContext());
+
+    // stagedObserver_ = actionCenter_.getStagedObserver();
+    systemState_.project.data = actionCenter_->getStagedObserver();
+
 }
 
 void MainWindow::update(){
@@ -63,11 +70,7 @@ void MainWindow::update(){
 }
 
 void MainWindow::draw(){
-    program_states::Context context{
-        .system     {systemState_},
-        .layout     {layoutState_},
-        .interface  {interfaceState_}
-    };
+    auto context{getInterfaceContext()};
 
     BeginTextureMode(interfaceRenderTexture_); {
         // ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));

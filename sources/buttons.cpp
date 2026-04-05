@@ -3,9 +3,10 @@
 #include "debug_utilities.hpp"
 
 void MainWindow::handlePageChangeButtonsEvents(){
-    const auto projectData{systemState_.project.data.lock()};
-    if(!projectData) return;
+    const auto projectDataSlot{systemState_.project.data.lock()};
+	if(!projectDataSlot || projectDataSlot->data->pages.empty()) return;
     
+	const auto &projectData{projectDataSlot->data};
 
     const int maximumPageNumber{std::max(1, static_cast<int>(projectData->pages.size()))};
 

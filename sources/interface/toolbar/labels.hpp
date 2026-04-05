@@ -24,6 +24,6 @@ namespace constants::labels::toolbar{
     constexpr const char *PasteNoteButtonText       {"#010#"};
 
     constexpr const char *ToolOptionsGroupBoxText{nullptr};
-    constexpr const char *InfoButtonText        {"#191#"};
+    constexpr const char *InfoButtonText        {"#043#"};
 
 } // namespace constants::labels::toolbar

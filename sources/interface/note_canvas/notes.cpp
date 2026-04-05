@@ -10,13 +10,20 @@
 
 #include "constants.hpp"
 
+#include <magic_enum/magic_enum.hpp>
+
 using namespace interface;
 using namespace constants::interface_layout::note_canvas;
 
-void NoteCanvas::drawNotes(program_states::Context &context){
-	const auto projectData{context.system.project.data.lock()};
+void NoteCanvas::drawNotes(program_states::InterfaceContext &context){
+	auto &noteCanvasState{context.interface.noteCanvas};
+	noteCanvasState.cursorPosition = std::nullopt;
 
-	if(!projectData || projectData->pages.empty()) return;
+	const auto projectDataSlot{context.system.project.data.lock()};
+
+	if(!projectDataSlot || projectDataSlot->data->pages.empty()) return;
+
+	const auto &projectData{projectDataSlot->data};
 
 	const int currentPageIndex{context.system.project.currentPage - 1};
 	const auto &currentPage{projectData->pages[currentPageIndex]};
@@ -27,7 +34,48 @@ void NoteCanvas::drawNotes(program_states::Context &context){
 			constants::project_data::MaximumNotePerPage
 		)
 	};
-	auto &noteCanvasState{context.interface.noteCanvas};
+
+
+	const Vector2 mouseCursorPositionInWorld{
+		GetScreenToWorld2D(GetMousePosition(), context.system.noteCanvas.gridCamera)
+	};
+	const bool isMouseCursorInsideGridArea{
+		CheckCollisionPointRec(mouseCursorPositionInWorld, noteCanvasState.gridArea)
+	};
+	// DEBUG_PRINT_IF_CHANGED("mouseCursorPositionInWorld: {},{}", mouseCursorPositionInWorld.x, mouseCursorPositionInWorld.y);
+
+	if(isMouseCursorInsideGridArea){
+		const float mousePositionRelativeToGridAreaX{
+			mouseCursorPositionInWorld.x - noteCanvasState.gridArea.x
+		};
+		const float mousePositionRelativeToGridAreaY{
+			(mouseCursorPositionInWorld.y - noteCanvasState.gridArea.y) + noteCanvasState.verticalScrollInPixels
+		};
+
+		const int hoveredNoteIndex{
+			static_cast<int>(std::floor(mousePositionRelativeToGridAreaX / noteCanvasState.columnWidth))
+		};
+		const int hoveredRowIndex{
+			static_cast<int>(std::floor(mousePositionRelativeToGridAreaY / noteCanvasState.rowHeightInPixels))
+		};
+
+
+		if(hoveredNoteIndex >= 0
+		&& hoveredNoteIndex < constants::project_data::MaximumNotePerPage
+		&& hoveredRowIndex >= 0
+		&& hoveredRowIndex < NumberOfRow
+		){
+			const int hoveredSemitoneFromC0{
+				FirstNoteOffsetFromC0 + (NumberOfRow - 1) - hoveredRowIndex
+			};
+
+			noteCanvasState.cursorPosition = program_states::Interface::NoteCanvas::CursorPosition{
+				.noteIndex = hoveredNoteIndex,
+				.note = static_cast<music_data::Note>(hoveredSemitoneFromC0)
+			};
+		}
+
+	}
 
 	const int selectedChannelIndex{context.interface.sidebar.selectedChannelListViewIndex};
 
@@ -182,5 +230,14 @@ void NoteCanvas::drawNotes(program_states::Context &context){
 		"selectedChannelIndex: {}, hasSpecificChannelSelection: {}",
 		selectedChannelIndex, hasSpecificChannelSelection
 	);
+
+	if(noteCanvasState.cursorPosition){
+		DEBUG_PRINT_IF_CHANGED(
+			"Position: {}, Note: {}",
+			noteCanvasState.cursorPosition.value().noteIndex,
+			magic_enum::enum_name<music_data::Note>(noteCanvasState.cursorPosition.value().note)
+		);
+	}
+
 
 }

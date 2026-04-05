@@ -11,7 +11,7 @@
 using namespace interface;
 using namespace constants::interface_layout::note_canvas;
 
-void NoteCanvas::drawPitchLabels(program_states::Context &context){
+void NoteCanvas::drawPitchLabels(program_states::InterfaceContext &context){
     auto &state{context.interface.noteCanvas};
 
     for(int rowIndex{0}; rowIndex < NumberOfRow; rowIndex++){
@@ -60,7 +60,7 @@ void NoteCanvas::drawPitchLabels(program_states::Context &context){
 
 }
 
-void NoteCanvas::drawBlackKeyRows(program_states::Context &context){
+void NoteCanvas::drawBlackKeyRows(program_states::InterfaceContext &context){
     auto &state{context.interface.noteCanvas};
 
     for(int rowIndex{0}; rowIndex < NumberOfRow; rowIndex++){
@@ -87,7 +87,7 @@ void NoteCanvas::drawBlackKeyRows(program_states::Context &context){
     }
 }
 
-void NoteCanvas::drawHorizontalGridLines(program_states::Context &context){
+void NoteCanvas::drawHorizontalGridLines(program_states::InterfaceContext &context){
     auto &state{context.interface.noteCanvas};
 
     // DEBUG_PRINT_IF_CHANGED(
@@ -117,7 +117,7 @@ void NoteCanvas::drawHorizontalGridLines(program_states::Context &context){
 
 }
 
-void NoteCanvas::drawVerticalGridLines(program_states::Context &context){
+void NoteCanvas::drawVerticalGridLines(program_states::InterfaceContext &context){
     auto &state{context.interface.noteCanvas};
 
     const float topLinePositionY{rowEdgeY(context, NumberOfRow)};

@@ -9,7 +9,7 @@
 using namespace interface;
 using namespace constants::labels::toolbar;
 
-void Toolbar::drawStateControl(program_states::Context &context){
+void Toolbar::drawStateControl(program_states::InterfaceContext &context){
 	const auto anchor{context.layout.anchor.toolbar.stateControl};
 	const auto &bounds{context.layout.bounds.toolbar.stateControl};
 

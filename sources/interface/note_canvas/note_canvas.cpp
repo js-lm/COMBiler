@@ -11,7 +11,7 @@
 using namespace interface;
 using namespace constants::labels::note_canvas;
 
-void NoteCanvas::draw(program_states::Context &context){
+void NoteCanvas::draw(program_states::InterfaceContext &context){
 	const auto anchor{context.layout.anchor.noteCanvas.noteCanvas};
 	const auto &bounds{context.layout.bounds.noteCanvas};
 

@@ -20,7 +20,7 @@ bool NoteCanvas::isBlackKey(int pitchClass){
     ) != BlackKeyIndices.end();
 }
 
-float NoteCanvas::rowEdgeY(program_states::Context &context, int rowLineIndex){
+float NoteCanvas::rowEdgeY(program_states::InterfaceContext &context, int rowLineIndex){
     auto &state{context.interface.noteCanvas};
     return state.gridArea.y - state.verticalScrollInPixels + static_cast<float>((rowLineIndex * state.totalHeightInPixels) / NumberOfRow);
 }
@@ -43,7 +43,7 @@ bool NoteCanvas::isOctaveBoundaryBetweenRows(int upperRowIndex, int lowerRowInde
     return upperPitchClass == 0 && lowerPitchClass == (NumberOfSemitoneInOctave - 1);
 }
 
-void NoteCanvas::cleanGridLayout(program_states::Context &context){
+void NoteCanvas::cleanGridLayout(program_states::InterfaceContext &context){
 	const auto &bounds{context.layout.bounds.noteCanvas};
 	const auto &groupBox{bounds.groupBox};
     const auto &anchor{context.layout.anchor.noteCanvas.noteCanvas};
@@ -146,7 +146,7 @@ void NoteCanvas::cleanGridLayout(program_states::Context &context){
     state.isGridLayoutDirty = false;
 }
 
-float NoteCanvas::maximumVerticalZoomFactorForSquareCell(program_states::Context &context){
+float NoteCanvas::maximumVerticalZoomFactorForSquareCell(program_states::InterfaceContext &context){
     auto &state{context.interface.noteCanvas};
 
     const float columnWidth{

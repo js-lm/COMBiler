@@ -13,12 +13,14 @@
 using namespace interface;
 using namespace constants::labels::navigation_bar;
 
-void NavigationBar::drawPerPageSettings(program_states::Context &context){
+void NavigationBar::drawPerPageSettings(program_states::InterfaceContext &context){
 	const auto anchor{context.layout.anchor.navigationBar.perPageSettings};
 	const auto &bounds{context.layout.bounds.navigationBar.perPageSettings};
 
-	const auto projectData{context.system.project.data.lock()};
-	if(projectData && !projectData->pages.empty()){
+	const auto projectDataSlot{context.system.project.data.lock()};
+	if(projectDataSlot && !projectDataSlot->data->pages.empty()){
+		const auto &projectData{projectDataSlot->data};
+
 		const int currentPageIndex{
 			std::clamp(
 				context.system.project.currentPage - 1,
@@ -50,8 +52,9 @@ void NavigationBar::drawPerPageSettings(program_states::Context &context){
 	}
 
 	if(context.interface.navigationBar.notePerPageSpinnerValue != previousNotePerPageSpinnerValue){
-		if(projectData && !projectData->pages.empty()){
-			// TODO? duplication
+		if(projectDataSlot && !projectDataSlot->data->pages.empty()){
+			const auto &projectData{projectDataSlot->data};
+
 			const int currentPageIndex{
 				std::clamp(
 					context.system.project.currentPage - 1,

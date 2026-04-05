@@ -11,7 +11,7 @@
 using namespace interface;
 using namespace constants::labels::sidebar;
 
-void Sidebar::drawInspector(program_states::Context &context){
+void Sidebar::drawInspector(program_states::InterfaceContext &context){
 	const auto anchor{context.layout.anchor.sidebar.inspect};
 	const auto &bounds{context.layout.bounds.sidebar.inspector};
 

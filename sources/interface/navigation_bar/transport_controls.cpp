@@ -9,7 +9,7 @@
 using namespace interface;
 using namespace constants::labels::navigation_bar;
 
-void NavigationBar::drawTransportControls(program_states::Context &context){
+void NavigationBar::drawTransportControls(program_states::InterfaceContext &context){
 	const auto anchor{context.layout.anchor.navigationBar.transportControls};
 	const auto &bounds{context.layout.bounds.navigationBar.transportControls};
 

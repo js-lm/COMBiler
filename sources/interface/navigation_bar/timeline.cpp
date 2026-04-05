@@ -11,7 +11,7 @@
 using namespace interface;
 using namespace constants::labels::navigation_bar;
 
-void NavigationBar::drawTimeline(program_states::Context &context){
+void NavigationBar::drawTimeline(program_states::InterfaceContext &context){
 	const auto anchor{context.layout.anchor.navigationBar.timeline};
 	const auto &bounds{context.layout.bounds.navigationBar.timeline};
 

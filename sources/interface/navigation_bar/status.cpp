@@ -9,7 +9,7 @@
 using namespace interface;
 using namespace constants::labels::navigation_bar;
 
-void NavigationBar::drawStatus(program_states::Context &context){
+void NavigationBar::drawStatus(program_states::InterfaceContext &context){
 	const auto anchor{context.layout.anchor.navigationBar.status};
 	const auto &bounds{context.layout.bounds.navigationBar.status};
 

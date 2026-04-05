@@ -6,6 +6,8 @@
 
 #include "project_data.hpp"
 
+#include "action_center/action_center.hpp"
+
 namespace program_states{
 
     struct System{
@@ -24,9 +26,7 @@ namespace program_states{
 
             int currentPage{1};
 
-            std::shared_ptr<ProjectData> DEBUG_thePreset{std::make_shared<ProjectData>(DEBUG_preset::projectData)};
-
-            std::weak_ptr<ProjectData> data{DEBUG_thePreset};
+            std::weak_ptr<ActionCenter::StagedSlot> data{};
 
         } project{};
 
