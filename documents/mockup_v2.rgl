@@ -1,7 +1,7 @@
 #
 # rgl layout text file (v4.0) - raygui layout file generated using rGuiLayout
 #
-# Number of controls:     44
+# Number of controls:     48
 #
 # Ref. window:    r <x> <y> <width> <height>
 # Anchor info:    a <id> <name> <posx> <posy> <enabled>
@@ -9,55 +9,60 @@
 #
 r 0 40 -1 -1
 a 001 SystemActionsAnchor 0 0 1
-a 002 StateControlAnchor 248 0 1
-a 003 ToolPaletteAnchor 448 0 1
-a 004 ToolOptionsAnchor 784 0 1
+a 002 StateControlAnchor 280 0 1
+a 003 ToolPaletteAnchor 464 0 1
+a 004 ToolOptionsAnchor 800 0 1
 a 005 InspectAnchor 0 40 1
 a 006 TransportControlsAnchor 416 408 1
 a 007 TimelineAnchor 0 448 1
 a 008 PerPageSettingsAnchor 648 408 1
 a 009 StatusAnchor 112 408 1
 a 010 NoteCanvasAnchor 112 40 1
-c 000 1 SystemActionsGroupBox 0 0 248 40 1 
+c 000 1 SystemActionsGroupBox 0 0 280 40 1 
 c 001 5 MenuButton 16 8 56 24 1 #214#Menu
 c 002 5 NewFileButton 86 8 24 24 1 #008#
-c 003 5 Button005 114 8 24 24 1 #001#
+c 003 5 LoadButton 114 8 24 24 1 #001#
 c 004 5 SaveFileButton 142 8 24 24 1 #002#
-c 005 5 ExportFileButton 170 8 24 24 1 #007#
-c 006 1 StateControlGroupBox 0 0 200 40 2 
-c 007 5 MusicSettingButton 208 8 24 24 1 #140#
+c 005 5 ExportFileButton 200 8 24 24 1 #007#
+c 006 1 StateControlGroupBox 0 0 184 40 2 
+c 007 5 MusicSettingButton 240 8 24 24 1 #140#
 c 008 5 UndoButton 16 8 24 24 2 #072#
 c 009 5 RedoButton 44 8 24 24 2 #073#
-c 010 11 ActionHistoryDropdownBox 80 8 104 24 2 Delete Note
-c 011 1 ToolPaletteGroupBox 0 0 336 40 3 
-c 012 9 ToolsToggleGroup 56 8 40 24 3 #021#;#023#;#028#;#124#
-c 013 4 ToolsLabel 16 8 40 24 3 Tools:
-c 014 5 CutNoteButton 240 8 24 24 3 #017#
-c 015 5 CopyNoteButton 268 8 24 24 3 #016#
-c 016 5 PasteNoteButton 296 8 24 24 3 #018#
-c 017 1 ToolOptionsGroupBox 0 0 176 40 4 
-c 018 1 InspectorGroupBox 0 0 112 408 5 
-c 019 1 TransportControlsGroupBox 0 0 232 40 6 
-c 020 5 PreviousPageButton 32 8 24 24 6 #129#
-c 021 5 NextPageButton 60 8 24 24 6 #134#
-c 022 5 StopButton 130 8 24 24 6 #133#
-c 023 5 PlayButton 102 8 24 24 6 #131#
-c 024 8 PageRepeatToggle 176 8 24 24 6 #061#
-c 025 21 ChannelListView 8 32 96 224 5 All;Instrument 1;Instrument 2;Instrument 3;Chord;Setting
-c 026 4 ChannelLabel 32 8 48 24 5 Channel
-c 027 2 StrcutureLine 8 264 96 24 5 Structure
-c 028 1 TimelineGroupBox 0 0 960 96 7 
-c 029 20 TimelineScrollPanel 112 24 776 72 7 
-c 030 4 TimelineLabel 112 0 120 24 7 Timeline:
-c 031 4 PageNumberLabel 816 0 72 24 7 Page: 16/64
-c 032 5 PageCopyButton 896 24 24 24 7 #016#
-c 033 5 PagePasteButton 928 24 24 24 7 #018#
-c 034 5 PageCutButton 928 56 24 24 7 #017#
-c 035 8 PageSelectToggle 896 56 24 24 7 #109#
-c 036 1 PerPageSettingsGroupBox 0 0 312 40 8 
-c 037 15 NotePerPageSpinner 208 8 88 24 8 Note Per Page:
-c 038 1 StatusGoupBox 0 0 304 -2147483648 9 
-c 039 14 TempoValueBox 48 288 56 24 5 Tempo: 
-c 040 14 NotesValueBox 48 320 56 24 5 Notes: 
-c 041 14 BarsValueBox 48 352 56 24 5 Bars: 
-c 043 1 NoteCanvasGroupBox 0 0 848 368 10 
+c 010 1 ToolPaletteGroupBox 0 0 336 40 3 
+c 011 9 ToolsToggleGroup 56 8 40 24 3 #021#;#023#;#028#;#124#
+c 012 4 ToolsLabel 16 8 40 24 3 Tools:
+c 013 5 CutNoteButton 240 8 24 24 3 #017#
+c 014 5 CopyNoteButton 268 8 24 24 3 #016#
+c 015 5 PasteNoteButton 296 8 24 24 3 #018#
+c 016 1 ToolOptionsGroupBox 0 0 160 40 4 
+c 017 1 InspectorGroupBox 0 0 112 408 5 
+c 018 1 TransportControlsGroupBox 0 0 232 40 6 
+c 019 5 PreviousPageButton 32 8 24 24 6 #129#
+c 020 5 NextPageButton 60 8 24 24 6 #134#
+c 021 5 StopButton 130 8 24 24 6 #133#
+c 022 5 PlayButton 102 8 24 24 6 #131#
+c 023 8 PageRepeatToggle 176 8 24 24 6 #061#
+c 024 21 ChannelListView 8 32 96 224 5 All;Instrument 1;Instrument 2;Instrument 3;Chord;Setting
+c 025 4 ChannelLabel 32 8 48 24 5 Channel
+c 026 2 StrcutureLine 8 264 96 24 5 Global
+c 027 1 TimelineGroupBox 0 0 960 96 7 
+c 028 20 TimelineScrollPanel 120 24 768 72 7 
+c 029 4 TimelineLabel 120 0 120 24 7 Timeline:
+c 030 4 PageNumberLabel 816 0 32 24 7 Page:
+c 031 5 PageCopyButton 896 24 24 24 7 #016#
+c 032 5 PagePasteButton 928 24 24 24 7 #018#
+c 033 5 PageCutButton 928 56 24 24 7 #017#
+c 034 8 PageSelectToggle 896 56 24 24 7 #109#
+c 035 1 PerPageSettingsGroupBox 0 0 312 40 8 
+c 036 15 NotePerPageSpinner 208 8 88 24 8 Note Per Page:
+c 037 1 StatusGoupBox 0 0 304 -2147483648 9 
+c 038 14 TempoValueBox 48 288 56 24 5 Tempo: 
+c 039 14 NotesValueBox 48 320 56 24 5 Notes: 
+c 040 1 NoteCanvasGroupBox 112 40 848 368 0 
+c 041 5 SaveAsButton 171 8 24 24 1 #006#
+c 043 5 ConstantsButton 80 8 88 24 2 #123#Constants
+c 043 5 InfoButton 120 8 24 24 4 #191#
+c 044 2 SideSettingLine 8 352 96 24 5 Visual
+c 045 7 ShowCommandsCheckBoxEx 8 376 24 24 5 Show Command
+c 046 4 PageNumberValueLabel 848 0 72 24 7 16/64
+c 047 19 TimelineStatusBar 0 0 112 96 7 SAMPLE TEXT

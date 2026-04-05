@@ -7,6 +7,7 @@ namespace constants::interface_layout{
 
     constexpr int TimelineScrollPanelRightPadding{72};
     constexpr int TimelinePageNumberLabelOffset{144};
+    constexpr int TimelinePageNumberValueLabelOffset{112};
     constexpr int TimelinePageCopyButtonOffset{64};
     constexpr int TimelinePagePasteButtonOffset{32};
     constexpr int TimelinePageCutButtonOffset{32};
@@ -16,6 +17,7 @@ namespace constants::interface_layout{
     constexpr int NavigationSectionCount{3};
 
     constexpr int PerPageSpinnerRightPadding{96};
+    constexpr int ToolOptionInfoButtonRightPadding{16};
 
     constexpr int TransportControlsButtonsTotalWidth{168};
     constexpr int TransportControlsNextPageButtonOffset{28};

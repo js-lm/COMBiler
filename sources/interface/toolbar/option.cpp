@@ -16,6 +16,7 @@ void Toolbar::drawOption(program_states::Context &context){
 	const auto groupBox{calculateBoundsAtAnchor(anchor, bounds.groupBox)};
 
 	GuiGroupBox(groupBox, ToolOptionsGroupBoxText);
+	context.interface.toolbar.isInfoButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.infoButton), InfoButtonText);
 
     
 }

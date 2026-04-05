@@ -48,14 +48,10 @@ void Sidebar::drawInspector(program_states::Context &context){
 		context.interface.sidebar.notesValueBoxEditMode = !context.interface.sidebar.notesValueBoxEditMode;
 	}
 
-	if(GuiValueBox(
-		calculateBoundsAtAnchor(anchor, bounds.barsValueBox),
-		BarsValueBoxText,
-		&context.interface.sidebar.barsValue,
-		0,
-		100, // TODO: magic numbers
-		context.interface.sidebar.barsValueBoxEditMode
-	)){
-		context.interface.sidebar.barsValueBoxEditMode = !context.interface.sidebar.barsValueBoxEditMode;
-	}
+	GuiLine(calculateBoundsAtAnchor(anchor, bounds.sideSettingLine), SideSettingLineText);
+	GuiCheckBox(
+		calculateBoundsAtAnchor(anchor, bounds.showCommandsCheckBox),
+		ShowCommandsCheckBoxText,
+		&context.interface.sidebar.isShowCommandsEnabled
+	);
 }

@@ -6,6 +6,8 @@
 
 #include "interface/utilities.hpp"
 
+#include <algorithm>
+
 using namespace interface;
 using namespace constants::labels::navigation_bar;
 
@@ -16,6 +18,7 @@ void NavigationBar::drawTimeline(program_states::Context &context){
 	const auto timelineScrollPanel{calculateBoundsAtAnchor(anchor, bounds.scrollPanel)};
 
 	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.groupBox), TimelineGroupBoxText);
+	GuiStatusBar(calculateBoundsAtAnchor(anchor, bounds.statusBar), TimelineStatusBarText);
 	GuiScrollPanel(
 		Rectangle{
 			timelineScrollPanel.x,
@@ -30,6 +33,18 @@ void NavigationBar::drawTimeline(program_states::Context &context){
 	);
 	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.timelineLabel), TimelineLabelText);
 	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.pageNumberLabel), PageNumberLabelText);
+
+	int maximumPageNumber{1};
+	int selectedPageNumber{1};
+	if(const auto projectDataSlot{context.system.project.data.lock()}; projectDataSlot){
+		maximumPageNumber = projectDataSlot->data->pages.size();
+		selectedPageNumber = context.system.project.currentPage;
+	}
+	GuiLabel(
+		calculateBoundsAtAnchor(anchor, bounds.pageNumberValueLabel),
+		TextFormat("%d/%d", selectedPageNumber, maximumPageNumber)
+	);
+
 	context.interface.navigationBar.isPageCopyButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.pageCopyButton), PageCopyButtonText);
 	context.interface.navigationBar.isPagePasteButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.pagePasteButton), PagePasteButtonText);
 	context.interface.navigationBar.isPageCutButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.pageCutButton), PageCutButtonText);

@@ -74,6 +74,7 @@ void MainWindow::handleWindowSizeChangeEvent(){
 
 
         bounds.navigationBar.timeline.pageNumberLabel.x = bounds.navigationBar.timeline.groupBox.width - TimelinePageNumberLabelOffset;
+        bounds.navigationBar.timeline.pageNumberValueLabel.x = bounds.navigationBar.timeline.groupBox.width - TimelinePageNumberValueLabelOffset;
 
         bounds.navigationBar.timeline.pageCopyButton.x = bounds.navigationBar.timeline.groupBox.width - TimelinePageCopyButtonOffset;
         bounds.navigationBar.timeline.pagePasteButton.x = bounds.navigationBar.timeline.groupBox.width - TimelinePagePasteButtonOffset;
@@ -111,6 +112,7 @@ void MainWindow::handleWindowSizeChangeEvent(){
     /* toolbar */ {
 
         bounds.toolbar.toolOption.groupBox.width = window.interfaceRenderTextureWidth - anchor.toolbar.toolOption.x;
+        bounds.toolbar.toolOption.infoButton.x = bounds.toolbar.toolOption.groupBox.width - bounds.toolbar.toolOption.infoButton.width - ToolOptionInfoButtonRightPadding;
     } /* toolbar */
 
     /* ntoe canvas */ {

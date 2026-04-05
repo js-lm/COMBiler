@@ -17,15 +17,10 @@ void Toolbar::drawStateControl(program_states::Context &context){
     
 	context.interface.toolbar.isUndoButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.undoButton), UndoButtonText);
 	context.interface.toolbar.isRedoButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.redoButton), RedoButtonText);
-
-	if(GuiDropdownBox(
-        calculateBoundsAtAnchor(anchor, bounds.actionHistoryDropdownBox),
-        ActionHistoryDropdownBoxText,
-		&context.interface.toolbar.actionHistoryDropdownActive,
-		context.interface.toolbar.actionHistoryDropdownEditMode
-    )){
-		context.interface.toolbar.actionHistoryDropdownEditMode = !context.interface.toolbar.actionHistoryDropdownEditMode;
-	}
+	context.interface.toolbar.isConstantsButtonPressed = GuiButton(
+		calculateBoundsAtAnchor(anchor, bounds.constantsButton),
+		ConstantsButtonText
+	);
 
     
 }

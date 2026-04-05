@@ -10,9 +10,9 @@ namespace program_states{
 
             struct Toolbar{
                 Vector2 systemAction{  0, 0};
-                Vector2 stateControl{248, 0};
-                Vector2 toolPalette {448, 0};
-                Vector2 toolOption  {784, 0};
+                Vector2 stateControl{280, 0};
+                Vector2 toolPalette {464, 0};
+                Vector2 toolOption  {800, 0};
             } toolbar{};
 
             struct Sidebar{
@@ -38,22 +38,23 @@ namespace program_states{
             struct Toolbar{
 
                 struct SystemAction{
-                    Rectangle groupBox          {0, 0, 248, 40};
+                    Rectangle groupBox          {0, 0, 280, 40};
 
                     Rectangle menuButton        { 16, 8, 56, 24};
                     Rectangle newFileButton     { 86, 8, 24, 24};
                     Rectangle loadFileButton    {114, 8, 24, 24};
                     Rectangle saveFileButton    {142, 8, 24, 24};
-                    Rectangle exportFileButton  {170, 8, 24, 24};
-                    Rectangle musicSettingButton{208, 8, 24, 24};
+                    Rectangle saveAsFileButton  {171, 8, 24, 24};
+                    Rectangle exportFileButton  {200, 8, 24, 24};
+                    Rectangle musicSettingButton{240, 8, 24, 24};
                 } systemAction{};
 
                 struct StateControl{
-                    Rectangle groupBox      {0, 0, 200, 40};
+                    Rectangle groupBox      {0, 0, 184, 40};
 
                     Rectangle undoButton    {16, 8, 24, 24};
                     Rectangle redoButton    {44, 8, 24, 24};
-                    Rectangle actionHistoryDropdownBox{80, 8, 104, 24};
+                    Rectangle constantsButton{80,8, 88, 24};
                 } stateControl{};
 
                 struct ToolPalette{
@@ -67,7 +68,8 @@ namespace program_states{
                 } toolPalette{};
 
                 struct ToolOption{
-                    Rectangle groupBox      {0, 0, 176, 40};
+                    Rectangle groupBox      {  0, 0, 160, 40};
+                    Rectangle infoButton    {120, 8,  24, 24};
                 } toolOption{};
 
             } toolbar{};
@@ -83,7 +85,8 @@ namespace program_states{
 
                     Rectangle tempoValueBox     {48, 288, 56, 24};
                     Rectangle notesValueBox     {48, 320, 56, 24};
-                    Rectangle barsValueBox      {48, 352, 56, 24};
+                    Rectangle sideSettingLine   { 8, 352, 96, 24};
+                    Rectangle showCommandsCheckBox{8,376, 24, 24};
                 } inspector{};
 
             } sidebar{};
@@ -103,14 +106,16 @@ namespace program_states{
                 struct Timeline{
                     Rectangle groupBox          {  0,  0, 960, 96};
 
-                    Rectangle scrollPanel       {112, 24, 776, 72};
-                    Rectangle timelineLabel     {112,  0, 120, 24};
+                    Rectangle scrollPanel       {120, 24, 768, 72};
+                    Rectangle timelineLabel     {120,  0, 120, 24};
 
-                    Rectangle pageNumberLabel   {816,  0,  72, 24};
+                    Rectangle pageNumberLabel   {816,  0,  32, 24};
+                    Rectangle pageNumberValueLabel{848,0,  72, 24};
                     Rectangle pageCopyButton    {896, 24,  24, 24};
                     Rectangle pagePasteButton   {928, 24,  24, 24};
                     Rectangle pageCutButton     {928, 56,  24, 24};
                     Rectangle pageSelectToggle  {896, 56,  24, 24};
+                    Rectangle statusBar         {  0,  0, 112, 96};
                 } timeline{};
 
                 struct PerPageSettings{

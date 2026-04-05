@@ -13,21 +13,21 @@ namespace program_states{
             bool isNewFileButtonPressed     {false};
             bool isLoadFileButtonPressed    {false};
             bool isSaveFileButtonPressed    {false};
+            bool isSaveAsFileButtonPressed  {false};
             bool isExportFileButtonPressed  {false};
 
             bool isMusicSettingButtonPressed{false};
 
             bool isUndoButtonPressed        {false};
             bool isRedoButtonPressed        {false};
-
-            bool actionHistoryDropdownEditMode{false};
-            int actionHistoryDropdownActive {0};
+            bool isConstantsButtonPressed   {false};
 
             int selectedToolIndex           {0};
 
             bool isCutNoteButtonPressed     {false};
             bool isCopyNoteButtonPressed    {false};
             bool isPasteNoteButtonPressed   {false};
+            bool isInfoButtonPressed        {false};
         } toolbar{};
 
         struct Sidebar{
@@ -39,9 +39,7 @@ namespace program_states{
 
             bool notesValueBoxEditMode  {false};
             int notesValue              {0};
-
-            bool barsValueBoxEditMode   {false};
-            int barsValue               {0};
+            bool isShowCommandsEnabled  {false};
 
         } sidebar{};
 
