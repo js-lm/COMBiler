@@ -21,7 +21,7 @@ void NoteCanvas::drawNotes(program_states::InterfaceContext &context){
 
 	const auto projectDataSlot{context.system.project.data.lock()};
 
-	if(!projectDataSlot || projectDataSlot->data->pages.empty()) return;
+	if(!projectDataSlot || !projectDataSlot->data || projectDataSlot->data->pages.empty()) return;
 
 	const auto &projectData{projectDataSlot->data};
 
@@ -42,6 +42,17 @@ void NoteCanvas::drawNotes(program_states::InterfaceContext &context){
 	const bool isMouseCursorInsideGridArea{
 		CheckCollisionPointRec(mouseCursorPositionInWorld, noteCanvasState.gridArea)
 	};
+
+	const int selectedChannelIndex{context.interface.sidebar.selectedChannelListViewIndex};
+	const bool isAllOrSystemChannelSelection{
+		selectedChannelIndex == notes::AllChannelsListViewIndex
+	 || selectedChannelIndex == notes::SystemChannelListViewIndex
+	};
+	const bool hasSpecificChannelSelection{
+		selectedChannelIndex >= 1
+	 && selectedChannelIndex <= static_cast<int>(currentPage.instrumentChannels.size())
+	};
+	const bool shouldShowLabels{isAllOrSystemChannelSelection};
 	// DEBUG_PRINT_IF_CHANGED("mouseCursorPositionInWorld: {},{}", mouseCursorPositionInWorld.x, mouseCursorPositionInWorld.y);
 
 	if(isMouseCursorInsideGridArea){
@@ -68,25 +79,36 @@ void NoteCanvas::drawNotes(program_states::InterfaceContext &context){
 			const int hoveredSemitoneFromC0{
 				FirstNoteOffsetFromC0 + (NumberOfRow - 1) - hoveredRowIndex
 			};
+			const auto hoveredNote{static_cast<music_data::Note>(hoveredSemitoneFromC0)};
+			auto isMatchingCellNote{[&](const auto &cell){
+				return cell.has_value()
+					&& std::holds_alternative<music_data::Note>(cell.value())
+					&& std::get<music_data::Note>(cell.value()) == hoveredNote;
+			}};
+
+			const bool isHoveringExistingNote{
+				isAllOrSystemChannelSelection
+					? std::any_of(
+						currentPage.instrumentChannels.begin(),
+						currentPage.instrumentChannels.end(),
+						[&](const auto &instrumentChannel){
+							return isMatchingCellNote(instrumentChannel[hoveredNoteIndex]);
+						}
+					)
+					: (hasSpecificChannelSelection
+						? isMatchingCellNote(currentPage.instrumentChannels[static_cast<size_t>(selectedChannelIndex - 1)][hoveredNoteIndex])
+						: false
+					)
+			};
 
 			noteCanvasState.cursorPosition = program_states::Interface::NoteCanvas::CursorPosition{
 				.noteIndex = hoveredNoteIndex,
-				.note = static_cast<music_data::Note>(hoveredSemitoneFromC0)
+				.note = hoveredNote,
+				.isHoveringNote = isHoveringExistingNote
 			};
 		}
 
 	}
-
-	const int selectedChannelIndex{context.interface.sidebar.selectedChannelListViewIndex};
-
-	const bool shouldShowLabels{
-		selectedChannelIndex == notes::AllChannelsListViewIndex
-	 || selectedChannelIndex == notes::SystemChannelListViewIndex
-	};
-	const bool hasSpecificChannelSelection{
-		selectedChannelIndex > notes::AllChannelsListViewIndex
-	 && selectedChannelIndex < notes::SystemChannelListViewIndex
-	};
 
 	auto drawNotesIn{[&](size_t channelIndex){
 		const bool isSpecificSelectedChannel{
@@ -226,18 +248,19 @@ void NoteCanvas::drawNotes(program_states::InterfaceContext &context){
 	}
 	if(hasSpecificChannelSelection) drawNotesIn(selectedChannelIndex - 1);
 
-	DEBUG_PRINT_IF_CHANGED(
-		"selectedChannelIndex: {}, hasSpecificChannelSelection: {}",
-		selectedChannelIndex, hasSpecificChannelSelection
-	);
+	// DEBUG_PRINT_IF_CHANGED(
+	// 	"selectedChannelIndex: {}, hasSpecificChannelSelection: {}",
+	// 	selectedChannelIndex, hasSpecificChannelSelection
+	// );
 
-	if(noteCanvasState.cursorPosition){
-		DEBUG_PRINT_IF_CHANGED(
-			"Position: {}, Note: {}",
-			noteCanvasState.cursorPosition.value().noteIndex,
-			magic_enum::enum_name<music_data::Note>(noteCanvasState.cursorPosition.value().note)
-		);
-	}
+	// if(noteCanvasState.cursorPosition){
+	// 	DEBUG_PRINT_IF_CHANGED(
+	// 		"Position: {}, Note: {}, Hover: {}",
+	// 		noteCanvasState.cursorPosition.value().noteIndex,
+	// 		magic_enum::enum_name<music_data::Note>(noteCanvasState.cursorPosition.value().note),
+	// 		noteCanvasState.cursorPosition.value().isHoveringNote
+	// 	);
+	// }
 
 
 }

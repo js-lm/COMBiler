@@ -107,8 +107,11 @@ namespace program_states{
             // std::optional<int> pressedPianoKeyIndex{};
 
             struct CursorPosition{
-                int noteIndex;
-                music_data::Note note;
+                int noteIndex{0};
+                music_data::Note note{music_data::Note::C0};
+
+                // TODO: isHoveringNote has some frame delay, not that it affect anything, but still kinda want to fix it
+                bool isHoveringNote{false};
             };
             std::optional<CursorPosition> cursorPosition{};
 

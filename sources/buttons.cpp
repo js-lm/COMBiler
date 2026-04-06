@@ -2,9 +2,13 @@
 
 #include "debug_utilities.hpp"
 
+#include "constants.hpp"
+
+#include <algorithm>
+
 void MainWindow::handlePageChangeButtonsEvents(){
     const auto projectDataSlot{systemState_.project.data.lock()};
-	if(!projectDataSlot || projectDataSlot->data->pages.empty()) return;
+    if(!projectDataSlot || !projectDataSlot->data || projectDataSlot->data->pages.empty()) return;
     
 	const auto &projectData{projectDataSlot->data};
 
@@ -25,4 +29,13 @@ void MainWindow::handlePageChangeButtonsEvents(){
 
     DEBUG_PRINT_IF_CHANGED("maximumPageNumber: {}", maximumPageNumber);
 
+}
+
+void MainWindow::handleToolbarButtonsEvents(){
+    if(interfaceState_.toolbar.isUndoButtonPressed && actionCenter_ && actionCenter_->undo()){
+        applyProjectTransientNavigationState();
+    }
+    if(interfaceState_.toolbar.isRedoButtonPressed && actionCenter_ && actionCenter_->redo()){
+        applyProjectTransientNavigationState();
+    }
 }

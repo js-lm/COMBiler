@@ -68,3 +68,16 @@ program_states::ReadOnlyContext MainWindow::getReadOnlyContext(){
         .interface  {interfaceState_}
     };
 }
+
+void MainWindow::applyProjectTransientNavigationState(){
+    const auto projectDataSlot{systemState_.project.data.lock()};
+    if(!projectDataSlot || !projectDataSlot->data || projectDataSlot->data->pages.empty()) return;
+
+    const auto &projectData{projectDataSlot->data};
+    const auto &transient{projectData->transient};
+
+    systemState_.project.currentPage = transient.currentPageNumber;
+    interfaceState_.sidebar.selectedChannelListViewIndex = transient.selectedChannelListViewIndex;
+
+    interfaceState_.noteCanvas.isGridLayoutDirty = true;
+}

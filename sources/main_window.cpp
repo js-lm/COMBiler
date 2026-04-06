@@ -64,8 +64,11 @@ void MainWindow::initialize(){
 
 void MainWindow::update(){
 
-    handleEvents();
+    if(canvasManager_ && actionCenter_){
+        canvasManager_->update(*actionCenter_);
+    }
 
+    handleEvents();
 
 }
 

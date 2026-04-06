@@ -2,10 +2,15 @@
 
 #include "program_states/context.hpp"
 
+#include "action_center/action_center.hpp"
+
 class CanvasManager{
 private:
-    // const MainWindow &mainWindow_;
-    const program_states::ReadOnlyContext context_;
+    program_states::ReadOnlyContext context_;
+
+    // ActionCenter &actionCenter_;
+
+    bool hasActionStarted_{false};
 
 public:
 
@@ -15,13 +20,15 @@ public:
     CanvasManager() = delete;
     ~CanvasManager() = default;
 
-    void update();
+    void update(ActionCenter &actionCenter);
 
 private:
-    void handleNoteTools();
+    void handleNoteTools(ActionCenter &actionCenter);
 
+    void handleNoteAdding(ActionCenter &actionCenter);
+    void handleNoteDeletion(ActionCenter &actionCenter);
 
 private:
-    void handlePageTools();
+    void handlePageTools(ActionCenter &actionCenter);
 
 };

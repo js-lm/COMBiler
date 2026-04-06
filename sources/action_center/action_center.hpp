@@ -17,7 +17,7 @@ private:
     size_t historyTail_{0};
     size_t historyHead_{0};
     size_t cursorIndex_{0};
-    size_t historyStackSize_{0};
+    size_t historyStackSize_{1};
 
     std::shared_ptr<StagedSlot> stagedSlot_{std::make_shared<StagedSlot>(
         std::make_shared<program_states::ProjectData>(program_states::DEBUG_preset::projectData)
@@ -28,20 +28,27 @@ private:
 public:
     ActionCenter(){
         commits_.resize(constants::action_center::MaximumHistory);
+        // commit();
+        const auto committedSnapshot{std::make_shared<program_states::ProjectData>(*stagedSlot_->data)};
+
+        commits_[0] = committedSnapshot;
+        stagedSlot_->data = committedSnapshot;
+
     }
     ~ActionCenter() = default;
 
 public:
     std::weak_ptr<StagedSlot> getStagedObserver() const{ return stagedSlot_;}
 
+    const program_states::ProjectData::Transient *currentTransient() const;
 
 public:
-    void redo();
-    void undo();
+    bool redo();
+    bool undo();
     bool canRedo() const{ return historyStackSize_ > 1 && cursorIndex_ != historyHead_;}
     bool canUndo() const{ return historyStackSize_ > 1 && cursorIndex_ != historyTail_;}
 
-    void addNote(int pageNumber, int noteIndex, music_data::Note note);
+    void addNote(int pageNumber, int channelIndex, int noteIndex, music_data::Note note);
     void removeNote(int pageNumber, int noteIndex);
     void copyNote();
     void pasteNote();
@@ -55,9 +62,6 @@ public:
     void finishAction();
 
 private:
+    void beginAction();
     void commit();
-
-
-
-
 };

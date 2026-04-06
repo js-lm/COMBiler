@@ -1,6 +1,6 @@
 #include "canvas_manager.hpp"
 
-void CanvasManager::handlePageTools(){
+void CanvasManager::handlePageTools(ActionCenter &actionCenter){
 
 
     

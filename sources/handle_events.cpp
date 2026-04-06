@@ -17,6 +17,7 @@ void MainWindow::handleEvents(){
 
 void MainWindow::handleButtonPressEvents(){
 
+    handleToolbarButtonsEvents();
     handlePageChangeButtonsEvents();
 
 }
@@ -149,9 +150,13 @@ void MainWindow::handleKeyboardEvent(){
             ), std::floor(window.scaleFactor) + 1.0f);
         }
         if(isZoomOutPressed) window.scaleFactor = std::max(constants::application_window::MinimumScaleFactor, std::ceil(window.scaleFactor) - 1.0f);
+
+        if(IsKeyPressed(KEY_Z) && actionCenter_ && actionCenter_->redo()) applyProjectTransientNavigationState();
     }else if(isControlDown){
         if(isZoomInPressed) window.scaleFactor += .1f;
         if(isZoomOutPressed) window.scaleFactor -= .1f;
+
+        if(IsKeyPressed(KEY_Z) && actionCenter_ && actionCenter_->undo()) applyProjectTransientNavigationState();
     }
 
     // if(IsKeyPressed(KEY_UP)) window.scaleFactor += .1f;

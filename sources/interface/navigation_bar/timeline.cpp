@@ -36,7 +36,7 @@ void NavigationBar::drawTimeline(program_states::InterfaceContext &context){
 
 	int maximumPageNumber{1};
 	int selectedPageNumber{1};
-	if(const auto projectDataSlot{context.system.project.data.lock()}; projectDataSlot){
+	if(const auto projectDataSlot{context.system.project.data.lock()}; projectDataSlot && projectDataSlot->data){
 		maximumPageNumber = projectDataSlot->data->pages.size();
 		selectedPageNumber = context.system.project.currentPage;
 	}

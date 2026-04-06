@@ -3,23 +3,15 @@
 #include <cstdint>
 #include <variant>
 
-namespace units{
-
-    using Percentage = float;
-
-    using Pixel = int;
-
-} // namespace units
-
 namespace music_data{
 
-    enum class Channel{
-        Instrument_1,
-        Instrument_2,
-        Instrument_3,
-        Instrument_4,
-        System
-    };
+    // enum class Channel{
+    //     Instrument_1,
+    //     Instrument_2,
+    //     Instrument_3,
+    //     Instrument_4,
+    //     System
+    // };
 
     // namespace commands{
 
@@ -28,7 +20,7 @@ namespace music_data{
 
     // } // commands
 
-    enum class Note{
+    enum class Note : uint8_t{
         C0,
         C_Sharp_0,
         D_Flat_0 = C_Sharp_0,
@@ -192,7 +184,7 @@ namespace music_data{
         B8
     };
 
-    enum class Instrument{
+    enum class Instrument : uint8_t{
     // Keyboards
         Grand_Piano,
         Electric_Piano,

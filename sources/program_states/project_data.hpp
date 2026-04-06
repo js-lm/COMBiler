@@ -45,6 +45,14 @@ namespace program_states{
 
         std::vector<Page> pages;
 
+
+        
+        struct Transient{
+            int currentPageNumber{1};
+            int selectedChannelListViewIndex{0};
+
+        } transient{};
+
     };
 
 

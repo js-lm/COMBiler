@@ -18,7 +18,7 @@ void NavigationBar::drawPerPageSettings(program_states::InterfaceContext &contex
 	const auto &bounds{context.layout.bounds.navigationBar.perPageSettings};
 
 	const auto projectDataSlot{context.system.project.data.lock()};
-	if(projectDataSlot && !projectDataSlot->data->pages.empty()){
+	if(projectDataSlot && projectDataSlot->data && !projectDataSlot->data->pages.empty()){
 		const auto &projectData{projectDataSlot->data};
 
 		const int currentPageIndex{
@@ -52,7 +52,7 @@ void NavigationBar::drawPerPageSettings(program_states::InterfaceContext &contex
 	}
 
 	if(context.interface.navigationBar.notePerPageSpinnerValue != previousNotePerPageSpinnerValue){
-		if(projectDataSlot && !projectDataSlot->data->pages.empty()){
+		if(projectDataSlot && projectDataSlot->data && !projectDataSlot->data->pages.empty()){
 			const auto &projectData{projectDataSlot->data};
 
 			const int currentPageIndex{

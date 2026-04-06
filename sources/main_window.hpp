@@ -58,6 +58,10 @@ private:
 private:
     void handleButtonPressEvents();
     void handlePageChangeButtonsEvents();
+    void handleToolbarButtonsEvents();
+
+private:
+    void applyProjectTransientNavigationState();
 
 private:
     float calculateMaximumScaleFactor() const;
