@@ -3,28 +3,21 @@
 #include <raylib.h>
 
 #include "constants.hpp"
+#include "utilities/project_utilities.hpp"
 
 void CanvasManager::handleNoteTools(ActionCenter &actionCenter){
 
     if(!context_.interface.noteCanvas.cursorPosition) return;
     
-
     if(IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
         hasActionStarted_ = true;
 
         switch(context_.interface.toolbar.selectedToolIndex){
         // TODO: magic numbers
-        case 0:
-            break;
-
+        case 0: handleSelection(actionCenter); break;
         case 1: handleNoteAdding(actionCenter); break;
-            
-        case 2:
-            break;
-
-        case 3:
-            break;
-        
+        case 2: handleNoteDeletion(actionCenter); break;
+        case 3: handleInstrumentChange(actionCenter); break;
         }
 
     }else{
@@ -32,10 +25,11 @@ void CanvasManager::handleNoteTools(ActionCenter &actionCenter){
             actionCenter.finishAction();
             hasActionStarted_ = false;
         }
-
-
-
     }
+
+}
+
+void CanvasManager::handleSelection(ActionCenter &actionCenter){
 
 
 }
@@ -45,18 +39,12 @@ void CanvasManager::handleNoteAdding(ActionCenter &actionCenter){
 
     if(cursor.isHoveringNote) return;
 
-    const int selectedChannelListIndex{context_.interface.sidebar.selectedChannelListViewIndex};
-    const bool hasSpecificChannelSelection{ // TODO: this should be a member function? too many duplications
-        selectedChannelListIndex >= 1
-     && selectedChannelListIndex <= constants::project_data::NumberOfInstrumentChannels
-    };
-    if(!hasSpecificChannelSelection) return;
-
-    const int channelIndex{selectedChannelListIndex - 1};
+    const auto channelIndex{utilities::selectedInstrumentChannelIndex(context_.interface.sidebar.selectedChannelListViewIndex)};
+    if(!channelIndex) return;
 
     actionCenter.addNote(
         context_.system.project.currentPage,
-        channelIndex,
+        channelIndex.value(),
         cursor.noteIndex,
         cursor.note
     );
@@ -66,10 +54,20 @@ void CanvasManager::handleNoteAdding(ActionCenter &actionCenter){
 void CanvasManager::handleNoteDeletion(ActionCenter &actionCenter){
     auto &cursor{context_.interface.noteCanvas.cursorPosition.value()};
 
-    if(!cursor.isHoveringNote) return;
+    // if(!cursor.isHoveringNote) return;
 
+    const auto channelIndex{utilities::selectedInstrumentChannelIndex(context_.interface.sidebar.selectedChannelListViewIndex)};
+    if(!channelIndex) return;
 
+    actionCenter.removeNote(
+        context_.system.project.currentPage,
+        channelIndex.value(),
+        cursor.noteIndex
+    );
 
+}
+
+void CanvasManager::handleInstrumentChange(ActionCenter &actionCenter){
 
 
 }

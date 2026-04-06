@@ -25,8 +25,10 @@ public:
 private:
     void handleNoteTools(ActionCenter &actionCenter);
 
+    void handleSelection(ActionCenter &actionCenter);
     void handleNoteAdding(ActionCenter &actionCenter);
     void handleNoteDeletion(ActionCenter &actionCenter);
+    void handleInstrumentChange(ActionCenter &actionCenter);
 
 private:
     void handlePageTools(ActionCenter &actionCenter);

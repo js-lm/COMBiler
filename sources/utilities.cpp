@@ -7,6 +7,8 @@
 
 #include <raymath.h>
 
+#include "utilities/project_utilities.hpp"
+
 float MainWindow::calculateMaximumScaleFactor() const{
     using namespace constants::application_window;
 
@@ -70,10 +72,8 @@ program_states::ReadOnlyContext MainWindow::getReadOnlyContext(){
 }
 
 void MainWindow::applyProjectTransientNavigationState(){
-    const auto projectDataSlot{systemState_.project.data.lock()};
-    if(!projectDataSlot || !projectDataSlot->data || projectDataSlot->data->pages.empty()) return;
-
-    const auto &projectData{projectDataSlot->data};
+    const auto projectData{utilities::projectDataWithPagesFrom(systemState_)};
+    if(!projectData) return;
     const auto &transient{projectData->transient};
 
     systemState_.project.currentPage = transient.currentPageNumber;

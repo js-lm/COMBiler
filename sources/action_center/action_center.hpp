@@ -49,7 +49,7 @@ public:
     bool canUndo() const{ return historyStackSize_ > 1 && cursorIndex_ != historyTail_;}
 
     void addNote(int pageNumber, int channelIndex, int noteIndex, music_data::Note note);
-    void removeNote(int pageNumber, int noteIndex);
+    void removeNote(int pageNumber, int channelIndex, int noteIndex);
     void copyNote();
     void pasteNote();
 

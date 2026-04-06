@@ -10,7 +10,7 @@ namespace constants::application_window{
     constexpr int MinimalWidth{960};
     constexpr int MinimalHeight{544};
 
-    constexpr int DefaultFPS{60};
+    constexpr int DefaultFPS{300};
 
     constexpr float MinimumScaleFactor{1.0f};
     constexpr float MaximumScaleFactor{4.0f};

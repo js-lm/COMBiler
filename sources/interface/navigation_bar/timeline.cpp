@@ -8,6 +8,8 @@
 
 #include <algorithm>
 
+#include "utilities/project_utilities.hpp"
+
 using namespace interface;
 using namespace constants::labels::navigation_bar;
 
@@ -36,8 +38,8 @@ void NavigationBar::drawTimeline(program_states::InterfaceContext &context){
 
 	int maximumPageNumber{1};
 	int selectedPageNumber{1};
-	if(const auto projectDataSlot{context.system.project.data.lock()}; projectDataSlot && projectDataSlot->data){
-		maximumPageNumber = projectDataSlot->data->pages.size();
+	if(const auto projectData{utilities::projectDataFrom(context.system)}; projectData){
+		maximumPageNumber = projectData->pages.size();
 		selectedPageNumber = context.system.project.currentPage;
 	}
 	GuiLabel(

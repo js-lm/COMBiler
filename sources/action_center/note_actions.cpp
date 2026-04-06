@@ -3,26 +3,38 @@
 #include <algorithm>
 
 #include "debug_utilities.hpp"
+#include "utilities/project_utilities.hpp"
 
 void ActionCenter::addNote(int pageNumber, int channelIndex, int noteIndex, music_data::Note note){
     
-    auto &page{stagedSlot_->data->pages[pageNumber - 1]};
+    auto &page{utilities::pageByNumber(*stagedSlot_->data, pageNumber)};
 
     beginAction();
 
-    stagedSlot_->data->transient.currentPageNumber = pageNumber;
-    stagedSlot_->data->transient.selectedChannelListViewIndex = channelIndex + 1;
+    utilities::applyTransientSelection(stagedSlot_->data->transient, pageNumber, channelIndex);
 
     page.instrumentChannels[channelIndex][noteIndex] = music_data::Note{note};
 
     DEBUG_PRINT(
-        "pageNumber: {}, channelIndex: {}, noteIndex: {}, note: {}", 
+        "addNote(); pageNumber: {}, channelIndex: {}, noteIndex: {}, note: {}", 
         pageNumber, channelIndex, noteIndex, magic_enum::enum_name<music_data::Note>(note)
     );
 }
 
-void ActionCenter::removeNote(int pageNumber, int noteIndex){
+void ActionCenter::removeNote(int pageNumber, int channelIndex, int noteIndex){
 
+    auto &page{utilities::pageByNumber(*stagedSlot_->data, pageNumber)};
+
+    beginAction();
+
+    utilities::applyTransientSelection(stagedSlot_->data->transient, pageNumber, channelIndex);
+
+    page.instrumentChannels[channelIndex][noteIndex] = std::nullopt;
+
+    DEBUG_PRINT(
+        "removeNote(); pageNumber: {}, channelIndex: {}, noteIndex: {}",
+        pageNumber, channelIndex, noteIndex
+    );
     
 }
 

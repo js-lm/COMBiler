@@ -9,6 +9,7 @@
 #include "debug_utilities.hpp"
 
 #include "constants.hpp"
+#include "utilities/project_utilities.hpp"
 
 #include <magic_enum/magic_enum.hpp>
 
@@ -19,21 +20,12 @@ void NoteCanvas::drawNotes(program_states::InterfaceContext &context){
 	auto &noteCanvasState{context.interface.noteCanvas};
 	noteCanvasState.cursorPosition = std::nullopt;
 
-	const auto projectDataSlot{context.system.project.data.lock()};
+	const auto projectData{utilities::projectDataWithPagesFrom(context.system)};
+	if(!projectData) return;
 
-	if(!projectDataSlot || !projectDataSlot->data || projectDataSlot->data->pages.empty()) return;
-
-	const auto &projectData{projectDataSlot->data};
-
-	const int currentPageIndex{context.system.project.currentPage - 1};
+	const int currentPageIndex{utilities::currentPageIndexFrom(*projectData, context.system.project.currentPage)};
 	const auto &currentPage{projectData->pages[currentPageIndex]};
-	const int currentPageNoteCount{
-		std::clamp(
-			currentPage.noteInThisPage.value_or(projectData->metadata.noteInThisPage),
-			constants::project_data::MinimumNotePerPage,
-			constants::project_data::MaximumNotePerPage
-		)
-	};
+	const int currentPageNoteCount{utilities::currentPageNoteCountFrom(*projectData, context.system.project.currentPage)};
 
 
 	const Vector2 mouseCursorPositionInWorld{
@@ -43,15 +35,13 @@ void NoteCanvas::drawNotes(program_states::InterfaceContext &context){
 		CheckCollisionPointRec(mouseCursorPositionInWorld, noteCanvasState.gridArea)
 	};
 
-	const int selectedChannelIndex{context.interface.sidebar.selectedChannelListViewIndex};
+	const int selectedChannelListViewIndex{context.interface.sidebar.selectedChannelListViewIndex};
+	const auto selectedInstrumentChannelIndexValue{utilities::selectedInstrumentChannelIndex(selectedChannelListViewIndex)};
 	const bool isAllOrSystemChannelSelection{
-		selectedChannelIndex == notes::AllChannelsListViewIndex
-	 || selectedChannelIndex == notes::SystemChannelListViewIndex
+		selectedChannelListViewIndex == notes::AllChannelsListViewIndex
+	 || selectedChannelListViewIndex == notes::SystemChannelListViewIndex
 	};
-	const bool hasSpecificChannelSelection{
-		selectedChannelIndex >= 1
-	 && selectedChannelIndex <= static_cast<int>(currentPage.instrumentChannels.size())
-	};
+	const bool hasSpecificChannelSelection{selectedInstrumentChannelIndexValue.has_value()};
 	const bool shouldShowLabels{isAllOrSystemChannelSelection};
 	// DEBUG_PRINT_IF_CHANGED("mouseCursorPositionInWorld: {},{}", mouseCursorPositionInWorld.x, mouseCursorPositionInWorld.y);
 
@@ -96,7 +86,7 @@ void NoteCanvas::drawNotes(program_states::InterfaceContext &context){
 						}
 					)
 					: (hasSpecificChannelSelection
-						? isMatchingCellNote(currentPage.instrumentChannels[static_cast<size_t>(selectedChannelIndex - 1)][hoveredNoteIndex])
+						? isMatchingCellNote(currentPage.instrumentChannels[static_cast<size_t>(selectedInstrumentChannelIndexValue.value())][hoveredNoteIndex])
 						: false
 					)
 			};
@@ -113,7 +103,7 @@ void NoteCanvas::drawNotes(program_states::InterfaceContext &context){
 	auto drawNotesIn{[&](size_t channelIndex){
 		const bool isSpecificSelectedChannel{
 			hasSpecificChannelSelection
-		 && channelIndex == selectedChannelIndex - 1
+		 && channelIndex == static_cast<size_t>(selectedInstrumentChannelIndexValue.value())
 		};
 
 		const Color baseColor{notes::ChannelNoteColors[channelIndex]};
@@ -241,12 +231,12 @@ void NoteCanvas::drawNotes(program_states::InterfaceContext &context){
 
 	for(size_t instrumentChannelIndex{currentPage.instrumentChannels.size()}; instrumentChannelIndex --> 0;){
 		if(hasSpecificChannelSelection 
-		&& instrumentChannelIndex == selectedChannelIndex - 1){
+		&& instrumentChannelIndex == selectedInstrumentChannelIndexValue.value()){
 			continue;
 		}
 		drawNotesIn(instrumentChannelIndex);
 	}
-	if(hasSpecificChannelSelection) drawNotesIn(selectedChannelIndex - 1);
+	if(hasSpecificChannelSelection) drawNotesIn(selectedInstrumentChannelIndexValue.value());
 
 	// DEBUG_PRINT_IF_CHANGED(
 	// 	"selectedChannelIndex: {}, hasSpecificChannelSelection: {}",
