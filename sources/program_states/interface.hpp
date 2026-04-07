@@ -5,6 +5,7 @@
 #include <optional>
 
 #include "aliases.hpp"
+#include "constants.hpp"
 
 namespace program_states{
 
@@ -24,13 +25,30 @@ namespace program_states{
             bool isRedoButtonPressed        {false};
             bool isConstantsButtonPressed   {false};
 
-            int selectedToolIndex           {0};
+            constants::toolbar::Tool selectedTool{constants::toolbar::Tool::Cursor};
 
             bool isCutNoteButtonPressed     {false};
             bool isCopyNoteButtonPressed    {false};
             bool isPasteNoteButtonPressed   {false};
             bool isInfoButtonPressed        {false};
         } toolbar{};
+
+        struct Prompts{
+            constants::prompts::CommandPrompt selectedCommandTool{constants::prompts::CommandPrompt::Tempo};
+
+            bool isCommandWindowVisible     {false};
+            constants::prompts::CommandPrompt activeCommandPrompt{constants::prompts::CommandPrompt::Tempo};
+
+            float tempoPlaybackSpeedPercentage{.0f};
+            bool tempoPercentageValueBoxEditMode{false};
+            int tempoPercentageValue        {0};
+
+            int volumeLevelToggleIndex      {0};
+            int volumeTargetToggleIndex     {0};
+
+            int articulationStateToggleIndex{0};
+            int articulationTargetToggleIndex{0};
+        } prompts{};
 
         struct Sidebar{
             int selectedChannelListViewScrollIndex{0};

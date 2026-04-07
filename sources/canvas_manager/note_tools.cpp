@@ -7,17 +7,18 @@
 
 void CanvasManager::handleNoteTools(ActionCenter &actionCenter){
 
+    if(context_.interface.prompts.isCommandWindowVisible) return;
+
     if(!context_.interface.noteCanvas.cursorPosition) return;
     
     if(IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
         hasActionStarted_ = true;
 
-        switch(context_.interface.toolbar.selectedToolIndex){
-        // TODO: magic numbers
-        case 0: handleSelection(actionCenter); break;
-        case 1: handleNoteAdding(actionCenter); break;
-        case 2: handleNoteDeletion(actionCenter); break;
-        case 3: handleInstrumentChange(actionCenter); break;
+        switch(context_.interface.toolbar.selectedTool){
+        case constants::toolbar::Tool::Cursor:  handleSelection(actionCenter); break;
+        case constants::toolbar::Tool::Pen:     handleNoteAdding(actionCenter); break;
+        case constants::toolbar::Tool::Eraser:  handleNoteDeletion(actionCenter); break;
+        case constants::toolbar::Tool::Change_Instrument: handleInstrumentChange(actionCenter); break;
         }
 
     }else{

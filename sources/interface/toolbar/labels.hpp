@@ -17,7 +17,9 @@ namespace constants::labels::toolbar{
     constexpr const char *ConstantsButtonText           {"#123#Constants"};
 
     constexpr const char *ToolPaletteGroupBoxText   {nullptr};
-    constexpr const char *ToolsToggleGroupText      {"#017#;#018#;#020#;#031#"};
+    constexpr const char *ToolsToggleGroupNormalText{"#016#;#019#;#020#;#031#"};
+    constexpr const char *ToolsToggleGroupCommandText{"#030#;#029#;#028#"};
+    constexpr const char *OpenCommandWindowButtonText{"#013#"};
     constexpr const char *ToolsLabelText            {"Tools:"};
     constexpr const char *CutNoteButtonText         {"#008#"};
     constexpr const char *CopyNoteButtonText        {"#009#"};

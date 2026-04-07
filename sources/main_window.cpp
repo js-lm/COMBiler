@@ -15,6 +15,8 @@
 #include "resources/styles/chromesthesia.h"
 #include "resources/icons/iconset.h"
 
+#include "debug_utilities.hpp"
+
 int MainWindow::run(){
 
     initialize();
@@ -79,10 +81,25 @@ void MainWindow::draw(){
         // ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
         ClearBackground(BLANK);
 
+        const bool wasCommandWindowVisible{interfaceState_.prompts.isCommandWindowVisible};
+        if(wasCommandWindowVisible) GuiLock();
         interface::Toolbar::draw(context);
+        if(wasCommandWindowVisible) GuiUnlock();
+
+        const bool shouldBlockUnderlyingUi{interfaceState_.prompts.isCommandWindowVisible};
+        if(shouldBlockUnderlyingUi) GuiLock();
         interface::Sidebar::draw(context);
         interface::NavigationBar::draw(context);
         interface::NoteCanvas::draw(context);
+        if(shouldBlockUnderlyingUi) GuiUnlock();
+
+        // DEBUG_PRINT_IF_CHANGED(
+        //     "isCommandWindowVisible: {}, wasCommandWindowVisible: {}, shouldBlockUnderlyingUi: {}",
+        //     interfaceState_.prompts.isCommandWindowVisible,
+        //     wasCommandWindowVisible, shouldBlockUnderlyingUi
+        // );
+
+        interface::Prompts::draw(context);
     } EndTextureMode();
 
     BeginDrawing(); {

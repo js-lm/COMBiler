@@ -1,0 +1,46 @@
+#
+# rgl layout text file (v4.0) - raygui layout file generated using rGuiLayout
+#
+# Number of controls:     28
+#
+# Ref. window:    r <x> <y> <width> <height>
+# Anchor info:    a <id> <name> <posx> <posy> <enabled>
+# Control info:   c <id> <type> <name> <rectangle> <anchor_id> <text>
+#
+r 0 40 -1 -1
+a 001 TempoAnchor 96 160 1
+a 002 TempoLabelAnchor 112 192 1
+a 003 VolumeLabelAnchor 312 392 1
+a 004 ArticulationLabelAnchor 536 88 1
+a 005 ArticulationAnchor 520 56 1
+a 006 VolumeAnchor 296 360 1
+a 007 VolumeTargetAnchor 528 392 1
+a 008 ArticulationTargetAnchor 536 248 1
+c 000 0 TempoWindowBox 0 0 320 136 1 
+c 001 1 TempoGroupBox 0 0 288 64 2 Tempo
+c 002 16 PlaybackSpeedSlider 96 8 120 16 2 Playback Speed
+c 003 14 ValueBOx006 224 8 32 16 2 
+c 004 4 TempoPercentageLabel 256 8 16 16 2 %
+c 005 4 TempoLabel 8 40 272 16 2 Sets playback speed. 2% increments.
+c 006 2 TempoLine 8 24 272 16 2 
+c 007 5 TempoYesButton 176 104 88 24 1 #112#Confirm
+c 008 5 TempoNoButton 56 104 88 24 1 #113#Back
+c 009 0 ArticulationWindowBox 0 0 432 272 5 
+c 010 0 VolumeWindowBox 0 0 448 136 6 
+c 011 1 VolumeGroupBox 0 0 208 40 3 Volume
+c 012 9 VolumeToggleGroup 16 8 16 24 3 1;2;3;4;5;6;7;8;9;10
+c 013 5 VolumeNoButton 120 104 88 24 6 #113#Back
+c 014 5 VolumeYesButton 240 104 88 24 6 #112#Confirm
+c 015 1 ArticulationGroupBox 0 0 400 152 4 Articulation
+c 016 4 VolumeLabel 16 80 416 16 6 Sets target volume. 10% increments.
+c 017 1 VolumeTargetGroupBox 0 0 200 40 7 Target
+c 018 9 VolumeTargetToggleGroup 56 8 24 24 7 All;1;2;3;4
+c 019 4 Label019 8 8 48 24 7 Channel:
+c 020 9 ArticulationStateToggleGroup 16 120 72 24 4 #016#Staccato;#017#Normal;#018#Legato;#019#Sustain;#020#Infinite
+c 021 2 ArticulationLine 8 104 384 16 4 
+c 022 4 ArticulationStateLabel 24 8 64 96 4 State
+c 023 4 ArticulationDescriptionLabel 88 8 296 96 4 Description
+c 024 5 ArticulationNoButton 112 240 88 24 5 #113#Back
+c 025 5 ArticulationYesButton 232 240 88 24 5 #112#Confirm
+c 026 1 ArticulationTargetGroupBox 0 0 400 40 8 Channel
+c 027 9 ArticulationTargetToggleGroup 16 8 72 24 8 All Channels;Channel 1;Channel 2;Channel 3;Channel 4

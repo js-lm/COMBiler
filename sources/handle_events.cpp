@@ -116,6 +116,19 @@ void MainWindow::handleWindowSizeChangeEvent(){
         bounds.toolbar.toolOption.infoButton.x = bounds.toolbar.toolOption.groupBox.width - bounds.toolbar.toolOption.infoButton.width - ToolOptionInfoButtonRightPadding;
     } /* toolbar */
 
+    /* prompts */ {
+        auto centeredPromptAnchorFrom{[&](const Rectangle &promptWindowBounds){
+            return Vector2{
+                (static_cast<float>(window.interfaceRenderTextureWidth) - promptWindowBounds.width) * .5f,
+                (static_cast<float>(window.interfaceRenderTextureHeight) - promptWindowBounds.height) * .5f
+            };
+        }};
+
+        anchor.prompts.tempoWindow = centeredPromptAnchorFrom(bounds.prompts.tempo.windowBox);
+        anchor.prompts.volumeWindow = centeredPromptAnchorFrom(bounds.prompts.volume.windowBox);
+        anchor.prompts.articulationWindow = centeredPromptAnchorFrom(bounds.prompts.articulation.windowBox);
+    } /* prompts */
+
     /* ntoe canvas */ {
 
         bounds.noteCanvas.groupBox.width = window.interfaceRenderTextureWidth - anchor.noteCanvas.noteCanvas.x;

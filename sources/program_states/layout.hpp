@@ -2,6 +2,8 @@
 
 #include <raylib.h>
 
+#include "constants/prompts.hpp"
+
 namespace program_states{
 
     struct Layout{
@@ -30,6 +32,12 @@ namespace program_states{
             struct NoteCanvas{
                 Vector2 noteCanvas  {112, 40};
             } noteCanvas{};
+
+            struct Prompts{
+                Vector2 tempoWindow         {0, 0};
+                Vector2 volumeWindow        {0, 0};
+                Vector2 articulationWindow  {0, 0};
+            } prompts{};
 
         } anchor{};
 
@@ -133,6 +141,46 @@ namespace program_states{
             struct NoteCanvas{
                 Rectangle groupBox{0, 0, 848, 368};
             } noteCanvas{};
+
+            struct Prompts{
+                struct Tempo{
+                    Rectangle windowBox         {  0,   0, 320, 136};
+                    Rectangle groupBox          { 16,  32, 288,  64};
+                    Rectangle slider            {112,  40, 120,  16};
+                    Rectangle percentageValueBox{240,  40,  32,  16};
+                    Rectangle percentageLabel   {272,  40,  16,  16};
+                    Rectangle descriptionLine   { 24,  56, 272,  16};
+                    Rectangle descriptionLabel  { 24,  72, 272,  16};
+                    Rectangle backButton        { 56, 104,  88,  24};
+                    Rectangle confirmButton     {176, 104,  88,  24};
+                } tempo{};
+
+                struct Volume{
+                    Rectangle windowBox         {  0,   0, 448, 136};
+                    Rectangle groupBox          { 16,  32, 208,  40};
+                    Rectangle levelToggleGroup  { 32,  40,  16,  24};
+                    Rectangle targetGroupBox    {232,  32, 200,  40};
+                    Rectangle targetLabel       {240,  40,  48,  24};
+                    Rectangle targetToggleGroup {288,  40,  24,  24};
+                    Rectangle descriptionLabel  { 16,  80, 416,  16};
+                    Rectangle backButton        {120, 104,  88,  24};
+                    Rectangle confirmButton     {240, 104,  88,  24};
+                } volume{};
+
+                struct Articulation{
+                    Rectangle windowBox         {  0,   0, 432, 272};
+                    Rectangle groupBox          { 16,  32, 400, 152};
+                    Rectangle stateToggleGroup  { 32, 152,  72,  24};
+                    Rectangle line              { 24, 136, 384,  16};
+                    Rectangle stateLabel        { 40,  42,  64,  96};
+                    Rectangle descriptionLabel  {104,  42, 296,  96};
+                    Rectangle targetGroupBox    { 16, 192, 400,  40};
+                    Rectangle targetToggleGroup { 32, 200,  72,  24};
+                    Rectangle backButton        {112, 240,  88,  24};
+                    Rectangle confirmButton     {232, 240,  88,  24};
+                } articulation{};
+                
+            } prompts{};
 
         } bounds{};
 

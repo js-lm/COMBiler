@@ -12,10 +12,10 @@ namespace constants{
     // constexpr utilities::EnumMap<music_data::Instrument, const char*> InstrumentIconMappings{
     constexpr utilities::EnumMap<music_data::Instrument, int> InstrumentIconMappings{
     // Keyboards
-        {music_data::Instrument::Grand_Piano,       128},
-        {music_data::Instrument::Electric_Piano,    129},
-        {music_data::Instrument::Drawbar_Organ,     130},
-        {music_data::Instrument::Church_Organ,      131},
+        {music_data::Instrument::Grand_Piano,       129},
+        {music_data::Instrument::Electric_Piano,    130},
+        {music_data::Instrument::Drawbar_Organ,     131},
+        {music_data::Instrument::Church_Organ,      132},
 
     // Percussion
         {music_data::Instrument::Music_Box,     136},

@@ -38,16 +38,29 @@ void MainWindow::handleToolbarButtonsEvents(){
         applyProjectTransientNavigationState();
     }
 
-    // TODO: magic numbers
-    if(IsKeyPressed(KEY_Q)) interfaceState_.toolbar.selectedToolIndex = 0;
-    if(IsKeyPressed(KEY_W)) interfaceState_.toolbar.selectedToolIndex = 1;
-    if(IsKeyPressed(KEY_E)) interfaceState_.toolbar.selectedToolIndex = 2;
-    if(IsKeyPressed(KEY_R)) interfaceState_.toolbar.selectedToolIndex = 3;
+    const bool isSystemChannelSelected{
+        interfaceState_.sidebar.selectedChannelListViewIndex == constants::interface_layout::note_canvas::notes::SystemChannelListViewIndex
+    };
 
-    if(IsKeyPressed(KEY_GRAVE)) interfaceState_.sidebar.selectedChannelListViewIndex = 0;
-    if(IsKeyPressed(KEY_ONE)) interfaceState_.sidebar.selectedChannelListViewIndex = 1;
-    if(IsKeyPressed(KEY_TWO)) interfaceState_.sidebar.selectedChannelListViewIndex = 2;
-    if(IsKeyPressed(KEY_THREE)) interfaceState_.sidebar.selectedChannelListViewIndex = 3;
-    if(IsKeyPressed(KEY_FOUR)) interfaceState_.sidebar.selectedChannelListViewIndex = 4;
-    if(IsKeyPressed(KEY_FIVE)) interfaceState_.sidebar.selectedChannelListViewIndex = 5;
+    if(isSystemChannelSelected){
+        if(IsKeyPressed(KEY_Q)) interfaceState_.prompts.selectedCommandTool = constants::prompts::CommandPrompt::Tempo;
+        if(IsKeyPressed(KEY_W)) interfaceState_.prompts.selectedCommandTool = constants::prompts::CommandPrompt::Volume;
+        if(IsKeyPressed(KEY_E)) interfaceState_.prompts.selectedCommandTool = constants::prompts::CommandPrompt::Articulation;
+        if(IsKeyPressed(KEY_R)){
+            interfaceState_.prompts.activeCommandPrompt = interfaceState_.prompts.selectedCommandTool;
+            interfaceState_.prompts.isCommandWindowVisible = true;
+        }
+    }else{
+        if(IsKeyPressed(KEY_Q)) interfaceState_.toolbar.selectedTool = constants::toolbar::Tool::Cursor;
+        if(IsKeyPressed(KEY_W)) interfaceState_.toolbar.selectedTool = constants::toolbar::Tool::Pen;
+        if(IsKeyPressed(KEY_E)) interfaceState_.toolbar.selectedTool = constants::toolbar::Tool::Eraser;
+        if(IsKeyPressed(KEY_R)) interfaceState_.toolbar.selectedTool = constants::toolbar::Tool::Change_Instrument;
+    }
+
+    if(IsKeyPressed(KEY_GRAVE)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::AllChannelsListViewIndex;
+    if(IsKeyPressed(KEY_ONE)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::FirstInstrumentChannelListViewIndex;
+    if(IsKeyPressed(KEY_TWO)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::SecondInstrumentChannelListViewIndex;
+    if(IsKeyPressed(KEY_THREE)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::ThirdInstrumentChannelListViewIndex;
+    if(IsKeyPressed(KEY_FOUR)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::FourthInstrumentChannelListViewIndex;
+    if(IsKeyPressed(KEY_FIVE)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::SystemChannelListViewIndex;
 }

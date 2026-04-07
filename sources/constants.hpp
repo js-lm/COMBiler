@@ -6,3 +6,6 @@
 #include "constants/instruments.hpp"
 #include "constants/note_canvas.hpp"
 #include "constants/action_center.hpp"
+#include "constants/toolbar.hpp"
+#include "constants/prompts.hpp"
+#include "constants/sidebar.hpp"
