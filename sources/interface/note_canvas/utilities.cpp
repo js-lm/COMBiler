@@ -170,7 +170,7 @@ music_data::Instrument NoteCanvas::instrumentAtPageStart(const program_states::P
 	for(int pageIndex{0}; pageIndex < currentPageIndex; pageIndex++){
 		const auto &channel{projectData.pages[pageIndex].instrumentChannels[instrumentChannelIndex]};
 
-		for(int columnIndex{0}; columnIndex < projectData.metadata.noteInThisPage; columnIndex++){
+		for(int columnIndex{0}; columnIndex < projectData.metadata.notePerPage; columnIndex++){
 
 			if(!channel[columnIndex].has_value()) continue;
 			

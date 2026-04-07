@@ -55,7 +55,7 @@ void NavigationBar::drawPerPageSettings(program_states::InterfaceContext &contex
 				)
 			};
 
-			if(updatedNoteCount == projectData->metadata.noteInThisPage){
+			if(updatedNoteCount == projectData->metadata.notePerPage){
 				projectData->pages[currentPageIndex].noteInThisPage = std::nullopt;
 			}else{
 				projectData->pages[currentPageIndex].noteInThisPage = updatedNoteCount;

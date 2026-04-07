@@ -2,6 +2,9 @@
 
 #include <cstdint>
 #include <variant>
+#include <array>
+#include <string>
+#include <unordered_map>
 
 namespace music_data{
 
@@ -269,3 +272,99 @@ namespace music_data{
     // } // namespace midi
 
 } // music_data
+
+namespace command{
+
+    // using Tempo = int;
+    // using Volume = uint8_t;
+
+    // enum class Articulation{
+    //     Staccato,
+    //     Normal,
+    //     Legato,
+    //     Sustain,
+    //     Infinite
+    // };
+
+    // using Target = uint8_t;
+
+    // // using Constant = std::variant<Tempo, Volume, Articulation>;
+    // using Constants = std::unordered_map<std::string, std::variant<Tempo, Volume, Articulation>>;
+
+
+
+    // using Value = std::variant<Tempo, Volume, Articulation, std::string>
+
+
+    // using Value = std::variant<int, std::string>;
+    // // using Value = std::variant<int, char*>;
+
+
+    // struct Command{
+    //     enum class Type{
+    //         Tempo,
+    //         Volume,
+    //         Articulation
+    //     } type;
+
+    //     Value value;
+    // };
+
+    enum class Target : uint8_t{
+        All_Channels,
+        Channel_1,
+        Channel_2,
+        Channel_3,
+        Channel_4
+    };
+
+
+    struct Tempo{
+        uint8_t tempo{80};
+    };
+
+    struct Volume{
+        uint8_t volume{8};
+        Target target{Target::All_Channels};
+    };
+
+    struct Articulation{
+        enum class Type : uint8_t{
+            Staccato,
+            Normal,
+            Legato,
+            Sustain,
+            Infinite
+        } articulation;
+
+        Target target{Target::All_Channels};
+    };
+
+    using Command = std::variant<Tempo, Volume, Articulation>;
+
+    // // using CommandConstants = std::unordered_map<std::string, Command>;
+    // using CommandConstants = std::array<Command, 256>;
+    // using CommandConstantStrings = std::array<std::string, 256>;
+
+    using ConstantIndex = uint8_t;
+
+    template<ConstantIndex MaximumSize>
+    class CommandConstants{
+    private:
+        std::array<Command, MaximumSize> commands_{};
+        std::unordered_map<std::string, ConstantIndex> indicesMap_;
+
+    public:
+        CommandConstants() = default;
+        ~CommandConstants() = default;
+
+        void setCommand(ConstantIndex index, const std::string &string, Command &command);
+
+        std::optional<Command> getCommand(ConstantIndex index);
+        std::optional<Command> getCommand(const std::string &string);
+
+    };
+
+    using CommandToken = std::variant<Command, ConstantIndex>;
+
+} // namespace commands

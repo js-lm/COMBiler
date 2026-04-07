@@ -39,7 +39,7 @@ namespace utilities{
 
         const int currentPageIndex{currentPageIndexFrom(projectData, currentPageNumber)};
         return std::clamp(
-            projectData.pages[currentPageIndex].noteInThisPage.value_or(projectData.metadata.noteInThisPage),
+            projectData.pages[currentPageIndex].noteInThisPage.value_or(projectData.metadata.notePerPage),
             constants::project_data::MinimumNotePerPage, constants::project_data::MaximumNotePerPage
         );
     }

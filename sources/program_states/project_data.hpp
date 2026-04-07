@@ -17,8 +17,7 @@ namespace program_states{
             int numberOfPages{16};
 
             int tempo{16};
-            int noteInThisPage{32};
-            int barsPerPage{4};
+            int notePerPage{32};
 
             // std::string author;
             // std::string 
@@ -33,14 +32,18 @@ namespace program_states{
 
         // };
 
+        using CommandChannel = std::array<
+            std::optional<command::CommandToken>, 
+            constants::project_data::MaximumNotePerPage
+        >;
+
 
         struct Page{
             std::array<InstrumentChannel, constants::project_data::NumberOfInstrumentChannels> instrumentChannels;
 
-            // ChordChannel chordChannel;
+            CommandChannel commandChannel;
 
             std::optional<int> noteInThisPage{};
-            std::optional<int> barsPerPage{};
         };
 
         std::vector<Page> pages;
@@ -60,7 +63,7 @@ namespace program_states{
 
         inline ProjectData projectData{
             .metadata{
-                .noteInThisPage{16}
+                .notePerPage{16}
             },
 
             .pages{std::vector<ProjectData::Page>{
@@ -139,7 +142,47 @@ namespace program_states{
                             music_data::Note::F5,
                             std::nullopt
                         }
-                    }
+                    },
+                
+                    .commandChannel{
+                        command::Command{command::Tempo{80}},
+                        std::nullopt,
+                        command::Command{command::Volume{8, command::Target::Channel_2}},
+                        std::nullopt,
+                        command::Command{command::Articulation{command::Articulation::Type::Staccato, command::Target::Channel_4}},
+                        std::nullopt,
+                        command::Command{command::Tempo{26}},
+                        std::nullopt,
+                        command::Command{command::Volume{1, command::Target::All_Channels}},
+                        std::nullopt,
+                        command::Command{command::Articulation{command::Articulation::Type::Legato, command::Target::Channel_3}},
+                        std::nullopt,
+                        command::Command{command::Volume{15, command::Target::Channel_1}},
+                        std::nullopt,
+                        command::Command{command::Tempo{60}},
+                        std::nullopt,
+                        command::Command{command::Articulation{command::Articulation::Type::Normal, command::Target::All_Channels}},
+                        std::nullopt,
+                        command::Command{command::Volume{4, command::Target::Channel_4}},
+                        std::nullopt,
+                        command::Command{command::Tempo{100}},
+                        std::nullopt,
+                        command::Command{command::Articulation{command::Articulation::Type::Sustain, command::Target::Channel_1}},
+                        std::nullopt,
+                        command::Command{command::Volume{5, command::Target::Channel_3}},
+                        std::nullopt,
+                        command::Command{command::Articulation{command::Articulation::Type::Infinite, command::Target::Channel_2}},
+                        std::nullopt,
+                        command::Command{command::Tempo{2}},
+                        std::nullopt,
+                        command::Command{command::Volume{7, command::Target::All_Channels}},
+                        std::nullopt
+                    },
+
+                    .noteInThisPage{32}
+                
+                
+                
                 },
 
                 ProjectData::Page{
