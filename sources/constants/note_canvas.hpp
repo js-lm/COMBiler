@@ -4,7 +4,7 @@
 
 #include <raylib.h>
 
-// #include "resources/icons/iconset.h"
+#include "aliases.hpp"
 
 namespace constants::interface_layout::note_canvas{
 
@@ -81,5 +81,73 @@ namespace constants::interface_layout::note_canvas{
         constexpr float InstrumentIndexColorDarkeningFactor{.35f};
         constexpr Color InstrumentIndexIconColor{245, 245, 245, 255};
     } // namespace notes
+
+    namespace commands{
+        constexpr Color TempoColor{145, 145, 145, 255};
+        constexpr Color VolumeColor{78, 180, 115, 255};
+        constexpr Color ArticulationColor{232, 145, 53, 255};
+
+        constexpr const char *TempoText{"Tempo"};
+        constexpr const char *VolumeText{"Volume"};
+        constexpr const char *ArticulationText{"Articulation"};
+        constexpr const char *EmptyText{""};
+        constexpr const char *UnsignedIntegerFormatText{"%d"};
+
+        constexpr int TempoIconIndex{30};
+        constexpr int VolumeIconIndex{29};
+
+        constexpr std::array<int, 5> ArticulationIconIndices{32, 33, 34, 35, 36};
+        constexpr std::array<const char*, 5> ArticulationNames{
+            "Staccato",
+            "Normal",
+            "Legato",
+            "Sustain",
+            "Infinite"
+        };
+
+        constexpr std::array<const char*, 5> TargetFullNames{
+            "All",
+            "Channel 1",
+            "Channel 2",
+            "Channel 3",
+            "Channel 4"
+        };
+
+        constexpr std::array<const char*, 5> TargetCompactNames{
+            "All", "Ch1", "Ch2", "Ch3", "Ch4"
+        };
+
+        constexpr float FullVisibilityAlpha{.95f};
+        constexpr float TransparentVisibilityAlpha{.6f};
+
+        constexpr float HorizontalPadding{3.0f};
+        constexpr int TextFontSize{10};
+        constexpr float LineHalfHeight{5.0f};
+
+        // TODO: they should be relative to the screen instead
+        constexpr float ConstantStringCenterRatio{.24f};
+        constexpr float IconCenterRatio{.42f};
+        constexpr float NameCenterRatio{.50f};
+        constexpr float ValueCenterRatio{.66f};
+        constexpr float TargetCenterRatio{.82f};
+
+        inline constexpr int articulationIconIndex(command::Articulation::Type articulationType){
+            return ArticulationIconIndices[static_cast<size_t>(articulationType)];
+        }
+
+        inline constexpr const char *articulationName(command::Articulation::Type articulationType){
+            return ArticulationNames[static_cast<size_t>(articulationType)];
+        }
+
+        inline constexpr const char *targetFullName(command::Target target){
+            return TargetFullNames[static_cast<size_t>(target)];
+        }
+
+        inline constexpr const char *targetCompactName(command::Target target){
+            return TargetCompactNames[static_cast<size_t>(target)];
+        }
+
+
+    } // namespace commands
 
 } // namespace constants::note_canvas

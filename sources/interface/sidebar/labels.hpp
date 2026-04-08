@@ -3,7 +3,7 @@
 namespace constants::labels::sidebar{
 
     constexpr const char *InspectorGroupBoxText {nullptr};
-    constexpr const char *ChannelListViewText   {"All;Channel C;Channel O;Channel M;Channel B;System"};
+    constexpr const char *ChannelListViewText   {"All;Channel 1;Channel 2;Channel 3;Channel 4;Command"};
     constexpr const char *ChannelLabelText      {"Channel"};
     constexpr const char *StructureLineText     {"Global"};
     constexpr const char *SideSettingLineText   {"Visual"};

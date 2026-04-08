@@ -39,7 +39,15 @@ void NoteCanvas::drawGrid(program_states::InterfaceContext &context){
 		drawPitchLabels(context);
 		drawHorizontalGridLines(context);
 		drawVerticalGridLines(context);
-		drawNotes(context);
+
+		if(context.interface.sidebar.selectedChannelListViewIndex == constants::sidebar::SystemChannelListViewIndex){
+			drawNotes(context);
+			drawCommands(context);
+		}else{
+			drawCommands(context);
+			drawNotes(context);
+		}
+
 
 
 		DrawLineEx(

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "program_states/context.hpp"
 
 namespace interface{
@@ -7,6 +9,15 @@ namespace interface{
     class NoteCanvas{
     public:
         static void draw(program_states::InterfaceContext &context);
+
+    private:
+        struct BigNote{
+            Color baseColor{BLANK};
+            int iconIndex{0};
+            std::string firstTextLine{};
+            std::string secondTextLine{};
+            std::string thirdTextLine{};
+        };
 
     private:
         static void drawGrid(program_states::InterfaceContext &context);
@@ -20,6 +31,9 @@ namespace interface{
         static void drawScrollBar(program_states::InterfaceContext &context);
 
         static void drawNotes(program_states::InterfaceContext &context);
+
+        static void drawCommands(program_states::InterfaceContext &context);
+
 
     private:
         static void handleZoom(program_states::InterfaceContext &context);
@@ -41,6 +55,14 @@ namespace interface{
             size_t instrumentChannelIndex, 
             int currentPageIndex
         );
+
+    private:
+        static std::optional<command::Command> commandFromToken(const command::CommandToken &token);
+        static bool doesTextFitWidth(const std::string &text, float width, int fontSize);
+        static std::string trimTextToFitWidth(const std::string &text, float width, int fontSize);
+        static std::string targetTextForWidth(command::Target target, float width, int fontSize);
+        static void drawCenteredTextLine(const Rectangle &columnBounds, float centerY, const std::string &text, Color textColor);
+        static BigNote createCommandBigNote(const command::Command &commandData, float width, int fontSize);
     };
 
 } // namespace interface
