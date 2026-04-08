@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "program_states/project_data.hpp"
+#include "program_states/interface.hpp"
 
 #include "constants.hpp"
 
@@ -58,10 +59,18 @@ public:
     void copyPage();
     void pastePage();  
 
+    void addCommand(int pageNumber, int noteIndex, const program_states::Interface::Prompts &promptState);
+    void removeCommand(int pageNumber, int noteIndex);
+
 public:
     void finishAction();
 
 private:
     void beginAction();
     void commit();
+
+private:
+    command::Target targetFromToggleIndex(int toggleIndex);
+    command::Articulation::Type articulationFromToggleIndex(int toggleIndex);
+    command::Command commandFromPromptState(const program_states::Interface::Prompts &promptState);
 };

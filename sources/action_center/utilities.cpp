@@ -2,6 +2,8 @@
 
 #include "debug_utilities.hpp"
 
+#include <algorithm>
+
 void ActionCenter::commit(){
     const size_t maximumSize{constants::action_center::MaximumHistory};
     const auto committedSnapshot{std::make_shared<program_states::ProjectData>(*stagedSlot_->data)};
@@ -89,4 +91,53 @@ void ActionCenter::finishAction(){
 
 const program_states::ProjectData::Transient *ActionCenter::currentTransient() const{
     return &stagedSlot_->data->transient;
+}
+
+
+command::Target ActionCenter::targetFromToggleIndex(int toggleIndex){
+    const int clampedIndex{std::clamp(toggleIndex,
+        constants::action_center::MinimumVolumeIndex, 
+        constants::action_center::MaximumVolumeIndex
+    )};
+    return static_cast<command::Target>(clampedIndex);
+}
+
+command::Articulation::Type ActionCenter::articulationFromToggleIndex(int toggleIndex){
+    const int clampedIndex{std::clamp(toggleIndex, 
+        constants::action_center::MinimumArticulationIndex, 
+        constants::action_center::MaximumArticulationIndex
+    )};
+    return static_cast<command::Articulation::Type>(clampedIndex);
+}
+
+command::Command ActionCenter::commandFromPromptState(const program_states::Interface::Prompts &promptState){
+    switch(promptState.selectedCommandTool){
+    case constants::prompts::CommandPrompt::Tempo:{
+        const int clampedTempo{
+            std::clamp(promptState.tempoPercentageValue,
+                constants::prompts::TempoPercentageMinimumValue,
+                constants::prompts::TempoPercentageMaximumValue
+            )
+        };
+
+        return command::Tempo{static_cast<uint8_t>(clampedTempo)};
+    }
+
+    case constants::prompts::CommandPrompt::Volume:{
+        const int volumeLevel{std::clamp(promptState.volumeLevelToggleIndex + 1, 
+            constants::action_center::MinimumVolume, constants::action_center::MaximumVolume
+        )};
+
+        return command::Volume{
+            .volume{static_cast<uint8_t>(volumeLevel)},
+            .target{targetFromToggleIndex(promptState.volumeTargetToggleIndex)}
+        };
+    }
+
+    default:
+        return command::Articulation{
+            .articulation{articulationFromToggleIndex(promptState.articulationStateToggleIndex)},
+            .target{targetFromToggleIndex(promptState.articulationTargetToggleIndex)}
+        };
+    }
 }

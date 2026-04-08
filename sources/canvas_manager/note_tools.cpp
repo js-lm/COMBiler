@@ -10,7 +10,9 @@ void CanvasManager::handleNoteTools(ActionCenter &actionCenter){
     if(context_.interface.prompts.isCommandWindowVisible) return;
 
     if(!context_.interface.noteCanvas.cursorPosition) return;
-    
+
+    if(handleCommandTools(actionCenter)) return;
+
     if(IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
         hasActionStarted_ = true;
 

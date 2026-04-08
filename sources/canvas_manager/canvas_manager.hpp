@@ -31,6 +31,9 @@ private:
     void handleInstrumentChange(ActionCenter &actionCenter);
 
 private:
+    bool handleCommandTools(ActionCenter &actionCenter);
+
+private:
     void handlePageTools(ActionCenter &actionCenter);
 
 };
