@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <string>
+#include <cmath>
 
 #include <raygui.h>
 
@@ -59,42 +60,11 @@ void NoteCanvas::drawCommands(program_states::InterfaceContext &context){
 		};
 
 		const float textWidth{std::max(.0f, columnBounds.width - (commands::HorizontalPadding * 2.0f))};
-		const auto commandVisualDescriptor{
+		const auto commandBigNote{
 			NoteCanvas::createCommandBigNote(commandData.value(), textWidth, commands::TextFontSize)
 		};
 
-		const Color fillColor{Fade(ColorBrightness(commandVisualDescriptor.baseColor, -notes::InstrumentIndexColorDarkeningFactor), commandAlpha)};
-		const Color borderColor{Fade(notes::NoteBorderColor, commandAlpha)};
-		const Color textColor{Fade(WHITE, commandAlpha)};
-
-
-		DrawRectangleRec(columnBounds, fillColor);
-		DrawRectangleLinesEx(columnBounds, notes::BorderThicknessInPixels, borderColor);
-
-		const std::string trimmedFirstTextLine{NoteCanvas::trimTextToFitWidth(commandVisualDescriptor.firstTextLine, textWidth, commands::TextFontSize)};
-		const std::string trimmedSecondTextLine{NoteCanvas::trimTextToFitWidth(commandVisualDescriptor.secondTextLine, textWidth, commands::TextFontSize)};
-		const std::string trimmedThirdTextLine{NoteCanvas::trimTextToFitWidth(commandVisualDescriptor.thirdTextLine, textWidth, commands::TextFontSize)};
-
-		const float stringCenterY{columnBounds.y + (commandHeight * commands::ConstantStringCenterRatio)};
-		const float iconCenterY{columnBounds.y + (commandHeight * commands::IconCenterRatio)};
-		const float nameCenterY{columnBounds.y + (commandHeight * commands::NameCenterRatio)};
-		const float valueCenterY{columnBounds.y + (commandHeight * commands::ValueCenterRatio)};
-		const float targetCenterY{columnBounds.y + (commandHeight * commands::TargetCenterRatio)};
-
-		// TODO: command constants
-		NoteCanvas::drawCenteredTextLine(columnBounds, stringCenterY, commands::EmptyText, textColor);
-
-		GuiDrawIcon(
-			commandVisualDescriptor.iconIndex,
-			columnBounds.x + (columnBounds.width - IconSize) * .5f,
-			iconCenterY - (IconSize * .5f),
-			1,
-			textColor
-		);
-
-		NoteCanvas::drawCenteredTextLine(columnBounds, nameCenterY, trimmedFirstTextLine, textColor);
-		NoteCanvas::drawCenteredTextLine(columnBounds, valueCenterY, trimmedSecondTextLine, textColor);
-		NoteCanvas::drawCenteredTextLine(columnBounds, targetCenterY, trimmedThirdTextLine, textColor);
+		NoteCanvas::drawBigNote(context, columnBounds, commandBigNote, commandAlpha, false);
 
 	}
 
@@ -136,35 +106,6 @@ std::string NoteCanvas::targetTextForWidth(command::Target target, float width, 
 
 
 	return commands::targetCompactName(target);
-}
-
-void NoteCanvas::drawCenteredTextLine(const Rectangle &columnBounds, float centerY, const std::string &text, Color textColor){
-	
-	if(text.empty()) return;
-
-	const float availableWidth{std::max(.0f, columnBounds.width - (commands::HorizontalPadding * 2.0f))};
-	if(availableWidth <= .0f) return;
-
-
-	const auto textSize{
-		MeasureTextEx(GetFontDefault(), text.c_str(), static_cast<float>(commands::TextFontSize), 1.0f)
-	};
-
-	const float startX{
-		columnBounds.x + commands::HorizontalPadding + ((availableWidth - textSize.x) * .5f)
-	};
-	const float startY{centerY - (textSize.y * .5f)};
-
-
-	DrawTextEx(
-		GetFontDefault(),
-		text.c_str(),
-		Vector2{startX, startY},
-		static_cast<float>(commands::TextFontSize),
-		1.0f,
-		textColor
-	);
-
 }
 
 NoteCanvas::BigNote NoteCanvas::createCommandBigNote(

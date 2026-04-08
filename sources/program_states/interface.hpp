@@ -39,14 +39,14 @@ namespace program_states{
             bool isCommandWindowVisible     {false};
             constants::prompts::CommandPrompt activeCommandPrompt{constants::prompts::CommandPrompt::Tempo};
 
-            float tempoPlaybackSpeedPercentage{.0f};
+            float tempoPlaybackSpeedPercentage{80.0f};
             bool tempoPercentageValueBoxEditMode{false};
             int tempoPercentageValue        {0};
 
-            int volumeLevelToggleIndex      {0};
+            int volumeLevelToggleIndex      {7};
             int volumeTargetToggleIndex     {0};
 
-            int articulationStateToggleIndex{0};
+            int articulationStateToggleIndex{1};
             int articulationTargetToggleIndex{0};
         } prompts{};
 

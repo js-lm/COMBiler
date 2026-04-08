@@ -17,6 +17,7 @@ namespace interface{
             std::string firstTextLine{};
             std::string secondTextLine{};
             std::string thirdTextLine{};
+            bool shouldDrawFirstTextLineVertically{false};
         };
 
     private:
@@ -61,8 +62,18 @@ namespace interface{
         static bool doesTextFitWidth(const std::string &text, float width, int fontSize);
         static std::string trimTextToFitWidth(const std::string &text, float width, int fontSize);
         static std::string targetTextForWidth(command::Target target, float width, int fontSize);
-        static void drawCenteredTextLine(const Rectangle &columnBounds, float centerY, const std::string &text, Color textColor);
+
         static BigNote createCommandBigNote(const command::Command &commandData, float width, int fontSize);
+        static BigNote createInstrumentBigNote(Color baseColor, music_data::Instrument instrument);
+
+        static void drawCenteredTextLine(const Rectangle &columnBounds, float centerY, const std::string &text, Color textColor);
+        static void drawBigNote(
+            program_states::InterfaceContext &context,
+            const Rectangle &columnBounds,
+            const BigNote &bigNote,
+            float alpha,
+            bool shouldCenterIconInColumn
+        );
     };
 
 } // namespace interface

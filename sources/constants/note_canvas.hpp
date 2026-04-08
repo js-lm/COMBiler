@@ -127,9 +127,12 @@ namespace constants::interface_layout::note_canvas{
         // TODO: they should be relative to the screen instead
         constexpr float ConstantStringCenterRatio{.24f};
         constexpr float IconCenterRatio{.42f};
-        constexpr float NameCenterRatio{.50f};
+        constexpr float NameCenterRatio{.5f};
         constexpr float ValueCenterRatio{.66f};
         constexpr float TargetCenterRatio{.82f};
+
+        constexpr float InstrumentVerticalIconCenterRatio{.3f};
+        constexpr float InstrumentVerticalTextTopPaddingInPixels{8.0f};
 
         inline constexpr int articulationIconIndex(command::Articulation::Type articulationType){
             return ArticulationIconIndices[static_cast<size_t>(articulationType)];

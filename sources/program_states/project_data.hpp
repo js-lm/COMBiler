@@ -89,7 +89,8 @@ namespace program_states{
                             std::nullopt
                         },
                         ProjectData::InstrumentChannel{
-                            music_data::Note::F2,
+                            music_data::Instrument::Steel_Acoustic_Guitar,
+                            music_data::Instrument::Nylon_Acoustic_Guitar,
                             music_data::Instrument::Sitar,
                             music_data::Note::C3,
                             music_data::Instrument::Piccolo,
@@ -104,7 +105,6 @@ namespace program_states{
                             music_data::Note::G2,
                             music_data::Instrument::Cello,
                             music_data::Note::F2,
-                            std::nullopt
                         },
                         ProjectData::InstrumentChannel{
                             music_data::Note::F_Sharp_2,

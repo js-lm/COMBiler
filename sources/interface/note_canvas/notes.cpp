@@ -150,48 +150,10 @@ void NoteCanvas::drawNotes(program_states::InterfaceContext &context){
 						bottomY - topY
 					};
 
-					// const Color darkerBaseColor{
-					// 	static_cast<unsigned char>(static_cast<float>(baseColor.r) * notes::InstrumentIndexColorDarkeningFactor),
-					// 	static_cast<unsigned char>(static_cast<float>(baseColor.g) * notes::InstrumentIndexColorDarkeningFactor),
-					// 	static_cast<unsigned char>(static_cast<float>(baseColor.b) * notes::InstrumentIndexColorDarkeningFactor),
-					// 	baseColor.a
-					// };
-					const Color fillColor{Fade(ColorBrightness(baseColor, -notes::InstrumentIndexColorDarkeningFactor), noteAlpha)};
-
-					DrawRectangleRec(bounds, fillColor);
-					DrawRectangleLinesEx(bounds, notes::BorderThicknessInPixels, Fade(notes::NoteBorderColor, noteAlpha));
-
-					// const int previousTextColor{GuiGetStyle(DEFAULT, TEXT_COLOR_NORMAL)};
-					// const int previousTextAlignment{GuiGetStyle(DEFAULT, TEXT_ALIGNMENT)};
-
-					// DEBUG_PRINT_TIMED(1000, "Before: previousTextColor: {}, previousTextAlignment:{}",
-					// 	previousTextColor, previousTextAlignment
-					// );
-
-					// GuiSetStyle(DEFAULT, TEXT_COLOR_NORMAL, ColorToInt(Fade(notes::InstrumentIndexIconColor, noteAlpha)));
-					// GuiSetStyle(DEFAULT, TEXT_ALIGNMENT, TEXT_ALIGN_CENTER);
-
-					// DEBUG_PRINT_TIMED(1000, "After: TEXT_COLOR_NORMAL: {}, TEXT_ALIGNMENT:{}",
-					// 	GuiGetStyle(DEFAULT, TEXT_COLOR_NORMAL), GuiGetStyle(DEFAULT, TEXT_ALIGNMENT)
-					// );
-					
-					// GuiLabel(bounds, TextFormat("#%d#", constants::InstrumentIconMappings[activeInstrument]));
-
-					// GuiSetStyle(DEFAULT, TEXT_COLOR_NORMAL, previousTextColor);
-					// GuiSetStyle(DEFAULT, TEXT_ALIGNMENT, previousTextAlignment);
-
-
-					// DEBUG_PRINT_TIMED(1000, "Restored: TEXT_COLOR_NORMAL: {}, TEXT_ALIGNMENT:{}",
-					// 	GuiGetStyle(DEFAULT, TEXT_COLOR_NORMAL), GuiGetStyle(DEFAULT, TEXT_ALIGNMENT)
-					// );
-
-					GuiDrawIcon(
-						constants::InstrumentIconMappings[activeInstrument], 
-						bounds.x + (bounds.width - IconSize) * .5f, 
-						bounds.y + (bounds.height - IconSize) * .5f, 
-						1, 
-						Fade(notes::InstrumentIndexIconColor, noteAlpha)
-					);
+					const auto instrumentBigNote{
+						NoteCanvas::createInstrumentBigNote(baseColor, activeInstrument)
+					};
+					NoteCanvas::drawBigNote(context, bounds, instrumentBigNote, noteAlpha, true);
 				}
 
 				continue;
@@ -253,4 +215,18 @@ void NoteCanvas::drawNotes(program_states::InterfaceContext &context){
 	// }
 
 
+}
+
+NoteCanvas::BigNote NoteCanvas::createInstrumentBigNote(Color baseColor, music_data::Instrument instrument){
+	std::string instrumentName{std::string{magic_enum::enum_name<music_data::Instrument>(instrument)}};
+	std::replace(instrumentName.begin(), instrumentName.end(), '_', ' ');
+
+	return BigNote{
+		.baseColor{baseColor},
+		.iconIndex{constants::InstrumentIconMappings[instrument]},
+		.firstTextLine{instrumentName},
+		.secondTextLine{commands::EmptyText},
+		.thirdTextLine{commands::EmptyText},
+		.shouldDrawFirstTextLineVertically{true}
+	};
 }
