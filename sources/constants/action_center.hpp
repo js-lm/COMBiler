@@ -13,7 +13,7 @@ namespace constants::action_center{
     constexpr int MaximumArticulationIndex{4};
     constexpr int MinimumArticulationIndex{0};
 
-    constexpr int MaximumVolume{1};
-    constexpr int MinimumVolume{10};
+    constexpr int MinimumVolume{1};
+    constexpr int MaximumVolume{10};
 
 } // namespace constants::action_center

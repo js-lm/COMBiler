@@ -150,9 +150,9 @@ void ActionCenter::updateInstrumentChannelCell(
     int noteIndex,
     std::optional<music_data::InstrumentChannelData> cellValue
 ){
-    auto &page{utilities::pageByNumber(*stagedSlot_->data, pageNumber)};
-
     beginAction();
+    
+    auto &page{utilities::pageByNumber(*stagedSlot_->data, pageNumber)};
 
     utilities::applyTransientSelection(stagedSlot_->data->transient, pageNumber, channelIndex);
 

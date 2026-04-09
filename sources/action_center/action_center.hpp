@@ -30,10 +30,12 @@ public:
     ActionCenter(){
         commits_.resize(constants::action_center::MaximumHistory);
         // commit();
-        const auto committedSnapshot{std::make_shared<program_states::ProjectData>(*stagedSlot_->data)};
+        // const auto committedSnapshot{std::make_shared<program_states::ProjectData>(*stagedSlot_->data)};
 
-        commits_[0] = committedSnapshot;
-        stagedSlot_->data = committedSnapshot;
+        // commits_[0] = committedSnapshot;
+        // stagedSlot_->data = committedSnapshot;
+
+        commits_[0] = std::make_shared<program_states::ProjectData>(*stagedSlot_->data);
 
     }
     ~ActionCenter() = default;
