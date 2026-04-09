@@ -180,9 +180,10 @@ void NoteCanvas::drawNotes(program_states::InterfaceContext &context){
 			if(shouldShowLabels && (shouldLabelFirstNoteInPage || shouldLabelNextNoteAfterInstrumentChange)){
 				const Rectangle iconBounds{noteBounds.x, noteBounds.y - IconSize - InstrumentIconPadding, IconSize, IconSize};
 				const int previousTextColor{GuiGetStyle(DEFAULT, TEXT_COLOR_NORMAL)};
+				const std::string instrumentIconText{constants::instruments::instrumentIconMarkupText(activeInstrument)};
 
 				GuiSetStyle(DEFAULT, TEXT_COLOR_NORMAL, ColorToInt(noteColor));
-				GuiLabel(iconBounds, TextFormat("#%d#", constants::InstrumentIconMappings[activeInstrument]));
+				GuiLabel(iconBounds, instrumentIconText.c_str());
 				GuiSetStyle(DEFAULT, TEXT_COLOR_NORMAL, previousTextColor);
 
 				shouldLabelFirstNoteInPage = false;
@@ -223,7 +224,7 @@ NoteCanvas::BigNote NoteCanvas::createInstrumentBigNote(Color baseColor, music_d
 
 	return BigNote{
 		.baseColor{baseColor},
-		.iconIndex{constants::InstrumentIconMappings[instrument]},
+		.iconIndex{constants::instruments::InstrumentIconMappings[instrument]},
 		.firstTextLine{instrumentName},
 		.secondTextLine{commands::EmptyText},
 		.thirdTextLine{commands::EmptyText},

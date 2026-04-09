@@ -6,8 +6,12 @@
 #include "constants.hpp"
 
 #include <array>
+#include <string>
+#include <algorithm>
 
-namespace constants{
+#include <magic_enum/magic_enum.hpp>
+
+namespace constants::instruments{
 
     // constexpr utilities::EnumMap<music_data::Instrument, const char*> InstrumentIconMappings{
     constexpr utilities::EnumMap<music_data::Instrument, int> InstrumentIconMappings{
@@ -27,18 +31,16 @@ namespace constants{
 
     // Woodwinds
         {music_data::Instrument::Flute,     144},
-        {music_data::Instrument::Piccolo,   145},
-        {music_data::Instrument::Oboe,      146},
-        {music_data::Instrument::Clarinet,  147},
-        {music_data::Instrument::Bassoon,   148},
+        {music_data::Instrument::Oboe,      145},
+        {music_data::Instrument::Clarinet,  146},
+        {music_data::Instrument::Bassoon,   147},
 
     // Strings
         {music_data::Instrument::Violin,            152},
         {music_data::Instrument::Viola,             153},
         {music_data::Instrument::Cello,             154},
         {music_data::Instrument::Contrabass,        155},
-        {music_data::Instrument::Pizzicato_Strings, 156},
-        {music_data::Instrument::Orchestral_Harp,   157},
+        {music_data::Instrument::Orchestral_Harp,   156},
 
     // Brass
         {music_data::Instrument::Trumpet,       160},
@@ -48,7 +50,8 @@ namespace constants{
 
     // Harmony
         {music_data::Instrument::String_Ensemble,   168},
-        {music_data::Instrument::Choir_Aahs,        169},
+        {music_data::Instrument::Pizzicato_Strings, 169},
+        {music_data::Instrument::Choir_Aahs,        170},
 
     // Guitars
         {music_data::Instrument::Nylon_Acoustic_Guitar, 176},
@@ -74,14 +77,17 @@ namespace constants{
         {music_data::Instrument::Pad_2_Warm,            204},
         {music_data::Instrument::Synthesizer_Strings,   205},
 
-    // Others
+    // World
         {music_data::Instrument::Shamisen,          208},
         {music_data::Instrument::Steel_Drum,        209},
         {music_data::Instrument::Sitar,             210},
         {music_data::Instrument::Accordion_French,  211},
         {music_data::Instrument::Harmonica,         212},
         {music_data::Instrument::Banjo,             213},
-        {music_data::Instrument::Pan_Flute,         214}
+        {music_data::Instrument::Pan_Flute,         214},
+
+    // Drum sets
+        {music_data::Instrument::Drum_Sets,         216}
     };
 
     constexpr std::array<music_data::Instrument, constants::project_data::NumberOfInstrumentChannels> DefaultInstrumentByChannel{
@@ -90,7 +96,22 @@ namespace constants{
         music_data::Instrument::Finger_Bass,
         music_data::Instrument::Shamisen
     };
+
+    // TODO: I am putting these helper functions everywhere...
+    inline std::string instrumentIconMarkupText(music_data::Instrument instrument){
+        return "#" + std::to_string(InstrumentIconMappings[instrument]) + "#";
+    }
+
+    inline std::string instrumentDisplayNameText(music_data::Instrument instrument){
+        std::string instrumentName{std::string{magic_enum::enum_name(instrument)}};
+        std::replace(instrumentName.begin(), instrumentName.end(), '_', ' ');
+        return instrumentName;
+    }
+
+    inline std::string instrumentListViewEntryText(music_data::Instrument instrument){
+        return instrumentIconMarkupText(instrument) + " " + instrumentDisplayNameText(instrument);
+    }
     
 
 
-} // namespace constants
+} // namespace constants::instruments

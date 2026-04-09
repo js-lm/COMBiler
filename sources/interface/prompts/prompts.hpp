@@ -12,6 +12,7 @@ namespace interface{
 		static void drawTempoPrompt(program_states::InterfaceContext &context);
 		static void drawVolumePrompt(program_states::InterfaceContext &context);
 		static void drawArticulationPrompt(program_states::InterfaceContext &context);
+		static void drawInstrumentPrompt(program_states::InterfaceContext &context);
 
 	private:
 		static const Vector2 &windowAnchor(
@@ -23,6 +24,9 @@ namespace interface{
 			const program_states::Interface &interfaceState,
 			const Rectangle &relativeBounds
 		);
+
+	private:
+		static std::string instrumentListViewText(const std::vector<music_data::Instrument> &instruments);
 	};
 
 } // namespace interface

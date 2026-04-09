@@ -6,6 +6,8 @@
 #include <string>
 #include <unordered_map>
 
+#include "utilities/enum_map.hpp"
+
 namespace music_data{
 
     // enum class Channel{
@@ -204,7 +206,6 @@ namespace music_data{
 
     // Woodwinds
         Flute,
-        Piccolo,
         Oboe,
         Clarinet,
         Bassoon,
@@ -251,14 +252,17 @@ namespace music_data{
         Pad_2_Warm,
         Synthesizer_Strings,
 
-    // Others
+    // World
         Shamisen,
         Steel_Drum,
         Sitar,
         Accordion_French,
         Harmonica,
         Banjo,
-        Pan_Flute
+        Pan_Flute,
+
+    // Drum Sets
+        Drum_Sets
     };
 
 
@@ -270,6 +274,24 @@ namespace music_data{
     using InstrumentChannelData = std::variant<Note, Instrument>;
 
     // } // namespace midi
+
+
+    enum class InstrumentFamily{
+        Keyboard,
+        Percussion,
+        Woodwind,
+        String,
+        Brass,
+        Harmony,
+        Guitar,
+        Bass,
+        Reed,
+        Synthesizer,
+        World,
+        Drum_Sets
+    };
+
+    // constexpr utilities::EnumMap<InstrumentFamily, Instrument>
 
 } // music_data
 

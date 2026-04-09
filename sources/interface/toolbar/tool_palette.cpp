@@ -34,17 +34,11 @@ void Toolbar::drawToolPalette(program_states::InterfaceContext &context){
 		promptState.selectedCommandTool = constants::prompts::commandPromptFromIndex(selectedCommandToolIndex);
 
 		Rectangle commandToggleGroupBounds{calculateBoundsAtAnchor(anchor, bounds.toolsToggleGroup)};
-		const float commandButtonWidth{commandToggleGroupBounds.width / static_cast<float>(constants::toolbar::ToolCount)};
 
 		GuiToggleGroup(commandToggleGroupBounds, ToolsToggleGroupCommandText, &selectedCommandToolIndex);
 		promptState.selectedCommandTool = constants::prompts::commandPromptFromIndex(selectedCommandToolIndex);
 
-		const Rectangle openCommandWindowButtonBounds{ // TODO: magic numbers
-			commandToggleGroupBounds.x + commandToggleGroupBounds.width * constants::prompts::CommandToolCount + 8,
-			commandToggleGroupBounds.y,
-			commandToggleGroupBounds.width / 2,
-			commandToggleGroupBounds.height
-		};
+        const Rectangle openCommandWindowButtonBounds{calculateBoundsAtAnchor(anchor, bounds.openCommandWindowButton)};
 
 		if(GuiButton(openCommandWindowButtonBounds, OpenCommandWindowButtonText)){
 			promptState.activeCommandPrompt = promptState.selectedCommandTool;
@@ -59,7 +53,31 @@ void Toolbar::drawToolPalette(program_states::InterfaceContext &context){
 		GuiToggleGroup(calculateBoundsAtAnchor(anchor, bounds.toolsToggleGroup), ToolsToggleGroupNormalText, &selectedToolIndex);
 
 		toolbarState.selectedTool = constants::toolbar::toolFromIndex(selectedToolIndex);
-		promptState.isCommandWindowVisible = false;
+		if(promptState.activeCommandPrompt != constants::prompts::CommandPrompt::Change_Instrument){
+			promptState.isCommandWindowVisible = false;
+		}
+
+		if(toolbarState.selectedTool != constants::toolbar::Tool::Change_Instrument
+		&& promptState.activeCommandPrompt == constants::prompts::CommandPrompt::Change_Instrument){
+			promptState.isCommandWindowVisible = false;
+		}
+
+
+		if(toolbarState.selectedTool == constants::toolbar::Tool::Change_Instrument){
+			GuiSetState(STATE_PRESSED);
+		}else{
+			// GuiSetState(STATE_DISABLED);
+			GuiSetState(STATE_NORMAL);
+		}
+
+		if(GuiButton(calculateBoundsAtAnchor(anchor, bounds.openInstrumentWindowButton), nullptr)){
+			promptState.activeCommandPrompt = constants::prompts::CommandPrompt::Change_Instrument;
+			promptState.isCommandWindowVisible = true;
+
+			toolbarState.selectedTool = constants::toolbar::Tool::Change_Instrument;
+		}
+		
+		GuiSetState(STATE_NORMAL);
 	}
 
 

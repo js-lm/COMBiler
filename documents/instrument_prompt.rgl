@@ -1,0 +1,16 @@
+#
+# rgl layout text file (v4.0) - raygui layout file generated using rGuiLayout
+#
+# Number of controls:     5
+#
+# Ref. window:    r <x> <y> <width> <height>
+# Anchor info:    a <id> <name> <posx> <posy> <enabled>
+# Control info:   c <id> <type> <name> <rectangle> <anchor_id> <text>
+#
+r 0 40 -1 -1
+a 001 anchor01 0 0 1
+c 000 0 WindowBox000 0 0 320 240 1 Select an instrument
+c 001 21 ListView001 8 48 88 184 1 Keyboards;Percussion;Woodwinds;Strings;Brass;Harmony;Guitars;Basses;Reeds;Synth;World;Drumset
+c 002 21 ListView002 104 48 208 184 1 Grand Piano;Electric Piano;Drawbar Organ;Church Organ
+c 003 4 Label003 32 24 40 24 1 Family
+c 004 4 Label004 184 24 48 24 1 Member

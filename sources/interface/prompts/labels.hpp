@@ -26,4 +26,13 @@ namespace constants::labels::prompts{
     constexpr const char *ArticulationTargetGroupBoxText{"Channel"};
     constexpr const char *ArticulationTargetToggleGroupText{"All Channels;Channel 1;Channel 2;Channel 3;Channel 4"};
 
+    constexpr const char *InstrumentFamilyListViewText{
+        "Keyboard;Percussion;Woodwind;String;Brass;Harmony;Guitar;Bass;Reed;Synth;World;Drum Sets"
+    };
+
+    constexpr const char *InstrumentWindowBoxText{"Select an instrument"};
+    constexpr const char *InstrumentFamilyLabelText{"Family"};
+    constexpr const char *InstrumentMemberLabelText{"Member"};
+
+
 } // namespace constants::labels::prompts

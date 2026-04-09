@@ -39,6 +39,14 @@ namespace program_states{
             bool isCommandWindowVisible     {false};
             constants::prompts::CommandPrompt activeCommandPrompt{constants::prompts::CommandPrompt::Tempo};
 
+            int instrumentFamilyListViewScrollIndex{0};
+            int instrumentFamilyListViewIndex{0};
+            int instrumentMemberListViewScrollIndex{0};
+            int instrumentMemberListViewIndex{0};
+
+            music_data::InstrumentFamily selectedInstrumentFamily{music_data::InstrumentFamily::Keyboard};
+            music_data::Instrument selectedInstrument{music_data::Instrument::Grand_Piano};
+
             float tempoPlaybackSpeedPercentage{80.0f};
             bool tempoPercentageValueBoxEditMode{false};
             int tempoPercentageValue        {0};

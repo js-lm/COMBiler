@@ -37,6 +37,7 @@ namespace program_states{
                 Vector2 tempoWindow         {0, 0};
                 Vector2 volumeWindow        {0, 0};
                 Vector2 articulationWindow  {0, 0};
+                Vector2 instrumentWindow    {0, 0};
             } prompts{};
 
         } anchor{};
@@ -69,6 +70,8 @@ namespace program_states{
                     Rectangle groupBox          {  0, 0, 336, 40};
 
                     Rectangle toolsToggleGroup  { 56, 8,  40, 24};
+                    Rectangle openCommandWindowButton{184, 8, 20, 24};
+                    Rectangle openInstrumentWindowButton{222, 8, 10, 24};
                     Rectangle toolsLabel        { 16, 8,  40, 24};
                     Rectangle cutNoteButton     {240, 8,  24, 24};
                     Rectangle copyNoteButton    {268, 8,  24, 24};
@@ -179,6 +182,14 @@ namespace program_states{
                     Rectangle backButton        {112, 240,  88,  24};
                     Rectangle confirmButton     {232, 240,  88,  24};
                 } articulation{};
+
+                struct Instrument{
+                    Rectangle windowBox     {  0,  0, 320, 240};
+                    Rectangle familyListView{  8, 48,  88, 184};
+                    Rectangle memberListView{104, 48, 208, 184};
+                    Rectangle familyLabel   { 32, 24,  40,  24};
+                    Rectangle memberLabel   {184, 24,  48,  24};
+                } instrument{};
                 
             } prompts{};
 

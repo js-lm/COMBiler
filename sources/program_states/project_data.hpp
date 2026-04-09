@@ -93,7 +93,7 @@ namespace program_states{
                             music_data::Instrument::Nylon_Acoustic_Guitar,
                             music_data::Instrument::Sitar,
                             music_data::Note::C3,
-                            music_data::Instrument::Piccolo,
+                            music_data::Instrument::Synthesizer_Bass,
                             music_data::Note::D3,
                             music_data::Instrument::Pad_2_Warm,
                             music_data::Note::C3,

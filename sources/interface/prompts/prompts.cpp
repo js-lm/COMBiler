@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <string>
 
 #include "constants.hpp"
 
@@ -11,6 +12,8 @@
 #include "interface/utilities.hpp"
 
 #include "debug_utilities.hpp"
+
+#include <magic_enum/magic_enum.hpp>
 
 using namespace interface;
 using namespace constants::labels::prompts;
@@ -36,7 +39,12 @@ void Prompts::draw(program_states::InterfaceContext &context){
         return;
     }
 
-    drawArticulationPrompt(context);
+    if(promptState.activeCommandPrompt == constants::prompts::CommandPrompt::Articulation){
+        drawArticulationPrompt(context);
+        return;
+    }
+
+    drawInstrumentPrompt(context);
 }
 
 void Prompts::drawTempoPrompt(program_states::InterfaceContext &context){
@@ -185,4 +193,71 @@ void Prompts::drawArticulationPrompt(program_states::InterfaceContext &context){
     if(isBackButtonPressed || isConfirmButtonPressed){
         promptState.isCommandWindowVisible = false;
     }
+}
+
+void Prompts::drawInstrumentPrompt(program_states::InterfaceContext &context){
+    auto &promptState{context.interface.prompts};
+    const auto &promptBounds{context.layout.bounds.prompts.instrument};
+
+    const Rectangle windowBounds{calculateBoundsAtPromptAnchor(context.layout, context.interface, promptBounds.windowBox)};
+    if(GuiWindowBox(windowBounds, InstrumentWindowBoxText)){
+        promptState.isCommandWindowVisible = false;
+        return;
+    }
+
+    promptState.instrumentFamilyListViewIndex = std::clamp(
+        promptState.instrumentFamilyListViewIndex, 0,
+        static_cast<int>(magic_enum::enum_count<music_data::InstrumentFamily>()) - 1
+    );
+
+    GuiListView(
+        calculateBoundsAtPromptAnchor(context.layout, context.interface, promptBounds.familyListView),
+        InstrumentFamilyListViewText,
+        &promptState.instrumentFamilyListViewScrollIndex,
+        &promptState.instrumentFamilyListViewIndex
+    );
+
+    promptState.instrumentFamilyListViewIndex = std::clamp(
+        promptState.instrumentFamilyListViewIndex, 0,
+        static_cast<int>(magic_enum::enum_count<music_data::InstrumentFamily>()) - 1
+    );
+    promptState.selectedInstrumentFamily = static_cast<music_data::InstrumentFamily>(promptState.instrumentFamilyListViewIndex);
+
+    const auto instrumentOptions{constants::prompts::getInstruments(promptState.selectedInstrumentFamily)};
+    const std::string instrumentMembersText{instrumentListViewText(instrumentOptions)};
+
+    if(instrumentOptions.empty()){
+        promptState.instrumentMemberListViewIndex = 0;
+    }else{
+        promptState.instrumentMemberListViewIndex = std::clamp(
+            promptState.instrumentMemberListViewIndex, 0,
+            static_cast<int>(instrumentOptions.size()) - 1
+        );
+
+        promptState.selectedInstrument = instrumentOptions[static_cast<size_t>(promptState.instrumentMemberListViewIndex)];
+    }
+
+    GuiListView(
+        calculateBoundsAtPromptAnchor(context.layout, context.interface, promptBounds.memberListView),
+        instrumentMembersText.c_str(),
+        &promptState.instrumentMemberListViewScrollIndex,
+        &promptState.instrumentMemberListViewIndex
+    );
+
+    if(!instrumentOptions.empty()){
+        promptState.instrumentMemberListViewIndex = std::clamp(
+            promptState.instrumentMemberListViewIndex, 0,
+            static_cast<int>(instrumentOptions.size()) - 1
+        );
+        promptState.selectedInstrument = instrumentOptions[static_cast<size_t>(promptState.instrumentMemberListViewIndex)];
+    }
+
+    GuiLabel(
+        calculateBoundsAtPromptAnchor(context.layout, context.interface, promptBounds.familyLabel),
+        InstrumentFamilyLabelText
+    );
+    GuiLabel(
+        calculateBoundsAtPromptAnchor(context.layout, context.interface, promptBounds.memberLabel),
+        InstrumentMemberLabelText
+    );
 }

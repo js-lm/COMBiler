@@ -127,6 +127,7 @@ void MainWindow::handleWindowSizeChangeEvent(){
         anchor.prompts.tempoWindow = centeredPromptAnchorFrom(bounds.prompts.tempo.windowBox);
         anchor.prompts.volumeWindow = centeredPromptAnchorFrom(bounds.prompts.volume.windowBox);
         anchor.prompts.articulationWindow = centeredPromptAnchorFrom(bounds.prompts.articulation.windowBox);
+        anchor.prompts.instrumentWindow = centeredPromptAnchorFrom(bounds.prompts.instrument.windowBox);
     } /* prompts */
 
     /* ntoe canvas */ {
