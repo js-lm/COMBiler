@@ -4,6 +4,8 @@
 
 #include <algorithm>
 
+#include "utilities/project_utilities.hpp"
+
 void ActionCenter::commit(){
     const size_t maximumSize{constants::action_center::MaximumHistory};
     const auto committedSnapshot{std::make_shared<program_states::ProjectData>(*stagedSlot_->data)};
@@ -140,4 +142,19 @@ command::Command ActionCenter::commandFromPromptState(const program_states::Inte
             .target{targetFromToggleIndex(promptState.articulationTargetToggleIndex)}
         };
     }
+}
+
+void ActionCenter::updateInstrumentChannelCell(
+    int pageNumber,
+    int channelIndex,
+    int noteIndex,
+    std::optional<music_data::InstrumentChannelData> cellValue
+){
+    auto &page{utilities::pageByNumber(*stagedSlot_->data, pageNumber)};
+
+    beginAction();
+
+    utilities::applyTransientSelection(stagedSlot_->data->transient, pageNumber, channelIndex);
+
+    page.instrumentChannels[channelIndex][noteIndex] = std::move(cellValue);
 }

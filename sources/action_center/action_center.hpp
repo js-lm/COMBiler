@@ -51,8 +51,10 @@ public:
 
     void addNote(int pageNumber, int channelIndex, int noteIndex, music_data::Note note);
     void removeNote(int pageNumber, int channelIndex, int noteIndex);
-    void copyNote();
-    void pasteNote();
+    void addInstrumentChange(int pageNumber, int channelIndex, int noteIndex, music_data::Instrument instrument);
+
+    void copy();
+    void paste();
 
     void addPage();
     void removePage();
@@ -73,4 +75,11 @@ private:
     command::Target targetFromToggleIndex(int toggleIndex);
     command::Articulation::Type articulationFromToggleIndex(int toggleIndex);
     command::Command commandFromPromptState(const program_states::Interface::Prompts &promptState);
+
+    void updateInstrumentChannelCell(
+        int pageNumber,
+        int channelIndex,
+        int noteIndex,
+        std::optional<music_data::InstrumentChannelData> cellValue
+    );
 };

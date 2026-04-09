@@ -38,16 +38,16 @@ void CanvasManager::handleSelection(ActionCenter &actionCenter){
 }
 
 void CanvasManager::handleNoteAdding(ActionCenter &actionCenter){
-    auto &cursor{context_.interface.noteCanvas.cursorPosition.value()};
+    const auto &cursor{cursorPosition()};
 
     if(cursor.isHoveringNote) return;
 
-    const auto channelIndex{utilities::selectedInstrumentChannelIndex(context_.interface.sidebar.selectedChannelListViewIndex)};
-    if(!channelIndex) return;
+    const auto instrumentChannelIndex{selectedInstrumentChannelIndex()};
+    if(!instrumentChannelIndex) return;
 
     actionCenter.addNote(
         context_.system.project.currentPage,
-        channelIndex.value(),
+        instrumentChannelIndex.value(),
         cursor.noteIndex,
         cursor.note
     );
@@ -55,22 +55,40 @@ void CanvasManager::handleNoteAdding(ActionCenter &actionCenter){
 }
 
 void CanvasManager::handleNoteDeletion(ActionCenter &actionCenter){
-    auto &cursor{context_.interface.noteCanvas.cursorPosition.value()};
+    const auto &cursor{cursorPosition()};
 
     // if(!cursor.isHoveringNote) return;
 
-    const auto channelIndex{utilities::selectedInstrumentChannelIndex(context_.interface.sidebar.selectedChannelListViewIndex)};
-    if(!channelIndex) return;
+    const auto instrumentChannelIndex{selectedInstrumentChannelIndex()};
+    if(!instrumentChannelIndex) return;
 
     actionCenter.removeNote(
         context_.system.project.currentPage,
-        channelIndex.value(),
+        instrumentChannelIndex.value(),
         cursor.noteIndex
     );
 
 }
 
 void CanvasManager::handleInstrumentChange(ActionCenter &actionCenter){
+    const auto &cursor{cursorPosition()};
 
+    const auto instrumentChannelIndex{selectedInstrumentChannelIndex()};
+    if(!instrumentChannelIndex) return;
 
+    actionCenter.addInstrumentChange(
+        context_.system.project.currentPage,
+        instrumentChannelIndex.value(),
+        cursor.noteIndex,
+        context_.interface.prompts.selectedInstrument
+    );
+
+}
+
+const program_states::Interface::NoteCanvas::CursorPosition &CanvasManager::cursorPosition() const{
+    return context_.interface.noteCanvas.cursorPosition.value();
+}
+
+std::optional<int> CanvasManager::selectedInstrumentChannelIndex() const{
+    return utilities::selectedInstrumentChannelIndex(context_.interface.sidebar.selectedChannelListViewIndex);
 }

@@ -36,4 +36,7 @@ private:
 private:
     void handlePageTools(ActionCenter &actionCenter);
 
+private:
+    const program_states::Interface::NoteCanvas::CursorPosition &cursorPosition() const;
+    std::optional<int> selectedInstrumentChannelIndex() const;
 };
