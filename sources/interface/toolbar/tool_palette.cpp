@@ -83,9 +83,40 @@ void Toolbar::drawToolPalette(program_states::InterfaceContext &context){
 
 	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.toolsLabel), ToolsLabelText);
 
-	context.interface.toolbar.isCutNoteButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.cutNoteButton), CutNoteButtonText);
-	context.interface.toolbar.isCopyNoteButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.copyNoteButton), CopyNoteButtonText);
-	context.interface.toolbar.isPasteNoteButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.pasteNoteButton), PasteNoteButtonText);
+	const bool hasSelectionArea{
+		context.interface.clipboard.selectionArea.has_value()
+	 && context.interface.clipboard.selectionArea.value().widthInCells > 0
+	 && context.interface.clipboard.selectionArea.value().heightInCells > 0
+	};
+	const bool hasCopiedSelection{context.interface.clipboard.hasCopiedSelection};
+	const bool isPasteModeEnabled{context.interface.clipboard.isPasteModeEnabled};
+
+	auto drawButton{[&](const Rectangle &buttonBounds, const char *buttonText, bool isEnabled){
+		if(!isEnabled) GuiSetState(STATE_DISABLED);
+		const bool isPressed{GuiButton(buttonBounds, buttonText) != 0};
+		GuiSetState(STATE_NORMAL);
+		return isEnabled && isPressed;
+	}};
+
+	const bool isCutEnabled{!isSystemChannelSelected && !isPasteModeEnabled && hasSelectionArea};
+	const bool isCopyEnabled{!isSystemChannelSelected && !isPasteModeEnabled && hasSelectionArea};
+	const bool isPasteEnabled{!isSystemChannelSelected && hasCopiedSelection};
+
+	context.interface.toolbar.isCutNoteButtonPressed = drawButton(
+		calculateBoundsAtAnchor(anchor, bounds.cutNoteButton),
+		CutNoteButtonText,
+		isCutEnabled
+	);
+	context.interface.toolbar.isCopyNoteButtonPressed = drawButton(
+		calculateBoundsAtAnchor(anchor, bounds.copyNoteButton),
+		CopyNoteButtonText,
+		isCopyEnabled
+	);
+	context.interface.toolbar.isPasteNoteButtonPressed = drawButton(
+		calculateBoundsAtAnchor(anchor, bounds.pasteNoteButton),
+		PasteNoteButtonText,
+		isPasteEnabled
+	);
 
     
 }

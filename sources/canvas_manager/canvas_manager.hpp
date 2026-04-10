@@ -49,6 +49,11 @@ private:
     std::optional<int> selectedInstrumentChannelIndex() const;
 
 private:
-    void clearSelectionState();
     void handleSelectAll();
+    void handleCopyAndPasteModeState();
+
+private:
+    void clearSelectionState();
+    bool hasSelectionArea() const;
+    bool isCommandChannelSelected() const;
 };

@@ -8,10 +8,29 @@ using namespace interface;
 using namespace constants::interface_layout::note_canvas;
 
 void NoteCanvas::drawSelection(program_states::InterfaceContext &context){
-    const auto &selectionArea{context.interface.clipboard.selectionArea};
-    if(!selectionArea.has_value()) return;
+    program_states::Interface::Clipboard::SelectionArea area{};
 
-    const auto &area{selectionArea.value()};
+    if(context.interface.clipboard.isPasteModeEnabled
+    && context.interface.clipboard.hasCopiedSelection
+    && context.interface.noteCanvas.cursorPosition.has_value()
+    ){
+        const auto &cursor{context.interface.noteCanvas.cursorPosition.value()};
+
+        area.widthInCells = context.interface.clipboard.copiedWidthInCells;
+        area.heightInCells = context.interface.clipboard.copiedHeightInCells;
+
+        area.topLeftColumnIndex = cursor.noteIndex - (area.widthInCells / 2);
+
+        const int centerRowIndex{
+            FirstNoteOffsetFromC0 + (NumberOfRow - 1) - static_cast<int>(cursor.note)
+        };
+        area.topLeftRowIndex = centerRowIndex - (area.heightInCells / 2);
+    }else{
+        const auto &selectionArea{context.interface.clipboard.selectionArea};
+        if(!selectionArea.has_value()) return;
+        area = selectionArea.value();
+    }
+
     if(area.widthInCells <= 0 || area.heightInCells <= 0) return;
 
     const float leftPositionX{

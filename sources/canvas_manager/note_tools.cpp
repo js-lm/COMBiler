@@ -12,8 +12,11 @@
 void CanvasManager::handleNoteTools(ActionCenter &actionCenter){
 
     handleSelectAll();
+    handleCopyAndPasteModeState();
 
     if(context_.interface.prompts.isCommandWindowVisible) return;
+
+    if(context_.interface.clipboard.isPasteModeEnabled) return;
 
     const bool isLeftMouseButtonDown{IsMouseButtonDown(MOUSE_BUTTON_LEFT)};
 
@@ -48,6 +51,52 @@ void CanvasManager::handleNoteTools(ActionCenter &actionCenter){
         }
     }
 
+}
+
+bool CanvasManager::hasSelectionArea() const{
+    return context_.interface.clipboard.selectionArea.has_value()
+        && context_.interface.clipboard.selectionArea.value().widthInCells > 0
+        && context_.interface.clipboard.selectionArea.value().heightInCells > 0;
+}
+
+bool CanvasManager::isCommandChannelSelected() const{
+    return context_.interface.sidebar.selectedChannelListViewIndex == constants::sidebar::SystemChannelListViewIndex;
+}
+
+void CanvasManager::handleCopyAndPasteModeState(){
+    auto &toolbarState{context_.interface.toolbar};
+    auto &clipboardState{context_.interface.clipboard};
+
+    const bool isControlDown{IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)};
+    const bool isCopyShortcutPressed{isControlDown && IsKeyPressed(KEY_C)};
+
+    const bool isCopyRequested{toolbarState.isCopyNoteButtonPressed || isCopyShortcutPressed};
+    const bool isPasteButtonPressed{toolbarState.isPasteNoteButtonPressed};
+
+    toolbarState.isCopyNoteButtonPressed = false;
+    toolbarState.isPasteNoteButtonPressed = false;
+
+    if(isCommandChannelSelected()){
+        clipboardState.isPasteModeEnabled = false;
+        return;
+    }
+
+    if(isCopyRequested && hasSelectionArea()){
+        const auto &selectionArea{clipboardState.selectionArea.value()};
+
+        clipboardState.hasCopiedSelection = true;
+        clipboardState.isPasteModeEnabled = true;
+        clipboardState.copiedWidthInCells = selectionArea.widthInCells;
+        clipboardState.copiedHeightInCells = selectionArea.heightInCells;
+
+        context_.interface.toolbar.selectedTool = constants::toolbar::Tool::Cursor;
+        isSelectionDragInProgress_ = false;
+        return;
+    }
+
+    if(isPasteButtonPressed && clipboardState.hasCopiedSelection){
+        clipboardState.isPasteModeEnabled = !clipboardState.isPasteModeEnabled;
+    }
 }
 
 void CanvasManager::handleSelection(ActionCenter &actionCenter){

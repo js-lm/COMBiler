@@ -158,6 +158,12 @@ namespace program_states{
 
             std::optional<SelectionArea> selectionArea{};
 
+            bool hasCopiedSelection{false};
+            bool isPasteModeEnabled{false};
+
+            int copiedWidthInCells{0};
+            int copiedHeightInCells{0};
+
             std::array<
                 std::vector<std::optional<music_data::InstrumentChannelData>>,
                 constants::project_data::NumberOfInstrumentChannels
