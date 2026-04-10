@@ -35,6 +35,8 @@ namespace interface{
 
         static void drawCommands(program_states::InterfaceContext &context);
 
+        static void drawSelection(program_states::InterfaceContext &context);
+
 
     private:
         static void handleZoom(program_states::InterfaceContext &context);

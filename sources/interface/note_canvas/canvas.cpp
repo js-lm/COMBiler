@@ -48,6 +48,8 @@ void NoteCanvas::drawGrid(program_states::InterfaceContext &context){
 			drawNotes(context);
 		}
 
+		drawSelection(context);
+
 
 
 		DrawLineEx(

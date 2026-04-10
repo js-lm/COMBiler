@@ -6,15 +6,23 @@
 
 class CanvasManager{
 private:
-    program_states::ReadOnlyContext context_;
+    program_states::InterfaceContext context_;
 
     // ActionCenter &actionCenter_;
 
     bool hasActionStarted_{false};
+    bool isSelectionDragInProgress_{false};
+    bool hasInitializedSelectionTracking_{false};
+
+    int selectionDragStartColumnIndex_{0};
+    int selectionDragStartRowIndex_{0};
+
+    constants::toolbar::Tool previousSelectedTool_{constants::toolbar::Tool::Cursor};
+    int previousSelectedChannelListViewIndex_{0};
 
 public:
 
-    CanvasManager(program_states::ReadOnlyContext context)
+    CanvasManager(program_states::InterfaceContext context)
         : context_{context}
     {}
     CanvasManager() = delete;
@@ -39,4 +47,8 @@ private:
 private:
     const program_states::Interface::NoteCanvas::CursorPosition &cursorPosition() const;
     std::optional<int> selectedInstrumentChannelIndex() const;
+
+private:
+    void clearSelectionState();
+    void handleSelectAll();
 };

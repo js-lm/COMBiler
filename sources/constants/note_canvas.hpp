@@ -153,4 +153,11 @@ namespace constants::interface_layout::note_canvas{
 
     } // namespace commands
 
+    namespace selection{
+        constexpr Color BorderColor{230, 40, 40, 255};
+        constexpr int BorderThicknessInPixels   {2};
+        constexpr int DashLengthInPixels        {6};
+        constexpr int GapLengthInPixels         {4};
+    } // namespace selection
+
 } // namespace constants::note_canvas

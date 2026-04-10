@@ -57,7 +57,7 @@ void MainWindow::initialize(){
     handleWindowSizeChangeEvent();
 
     actionCenter_ = std::make_unique<ActionCenter>();
-    canvasManager_ = std::make_unique<CanvasManager>(getReadOnlyContext());
+    canvasManager_ = std::make_unique<CanvasManager>(getInterfaceContext());
 
     // stagedObserver_ = actionCenter_.getStagedObserver();
     systemState_.project.data = actionCenter_->getStagedObserver();

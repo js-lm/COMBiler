@@ -3,6 +3,8 @@
 #include <raylib.h>
 
 #include <optional>
+#include <array>
+#include <vector>
 
 #include "aliases.hpp"
 #include "constants.hpp"
@@ -144,6 +146,25 @@ namespace program_states{
 
         } noteCanvas{};
 
+        struct Clipboard{
+            // using SelectionArea = Rectangle;
+
+            struct SelectionArea{
+                int topLeftColumnIndex{0};
+                int topLeftRowIndex{0};
+                int widthInCells{0};
+                int heightInCells{0};
+            };
+
+            std::optional<SelectionArea> selectionArea{};
+
+            std::array<
+                std::vector<std::optional<music_data::InstrumentChannelData>>,
+                constants::project_data::NumberOfInstrumentChannels
+            > instrumentChannels{};
+
+            std::vector<std::optional<command::CommandToken>> commandChannel{};
+        } clipboard{};
 
     };
 
