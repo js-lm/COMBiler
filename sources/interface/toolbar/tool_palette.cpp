@@ -112,11 +112,23 @@ void Toolbar::drawToolPalette(program_states::InterfaceContext &context){
 		CopyNoteButtonText,
 		isCopyEnabled
 	);
-	context.interface.toolbar.isPasteNoteButtonPressed = drawButton(
-		calculateBoundsAtAnchor(anchor, bounds.pasteNoteButton),
-		PasteNoteButtonText,
-		isPasteEnabled
-	);
+	context.interface.toolbar.isPasteNoteButtonPressed = false;
+	if(isPasteEnabled){
+		GuiToggle(
+			calculateBoundsAtAnchor(anchor, bounds.pasteNoteButton),
+			PasteNoteButtonText,
+			&context.interface.clipboard.isPasteModeEnabled
+		);
+	}else{
+		GuiSetState(STATE_DISABLED);
+		bool isDisabledPasteToggle{context.interface.clipboard.isPasteModeEnabled};
+		GuiToggle(
+			calculateBoundsAtAnchor(anchor, bounds.pasteNoteButton),
+			PasteNoteButtonText,
+			&isDisabledPasteToggle
+		);
+		GuiSetState(STATE_NORMAL);
+	}
 
     
 }

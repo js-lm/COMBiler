@@ -6,6 +6,7 @@
 #include "utilities/project_utilities.hpp"
 
 #include <algorithm>
+#include <type_traits>
 
 #include "debug_utilities.hpp"
 
@@ -71,8 +72,6 @@ void CanvasManager::handleCopyAndPasteModeState(){
     const bool isCopyShortcutPressed{isControlDown && IsKeyPressed(KEY_C)};
 
     const bool isCopyRequested{toolbarState.isCopyNoteButtonPressed || isCopyShortcutPressed};
-    const bool isPasteButtonPressed{toolbarState.isPasteNoteButtonPressed};
-
     toolbarState.isCopyNoteButtonPressed = false;
     toolbarState.isPasteNoteButtonPressed = false;
 
@@ -82,21 +81,124 @@ void CanvasManager::handleCopyAndPasteModeState(){
     }
 
     if(isCopyRequested && hasSelectionArea()){
+        const auto projectData{utilities::projectDataWithPagesFrom(context_.system)};
+        if(!projectData) return;
+
         const auto &selectionArea{clipboardState.selectionArea.value()};
+        const auto &currentPage{utilities::pageByNumber(*projectData, context_.system.project.currentPage)};
+
+        clipboardState.copiedFromAllChannels = context_.interface.sidebar.selectedChannelListViewIndex == constants::sidebar::AllChannelsListViewIndex;
+        clipboardState.copiedInstrumentChannelIndex = -1; // TODO: magic numbers
+
+        if(!clipboardState.copiedFromAllChannels){
+
+            const auto selectedInstrumentChannel{selectedInstrumentChannelIndex()};
+
+            if(!selectedInstrumentChannel.has_value()) return;
+
+            clipboardState.copiedInstrumentChannelIndex = selectedInstrumentChannel.value();
+
+        }
+
+        for(auto &instrumentChannel: clipboardState.instrumentChannels){
+            instrumentChannel.assign(selectionArea.widthInCells, std::nullopt);
+        }
+        clipboardState.commandChannel.assign(selectionArea.widthInCells, std::nullopt);
+
+        auto rowIndexFromNote{[](music_data::Note note){
+
+            return constants::interface_layout::note_canvas::FirstNoteOffsetFromC0
+                 + (constants::interface_layout::note_canvas::NumberOfRow - 1)
+                 - static_cast<int>(note);
+        }};
+
+        auto shouldCopyCell{[&](const std::optional<music_data::InstrumentChannelData> &cell){
+            if(!cell.has_value()) return false;
+            if(std::holds_alternative<music_data::Instrument>(cell.value())) return true;
+
+            const int rowIndex{rowIndexFromNote(std::get<music_data::Note>(cell.value()))};
+            return rowIndex >= selectionArea.topLeftRowIndex
+                && rowIndex < selectionArea.topLeftRowIndex + selectionArea.heightInCells;
+
+        }};
+
+        auto commandAffectsChannel{[](const command::CommandToken &commandToken, int instrumentChannelIndex){
+            if(!std::holds_alternative<command::Command>(commandToken)) return false;
+
+            const auto commandData{std::get<command::Command>(commandToken)};
+            const auto targetForChannel{static_cast<command::Target>(instrumentChannelIndex + 1)};
+
+            return std::visit([targetForChannel](const auto &commandVariant){
+                using Type = std::decay_t<decltype(commandVariant)>;
+
+                if constexpr(std::is_same_v<Type, command::Tempo>){
+
+                    return true;
+                }else{
+
+                    return commandVariant.target == command::Target::All_Channels
+                        || commandVariant.target == targetForChannel;
+                }
+
+            }, commandData);
+        }};
+
+        for(int selectionColumnOffset{0}; selectionColumnOffset < selectionArea.widthInCells; selectionColumnOffset++){
+            const int sourceColumnIndex{selectionArea.topLeftColumnIndex + selectionColumnOffset};
+            if(sourceColumnIndex < 0 || sourceColumnIndex >= constants::project_data::MaximumNotePerPage) continue;
+
+            if(clipboardState.copiedFromAllChannels){
+                for(int instrumentChannelIndex{0}; instrumentChannelIndex < constants::project_data::NumberOfInstrumentChannels; instrumentChannelIndex++){
+                    const auto &cell{currentPage.instrumentChannels[instrumentChannelIndex][sourceColumnIndex]};
+                    
+                    if(!shouldCopyCell(cell)) continue;
+
+                    clipboardState.instrumentChannels[instrumentChannelIndex][selectionColumnOffset] = cell;
+
+                }
+            }else{
+                const int instrumentChannelIndex{clipboardState.copiedInstrumentChannelIndex};
+                const auto &cell{currentPage.instrumentChannels[instrumentChannelIndex][sourceColumnIndex]};
+
+                if(shouldCopyCell(cell)){
+                    clipboardState.instrumentChannels[instrumentChannelIndex][selectionColumnOffset] = cell;
+                }
+
+            }
+
+            if(clipboardState.copiedFromAllChannels){
+                clipboardState.commandChannel[selectionColumnOffset] = currentPage.commandChannel[sourceColumnIndex];
+            }else if(currentPage.commandChannel[sourceColumnIndex].has_value()){
+                const auto &commandToken{currentPage.commandChannel[sourceColumnIndex].value()};
+                const int instrumentChannelIndex{clipboardState.copiedInstrumentChannelIndex};
+
+                if(commandAffectsChannel(commandToken, instrumentChannelIndex)){
+                    clipboardState.commandChannel[selectionColumnOffset] = commandToken;
+                }
+                
+            }
+        }
 
         clipboardState.hasCopiedSelection = true;
         clipboardState.isPasteModeEnabled = true;
         clipboardState.copiedWidthInCells = selectionArea.widthInCells;
         clipboardState.copiedHeightInCells = selectionArea.heightInCells;
+        clipboardState.copiedCenterRowIndex = selectionArea.topLeftRowIndex + (selectionArea.heightInCells / 2);
+
+        // DEBUG_PRINT(
+        //     "copy selection -> width:{}, height:{}, fromAllChannels:{}, instrumentChannelIndex:{}",
+        //     clipboardState.copiedWidthInCells,
+        //     clipboardState.copiedHeightInCells,
+        //     clipboardState.copiedFromAllChannels,
+        //     clipboardState.copiedInstrumentChannelIndex
+        // );
 
         context_.interface.toolbar.selectedTool = constants::toolbar::Tool::Cursor;
         isSelectionDragInProgress_ = false;
         return;
     }
 
-    if(isPasteButtonPressed && clipboardState.hasCopiedSelection){
-        clipboardState.isPasteModeEnabled = !clipboardState.isPasteModeEnabled;
-    }
+    // DEBUG_PRINT_IF_CHANGED("isPasteModeEnabled: {}", clipboardState.isPasteModeEnabled);
 }
 
 void CanvasManager::handleSelection(ActionCenter &actionCenter){
@@ -124,10 +226,10 @@ void CanvasManager::handleSelection(ActionCenter &actionCenter){
     const int widthInCells{(rightColumnIndex - leftColumnIndex) + 1};
     const int heightInCells{(bottomRowIndex - topRowIndex) + 1};
 
-    DEBUG_PRINT_IF_CHANGED(
-        "leftColumnIndex:{}, topRowIndex: {}. widthInCells: {}, heightInCells: {}",
-        leftColumnIndex, topRowIndex, widthInCells, heightInCells
-    );
+    // DEBUG_PRINT_IF_CHANGED(
+    //     "leftColumnIndex:{}, topRowIndex: {}. widthInCells: {}, heightInCells: {}",
+    //     leftColumnIndex, topRowIndex, widthInCells, heightInCells
+    // );
 
     if(widthInCells == 1 && heightInCells == 1){
         context_.interface.clipboard.selectionArea = std::nullopt;

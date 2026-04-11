@@ -160,4 +160,14 @@ namespace constants::interface_layout::note_canvas{
         constexpr int GapLengthInPixels         {4};
     } // namespace selection
 
+    namespace paste_ghost{
+        constexpr float NoteFillAlpha{.45f};
+        constexpr float NoteBorderAlpha{.7f};
+        constexpr float BigNoteAlpha{.45f};
+
+        constexpr float TransposeTextOffsetInPixels{2.0f};
+        constexpr int TransposeTextFontSize{11};
+        constexpr float TransposeTextSpacingInPixels{1.0f};
+    } // namespace paste_ghost
+
 } // namespace constants::note_canvas

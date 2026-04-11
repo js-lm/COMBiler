@@ -36,6 +36,7 @@ namespace interface{
         static void drawCommands(program_states::InterfaceContext &context);
 
         static void drawSelection(program_states::InterfaceContext &context);
+        static void drawPasteGhost(program_states::InterfaceContext &context);
 
 
     private:

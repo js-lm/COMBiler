@@ -163,6 +163,9 @@ namespace program_states{
 
             int copiedWidthInCells{0};
             int copiedHeightInCells{0};
+            int copiedCenterRowIndex{0};
+            bool copiedFromAllChannels{false};
+            int copiedInstrumentChannelIndex{-1};
 
             std::array<
                 std::vector<std::optional<music_data::InstrumentChannelData>>,

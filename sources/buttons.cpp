@@ -26,7 +26,7 @@ void MainWindow::handlePageChangeButtonsEvents(){
         interfaceState_.noteCanvas.isGridLayoutDirty = true;
     }
 
-    DEBUG_PRINT_IF_CHANGED("maximumPageNumber: {}", maximumPageNumber);
+    // DEBUG_PRINT_IF_CHANGED("maximumPageNumber: {}", maximumPageNumber);
 
 }
 

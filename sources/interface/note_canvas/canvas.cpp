@@ -49,6 +49,7 @@ void NoteCanvas::drawGrid(program_states::InterfaceContext &context){
 		}
 
 		drawSelection(context);
+		drawPasteGhost(context);
 
 
 
