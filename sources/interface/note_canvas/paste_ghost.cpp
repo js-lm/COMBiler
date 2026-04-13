@@ -18,13 +18,12 @@ void NoteCanvas::drawPasteGhost(program_states::InterfaceContext &context){
     const auto &clipboardState{context.interface.clipboard};
 
     if(!clipboardState.isPasteModeEnabled || !clipboardState.hasCopiedSelection) return;
-    if(!context.interface.noteCanvas.cursorPosition.has_value()) return;
+    if(!clipboardState.hasPasteAnchor) return;
 
-    const auto &cursor{context.interface.noteCanvas.cursorPosition.value()};
-    const int destinationTopLeftColumnIndex{cursor.noteIndex - (clipboardState.copiedWidthInCells / 2)};
-    const int destinationCenterRowIndex{
-        FirstNoteOffsetFromC0 + (NumberOfRow - 1) - static_cast<int>(cursor.note)
+    const int destinationTopLeftColumnIndex{
+        clipboardState.pasteAnchorNoteIndex - (clipboardState.copiedWidthInCells / 2)
     };
+    const int destinationCenterRowIndex{clipboardState.pasteAnchorCenterRowIndex};
     const int destinationTopLeftRowIndex{destinationCenterRowIndex - (clipboardState.copiedHeightInCells / 2)};
     const int transposeSemitoneOffset{clipboardState.copiedCenterRowIndex - destinationCenterRowIndex};
 

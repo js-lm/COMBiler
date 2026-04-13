@@ -165,7 +165,11 @@ namespace program_states{
             int copiedHeightInCells{0};
             int copiedCenterRowIndex{0};
             bool copiedFromAllChannels{false};
-            int copiedInstrumentChannelIndex{-1};
+            int copiedInstrumentChannelIndex{constants::interface_layout::note_canvas::notes::NoInstrumentChannelIndex};
+            
+            bool hasPasteAnchor{false};
+            int pasteAnchorNoteIndex{0};
+            int pasteAnchorCenterRowIndex{0};
 
             std::array<
                 std::vector<std::optional<music_data::InstrumentChannelData>>,

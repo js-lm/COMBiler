@@ -17,7 +17,10 @@ void CanvasManager::handleNoteTools(ActionCenter &actionCenter){
 
     if(context_.interface.prompts.isCommandWindowVisible) return;
 
-    if(context_.interface.clipboard.isPasteModeEnabled) return;
+    if(context_.interface.clipboard.isPasteModeEnabled){
+        handlePastePlacement(actionCenter);
+        return;
+    }
 
     const bool isLeftMouseButtonDown{IsMouseButtonDown(MOUSE_BUTTON_LEFT)};
 
@@ -54,6 +57,132 @@ void CanvasManager::handleNoteTools(ActionCenter &actionCenter){
 
 }
 
+bool CanvasManager::handlePastePlacement(ActionCenter &actionCenter){
+    const auto &clipboardState{context_.interface.clipboard};
+
+    if(!clipboardState.hasCopiedSelection) return false;
+    if(!context_.interface.noteCanvas.cursorPosition.has_value()) return false;
+    if(!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) return false;
+
+    const auto &cursor{context_.interface.noteCanvas.cursorPosition.value()};
+    const int destinationTopLeftColumnIndex{cursor.noteIndex - (clipboardState.copiedWidthInCells / 2)};
+    const int destinationCenterRowIndex{
+        constants::interface_layout::note_canvas::FirstNoteOffsetFromC0
+      + (constants::interface_layout::note_canvas::NumberOfRow - 1)
+      - static_cast<int>(cursor.note)
+    };
+    const int transposeSemitoneOffset{clipboardState.copiedCenterRowIndex - destinationCenterRowIndex};
+
+    int destinationChannelIndex{clipboardState.copiedInstrumentChannelIndex};
+    const auto selectedInstrumentChannelIndexValue{selectedInstrumentChannelIndex()};
+    if(!clipboardState.copiedFromAllChannels && selectedInstrumentChannelIndexValue.has_value()){
+        destinationChannelIndex = selectedInstrumentChannelIndexValue.value();
+    }
+
+    bool hasPlacedAnyData{false};
+
+    for(int sourceColumnOffset{0}; sourceColumnOffset < clipboardState.copiedWidthInCells; sourceColumnOffset++){
+        const int destinationColumnIndex{destinationTopLeftColumnIndex + sourceColumnOffset};
+        if(destinationColumnIndex < 0 || destinationColumnIndex >= constants::project_data::MaximumNotePerPage) continue;
+
+        auto pasteCell{[&](int sourceChannelIndex, int targetChannelIndex){
+            const auto &cell{clipboardState.instrumentChannels[sourceChannelIndex][sourceColumnOffset]};
+            if(!cell.has_value()) return;
+
+            if(std::holds_alternative<music_data::Instrument>(cell.value())){
+                actionCenter.addInstrumentChange(
+                    context_.system.project.currentPage,
+                    targetChannelIndex,
+                    destinationColumnIndex,
+                    std::get<music_data::Instrument>(cell.value())
+                );
+                hasPlacedAnyData = true;
+                return;
+            }
+
+            const int transposedSemitone{
+                static_cast<int>(std::get<music_data::Note>(cell.value())) + transposeSemitoneOffset
+            };
+
+            if(transposedSemitone < constants::interface_layout::note_canvas::notes::MinimumSemitone
+            || transposedSemitone > constants::interface_layout::note_canvas::notes::MaximumSemitone
+            ){
+                return;
+            }
+
+            actionCenter.addNote(
+                context_.system.project.currentPage,
+                targetChannelIndex,
+                destinationColumnIndex,
+                static_cast<music_data::Note>(transposedSemitone)
+            );
+            hasPlacedAnyData = true;
+        }};
+
+        if(clipboardState.copiedFromAllChannels){
+            for(int channelIndex{0}; channelIndex < constants::project_data::NumberOfInstrumentChannels; channelIndex++){
+                pasteCell(channelIndex, channelIndex);
+            }
+        }else if(destinationChannelIndex >= 0){
+            pasteCell(clipboardState.copiedInstrumentChannelIndex, destinationChannelIndex);
+        }
+
+        const auto &commandToken{clipboardState.commandChannel[sourceColumnOffset]};
+        if(commandToken.has_value()){
+            if(clipboardState.copiedFromAllChannels){
+                
+                actionCenter.setCommandToken(
+                    context_.system.project.currentPage,
+                    destinationColumnIndex,
+                    context_.interface.sidebar.selectedChannelListViewIndex,
+                    commandToken
+                );
+
+                hasPlacedAnyData = true;
+
+
+            }else if(destinationChannelIndex >= 0){
+
+                auto retargetedCommandToken{commandToken.value()};
+
+                if(std::holds_alternative<command::Command>(retargetedCommandToken)){
+                    auto commandData{std::get<command::Command>(retargetedCommandToken)};
+                    const auto destinationTarget{static_cast<command::Target>(destinationChannelIndex + 1)};
+
+                    commandData = std::visit([destinationTarget](const auto &commandVariant)->command::Command{
+                        using Type = std::decay_t<decltype(commandVariant)>;
+
+                        if constexpr(std::is_same_v<Type, command::Tempo>){
+                            return commandVariant;
+                        }else if constexpr(std::is_same_v<Type, command::Volume>){
+                            return command::Volume{.volume{commandVariant.volume}, .target{destinationTarget}};
+                        }else{
+                            return command::Articulation{.articulation{commandVariant.articulation}, .target{destinationTarget}};
+                        }
+                    }, commandData);
+
+                    retargetedCommandToken = commandData;
+                }
+
+                actionCenter.setCommandToken(
+                    context_.system.project.currentPage,
+                    destinationColumnIndex,
+                    context_.interface.sidebar.selectedChannelListViewIndex,
+                    retargetedCommandToken
+                );
+                hasPlacedAnyData = true;
+            }
+
+
+        }
+    }
+
+    if(hasPlacedAnyData) actionCenter.finishAction();
+
+    return hasPlacedAnyData;
+
+}
+
 bool CanvasManager::hasSelectionArea() const{
     return context_.interface.clipboard.selectionArea.has_value()
         && context_.interface.clipboard.selectionArea.value().widthInCells > 0
@@ -77,7 +206,25 @@ void CanvasManager::handleCopyAndPasteModeState(){
 
     if(isCommandChannelSelected()){
         clipboardState.isPasteModeEnabled = false;
+        clipboardState.hasPasteAnchor = false;
         return;
+    }
+
+    if(clipboardState.isPasteModeEnabled
+    && context_.interface.toolbar.selectedTool != constants::toolbar::Tool::Cursor){
+        clipboardState.isPasteModeEnabled = false;
+        clipboardState.hasPasteAnchor = false;
+    }
+
+    if(clipboardState.isPasteModeEnabled && context_.interface.noteCanvas.cursorPosition.has_value()){
+        const auto &cursor{context_.interface.noteCanvas.cursorPosition.value()};
+
+        clipboardState.hasPasteAnchor = true;
+        clipboardState.pasteAnchorNoteIndex = cursor.noteIndex;
+        clipboardState.pasteAnchorCenterRowIndex =
+            constants::interface_layout::note_canvas::FirstNoteOffsetFromC0
+          + (constants::interface_layout::note_canvas::NumberOfRow - 1)
+          - static_cast<int>(cursor.note);
     }
 
     if(isCopyRequested && hasSelectionArea()){
@@ -88,7 +235,7 @@ void CanvasManager::handleCopyAndPasteModeState(){
         const auto &currentPage{utilities::pageByNumber(*projectData, context_.system.project.currentPage)};
 
         clipboardState.copiedFromAllChannels = context_.interface.sidebar.selectedChannelListViewIndex == constants::sidebar::AllChannelsListViewIndex;
-        clipboardState.copiedInstrumentChannelIndex = -1; // TODO: magic numbers
+        clipboardState.copiedInstrumentChannelIndex = constants::interface_layout::note_canvas::notes::NoInstrumentChannelIndex;
 
         if(!clipboardState.copiedFromAllChannels){
 
@@ -185,6 +332,10 @@ void CanvasManager::handleCopyAndPasteModeState(){
         clipboardState.copiedHeightInCells = selectionArea.heightInCells;
         clipboardState.copiedCenterRowIndex = selectionArea.topLeftRowIndex + (selectionArea.heightInCells / 2);
 
+        clipboardState.hasPasteAnchor = true;
+        clipboardState.pasteAnchorNoteIndex = selectionArea.topLeftColumnIndex + (selectionArea.widthInCells / 2);
+        clipboardState.pasteAnchorCenterRowIndex = clipboardState.copiedCenterRowIndex;
+
         // DEBUG_PRINT(
         //     "copy selection -> width:{}, height:{}, fromAllChannels:{}, instrumentChannelIndex:{}",
         //     clipboardState.copiedWidthInCells,
@@ -231,7 +382,8 @@ void CanvasManager::handleSelection(ActionCenter &actionCenter){
     //     leftColumnIndex, topRowIndex, widthInCells, heightInCells
     // );
 
-    if(widthInCells == 1 && heightInCells == 1){
+    if(widthInCells == constants::interface_layout::note_canvas::selection::SingleCellSelectionSizeInCells
+    && heightInCells == constants::interface_layout::note_canvas::selection::SingleCellSelectionSizeInCells){
         context_.interface.clipboard.selectionArea = std::nullopt;
         return;
     }

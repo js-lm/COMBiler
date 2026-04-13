@@ -65,6 +65,12 @@ public:
 
     void addCommand(int pageNumber, int noteIndex, const program_states::Interface::Prompts &promptState);
     void removeCommand(int pageNumber, int noteIndex);
+    void setCommandToken(
+        int pageNumber,
+        int noteIndex,
+        int selectedChannelListViewIndex,
+        std::optional<command::CommandToken> commandToken
+    );
 
 public:
     void finishAction();

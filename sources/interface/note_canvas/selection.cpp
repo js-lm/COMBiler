@@ -12,18 +12,15 @@ void NoteCanvas::drawSelection(program_states::InterfaceContext &context){
 
     if(context.interface.clipboard.isPasteModeEnabled
     && context.interface.clipboard.hasCopiedSelection
-    && context.interface.noteCanvas.cursorPosition.has_value()
+    && context.interface.clipboard.hasPasteAnchor
     ){
-        const auto &cursor{context.interface.noteCanvas.cursorPosition.value()};
+        const int anchorNoteIndex{context.interface.clipboard.pasteAnchorNoteIndex};
+        const int centerRowIndex{context.interface.clipboard.pasteAnchorCenterRowIndex};
 
         area.widthInCells = context.interface.clipboard.copiedWidthInCells;
         area.heightInCells = context.interface.clipboard.copiedHeightInCells;
 
-        area.topLeftColumnIndex = cursor.noteIndex - (area.widthInCells / 2);
-
-        const int centerRowIndex{
-            FirstNoteOffsetFromC0 + (NumberOfRow - 1) - static_cast<int>(cursor.note)
-        };
+        area.topLeftColumnIndex = anchorNoteIndex - (area.widthInCells / 2);
         area.topLeftRowIndex = centerRowIndex - (area.heightInCells / 2);
     }else{
         const auto &selectionArea{context.interface.clipboard.selectionArea};

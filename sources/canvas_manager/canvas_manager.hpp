@@ -56,4 +56,7 @@ private:
     void clearSelectionState();
     bool hasSelectionArea() const;
     bool isCommandChannelSelected() const;
+
+private:
+    bool handlePastePlacement(ActionCenter &actionCenter);
 };

@@ -42,3 +42,19 @@ void ActionCenter::removeCommand(int pageNumber, int noteIndex){
 		noteIndex
 	);
 }
+
+void ActionCenter::setCommandToken(
+	int pageNumber,
+	int noteIndex,
+	int selectedChannelListViewIndex,
+	std::optional<command::CommandToken> commandToken
+){
+	auto &page{utilities::pageByNumber(*stagedSlot_->data, pageNumber)};
+
+	beginAction();
+
+	stagedSlot_->data->transient.currentPageNumber = pageNumber;
+	stagedSlot_->data->transient.selectedChannelListViewIndex = selectedChannelListViewIndex;
+
+	page.commandChannel[noteIndex] = std::move(commandToken);
+}

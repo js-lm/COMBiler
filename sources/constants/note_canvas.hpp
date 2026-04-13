@@ -63,6 +63,9 @@ namespace constants::interface_layout::note_canvas{
 
         constexpr int AllChannelsListViewIndex{0};
         constexpr int SystemChannelListViewIndex{5};
+        constexpr int NoInstrumentChannelIndex{-1};
+        constexpr int MinimumSemitone{static_cast<int>(music_data::Note::C0)};
+        constexpr int MaximumSemitone{static_cast<int>(music_data::Note::B8)};
 
         constexpr float SelectedChannelAlpha    {1.0f};
         constexpr float UnselectedChannelAlpha  {.4f};
@@ -158,6 +161,7 @@ namespace constants::interface_layout::note_canvas{
         constexpr int BorderThicknessInPixels   {2};
         constexpr int DashLengthInPixels        {6};
         constexpr int GapLengthInPixels         {4};
+        constexpr int SingleCellSelectionSizeInCells{1};
     } // namespace selection
 
     namespace paste_ghost{
