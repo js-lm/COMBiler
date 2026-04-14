@@ -35,6 +35,12 @@ static const GuiStyleProp chromesthesiaStyleProps[CHROMESTHESIA_STYLE_PROPS_COUN
 
 // WARNING: This style uses a custom font: "LanaPixel.ttf" (size: 13, spacing: 1)
 
+/* * LanaPixel font (c) 2020, eishiya (https://mastodon.art/@eishiya)
+ * Modified Version: Subsetted and converted to C binary.
+ * Licensed under the SIL Open Font License 1.1. 
+ * Please see the included LanaPixel_OpenFontLicense.txt for full license details.
+ */
+
 #define CHROMESTHESIA_STYLE_FONT_ATLAS_COMP_SIZE 899
 
 // Font atlas image pixels data: DEFLATE compressed
