@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
 
-set(PROJECT_TARGET MusicBoxPaperStripGenerator)
+set(PROJECT_TARGET COMBiler)
 project(${PROJECT_TARGET} CXX)
 
 set(CMAKE_CXX_STANDARD 20)
