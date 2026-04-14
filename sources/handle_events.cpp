@@ -148,6 +148,12 @@ void MainWindow::handleWindowSizeChangeEvent(){
 
 void MainWindow::handleKeyboardEvent(){
 
+    if(IsKeyPressed(KEY_ESCAPE)){
+        interfaceState_.prompts.isCommandWindowVisible = false;
+        if(canvasManager_) canvasManager_->cancelSelectionAndPasteMode();
+        return;
+    }
+
     const bool isControlDown{IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)};
     const bool isShiftDown{IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)};
     auto &window{systemState_.window};

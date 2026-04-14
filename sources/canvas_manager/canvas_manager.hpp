@@ -29,6 +29,7 @@ public:
     ~CanvasManager() = default;
 
     void update(ActionCenter &actionCenter);
+    void cancelSelectionAndPasteMode();
 
 private:
     void handleNoteTools(ActionCenter &actionCenter);

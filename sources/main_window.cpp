@@ -42,12 +42,16 @@ void MainWindow::initialize(){
         constants::application_window::Title
     );
 
+    SetExitKey(KEY_NULL);
+
+    EnableEventWaiting();
+
     SetWindowMinSize(
         constants::application_window::MinimalWidth, 
         constants::application_window::MinimalHeight
     );
 
-    SetTargetFPS(constants::application_window::DefaultFPS);
+    // SetTargetFPS(constants::application_window::DefaultFPS);
 
     std::memcpy(GuiGetIcons(), guiIcons, sizeof(guiIcons));
     GuiLoadStyleChromesthesia();
@@ -71,7 +75,6 @@ void MainWindow::update(){
     }
 
     handleEvents();
-
 }
 
 void MainWindow::draw(){

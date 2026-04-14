@@ -18,3 +18,10 @@ void CanvasManager::clearSelectionState(){
     context_.interface.clipboard.selectionArea = std::nullopt;
     isSelectionDragInProgress_ = false;
 }
+
+void CanvasManager::cancelSelectionAndPasteMode(){
+    clearSelectionState();
+
+    context_.interface.clipboard.isPasteModeEnabled = false;
+    context_.interface.clipboard.hasPasteAnchor = false;
+}
