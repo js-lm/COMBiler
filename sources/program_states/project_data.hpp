@@ -44,6 +44,7 @@ namespace program_states{
             CommandChannel commandChannel;
 
             std::optional<int> noteInThisPage{};
+            size_t modificationCounter{0};
         };
 
         std::vector<Page> pages;

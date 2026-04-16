@@ -15,7 +15,6 @@ void CanvasManager::update(ActionCenter &actionCenter){
     if(hasToolSwitched || hasChannelSwitched) clearSelectionState();
 
     handleNoteTools(actionCenter);
-    handlePageTools(actionCenter);
 
     previousSelectedTool_ = context_.interface.toolbar.selectedTool;
     previousSelectedChannelListViewIndex_ = context_.interface.sidebar.selectedChannelListViewIndex;

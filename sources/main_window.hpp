@@ -6,6 +6,7 @@
 
 #include "action_center/action_center.hpp"
 #include "canvas_manager/canvas_manager.hpp"
+#include "timeline_manager/timeline_manager.hpp"
 
 #include "program_states/context.hpp"
 
@@ -22,6 +23,7 @@ private:
 private:
     std::unique_ptr<ActionCenter> actionCenter_;
     std::unique_ptr<CanvasManager> canvasManager_;
+    std::unique_ptr<TimelineManager> timelineManager_;
 
 private:
     RenderTexture2D interfaceRenderTexture_{};

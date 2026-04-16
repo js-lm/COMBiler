@@ -12,6 +12,12 @@
 namespace program_states{
 
     struct Interface{
+        enum class SelectionDomain{
+            Notes,
+            Pages,
+        };
+
+        SelectionDomain activeSelectionDomain{SelectionDomain::Notes};
 
         struct Toolbar{
             bool isMenuButtonPressed        {false};
