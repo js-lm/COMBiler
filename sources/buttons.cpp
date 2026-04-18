@@ -13,6 +13,15 @@ void MainWindow::handlePageChangeButtonsEvents(){
 
     const int maximumPageNumber{std::max(1, static_cast<int>(projectData->pages.size()))};
 
+    if(interfaceState_.navigationBar.requestedPageNumber > 0){
+        systemState_.project.currentPage = std::clamp(
+            interfaceState_.navigationBar.requestedPageNumber,
+            1, maximumPageNumber
+        );
+        interfaceState_.navigationBar.requestedPageNumber = 0;
+        interfaceState_.noteCanvas.isGridLayoutDirty = true;
+    }
+
     if(interfaceState_.navigationBar.isPreviousPageButtonPressed){
         systemState_.project.currentPage = std::max(1, systemState_.project.currentPage - 1);
         interfaceState_.navigationBar.isPreviousPageButtonPressed = false;

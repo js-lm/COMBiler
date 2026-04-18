@@ -5,6 +5,9 @@
 #include "labels.hpp"
 
 #include "interface/utilities.hpp"
+#include "utilities/project_utilities.hpp"
+
+#include "constants.hpp"
 
 #include <cmath>
 
@@ -14,6 +17,23 @@ using namespace constants::labels::sidebar;
 void Sidebar::drawInspector(program_states::InterfaceContext &context){
 	const auto anchor{context.layout.anchor.sidebar.inspect};
 	const auto &bounds{context.layout.bounds.sidebar.inspector};
+	const auto projectData{utilities::projectDataFrom(context.system)};
+
+	if(projectData){
+		const int clampedDefaultNoteCount{
+			std::clamp(
+				projectData->metadata.notePerPage,
+				constants::project_data::MinimumNotePerPage,
+				constants::project_data::MaximumNotePerPage
+			)
+		};
+
+		if(context.interface.sidebar.notesValue != clampedDefaultNoteCount){
+			context.interface.sidebar.notesValue = clampedDefaultNoteCount;
+		}
+	}
+
+	const int previousNotesValue{context.interface.sidebar.notesValue};
 
 	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.groupBox), InspectorGroupBoxText);
 	GuiListView(
@@ -41,11 +61,24 @@ void Sidebar::drawInspector(program_states::InterfaceContext &context){
 		calculateBoundsAtAnchor(anchor, bounds.notesValueBox),
 		NotesValueBoxText,
 		&context.interface.sidebar.notesValue,
-		0,
-		100, // TODO: magic numbers
+		constants::project_data::MinimumNotePerPage,
+		constants::project_data::MaximumNotePerPage,
 		context.interface.sidebar.notesValueBoxEditMode
 	)){
 		context.interface.sidebar.notesValueBoxEditMode = !context.interface.sidebar.notesValueBoxEditMode;
+	}
+
+	if(projectData && context.interface.sidebar.notesValue != previousNotesValue){
+		context.interface.sidebar.notesValue = std::clamp(
+			context.interface.sidebar.notesValue,
+			constants::project_data::MinimumNotePerPage,
+			constants::project_data::MaximumNotePerPage
+		);
+
+		projectData->metadata.notePerPage = context.interface.sidebar.notesValue;
+		const int currentPageNoteCount{utilities::currentPageNoteCountFrom(*projectData, context.system.project.currentPage)};
+		context.interface.navigationBar.notePerPageSpinnerValue = currentPageNoteCount;
+		context.interface.noteCanvas.isGridLayoutDirty = true;
 	}
 
 	GuiLine(calculateBoundsAtAnchor(anchor, bounds.sideSettingLine), SideSettingLineText);

@@ -74,7 +74,7 @@ namespace program_states{
             int tempoValue              {0};
 
             bool notesValueBoxEditMode  {false};
-            int notesValue              {0};
+            int notesValue              {32};
             bool isShowCommandsEnabled  {false};
 
         } sidebar{};
@@ -94,6 +94,17 @@ namespace program_states{
 
             bool notePerPageSpinnerEditMode{false};
             int notePerPageSpinnerValue     {32};
+            int requestedPageNumber         {0};
+
+            bool isTimelineDragCandidate    {false};
+            bool isTimelineDraggingPage     {false};
+            int timelineDragCandidatePageIndex{-1};
+            int timelineDraggedPageIndex    {-1};
+            int timelineDropInsertionIndex  {0};
+            Vector2 timelineDragStartMouseScreenPosition{0, 0};
+            float timelineDragGrabOffsetInPixelsX{.0f};
+            int timelinePreviousClickedInsertionIndex{-1};
+            double timelinePreviousInsertionClickTimeInSeconds{.0};
 
             Rectangle timelineScrollPanelScrollView{0, 0, 0, 0};
             Vector2 timelineScrollPanelScrollOffset{0, 0};

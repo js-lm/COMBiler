@@ -151,6 +151,7 @@ void MainWindow::handleKeyboardEvent(){
     if(IsKeyPressed(KEY_ESCAPE)){
         interfaceState_.prompts.isCommandWindowVisible = false;
         if(canvasManager_) canvasManager_->cancelSelectionAndPasteMode();
+        if(timelineManager_) timelineManager_->cancelActiveInteraction();
         return;
     }
 
@@ -173,7 +174,7 @@ void MainWindow::handleKeyboardEvent(){
 
         if(IsKeyPressed(KEY_Z) && actionCenter_ && actionCenter_->redo()) applyProjectTransientNavigationState();
     }else if(isControlDown){
-        if(isZoomInPressed) window.scaleFactor += .1f;
+        if(isZoomInPressed) window.scaleFactor += .1f; // TODO: magic numbers
         if(isZoomOutPressed) window.scaleFactor -= .1f;
 
         if(IsKeyPressed(KEY_Z) && actionCenter_ && actionCenter_->undo()) applyProjectTransientNavigationState();
