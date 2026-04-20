@@ -35,27 +35,89 @@ float NavigationBar::timelineBlockWidthInPixels(
         constants::interface_layout::timeline::MinimumBlockWidthInPixels,
         static_cast<float>(pageNoteCount) * constants::interface_layout::timeline::BlockWidthPerNoteInPixels
     );
+}
 
+float NavigationBar::timelineBlockPositionXInPixels(
+    const program_states::ProjectData &projectData,
+    size_t targetPageIndex
+){
+    float positionXInPixels{constants::interface_layout::timeline::ContentLeftPaddingInPixels};
+
+    for(size_t pageIndex{constants::interface_layout::timeline::MinimumIndex};
+        pageIndex < targetPageIndex;
+        pageIndex++
+    ){
+        positionXInPixels += timelineBlockWidthInPixels(projectData, pageIndex);
+        positionXInPixels += constants::interface_layout::timeline::BlockSpacingInPixels;
+    }
+
+    return positionXInPixels;
 }
 
 float NavigationBar::timelineContentWidthInPixels(const program_states::ProjectData &projectData){
-    float contentWidthInPixels{constants::interface_layout::timeline::ContentLeftPaddingInPixels};
-
-    for(size_t pageIndex{0}; pageIndex < projectData.pages.size(); pageIndex++){
-        contentWidthInPixels += timelineBlockWidthInPixels(projectData, pageIndex);
-
-        if(pageIndex + constants::interface_layout::timeline::FirstPageNumber < projectData.pages.size()){
-
-            contentWidthInPixels += constants::interface_layout::timeline::BlockSpacingInPixels;
-        }
-
+    if(projectData.pages.empty()){
+        return constants::interface_layout::timeline::ContentLeftPaddingInPixels;
     }
 
-    contentWidthInPixels += constants::interface_layout::timeline::PlusButtonSizeInPixels;
-    contentWidthInPixels += constants::interface_layout::timeline::PlusButtonOffsetInPixels;
+    return timelineBlockPositionXInPixels(projectData, projectData.pages.size())
+         - constants::interface_layout::timeline::BlockSpacingInPixels;  
+}
 
+float NavigationBar::timelineDropIndicatorCenterPositionXInPixels(
+    const program_states::ProjectData &projectData,
+    const Rectangle &scrollPanelBounds,
+    float   scrollOffsetXInPixels,
+    int     dropInsertionIndex
+){
+    const int clampedDropInsertionIndex{
+        std::clamp(
+            dropInsertionIndex,
+            constants::interface_layout::timeline::MinimumIndex,
+            static_cast<int>(projectData.pages.size())
+        )
+    };
 
-    return contentWidthInPixels;
+    const float positionXInPixels{
+        scrollPanelBounds.x + scrollOffsetXInPixels + timelineBlockPositionXInPixels(projectData, clampedDropInsertionIndex)
+    };
+
+    const float halfSpacingInPixels{
+        constants::interface_layout::timeline::BlockSpacingInPixels * constants::interface_layout::timeline::MarkerHalfWidthScale
+    };
+
+    return positionXInPixels - halfSpacingInPixels;
+
+}
+
+int NavigationBar::timelineDropInsertionIndexFromMouseXInPixels(
+    const program_states::ProjectData &projectData,
+    const Rectangle &scrollPanelBounds,
+    float scrollOffsetXInPixels,
+    float mousePositionXInPixels
+){
+    if(projectData.pages.empty()){
+        return constants::interface_layout::timeline::MinimumIndex;
+    }
+
+    float currentPositionX{constants::interface_layout::timeline::ContentLeftPaddingInPixels};
+    for(size_t pageIndex{constants::interface_layout::timeline::MinimumIndex};
+        pageIndex < projectData.pages.size();
+        pageIndex++
+    ){
+        const float blockWidthInPixels{timelineBlockWidthInPixels(projectData, pageIndex)};
+        const float blockCenterPositionXInPixels{
+            scrollPanelBounds.x + scrollOffsetXInPixels + currentPositionX
+          + (blockWidthInPixels * constants::interface_layout::timeline::MarkerHalfWidthScale)
+        };
+
+        if(mousePositionXInPixels < blockCenterPositionXInPixels){ 
+            return pageIndex;
+        }
+
+        currentPositionX += blockWidthInPixels + constants::interface_layout::timeline::BlockSpacingInPixels;
+    }
+
+    return projectData.pages.size();
 }
 
 float NavigationBar::drawTimelineBlocksAndMarkers(
@@ -65,15 +127,15 @@ float NavigationBar::drawTimelineBlocksAndMarkers(
     const Vector2   &mousePosition,
     bool            isMouseInsideScrollPanel,
     int             &hoveredBlockIndex,
-    int             &hoveredMarkerIndex,
     Rectangle       &draggedBlockBounds
 ){
-
     auto &navigationBarState{context.interface.navigationBar};
-
     float currentPositionX{constants::interface_layout::timeline::ContentLeftPaddingInPixels};
 
-    for(size_t pageIndex{0}; pageIndex < projectData.pages.size(); pageIndex++){
+    for(size_t pageIndex{constants::interface_layout::timeline::MinimumIndex};
+        pageIndex < projectData.pages.size();
+        pageIndex++
+    ){
         const float blockWidthInPixels{timelineBlockWidthInPixels(projectData, pageIndex)};
         const Rectangle blockBounds{
             scrollPanelBounds.x + navigationBarState.timelineScrollPanelScrollOffset.x + currentPositionX,
@@ -84,13 +146,11 @@ float NavigationBar::drawTimelineBlocksAndMarkers(
 
         const bool isBlockHovered{isMouseInsideScrollPanel && CheckCollisionPointRec(mousePosition, blockBounds)};
         if(isBlockHovered){
-
             hoveredBlockIndex = static_cast<int>(pageIndex);
         }
 
         if(!navigationBarState.isTimelineDraggingPage || navigationBarState.timelineDraggedPageIndex != static_cast<int>(pageIndex)){
             GuiButton(blockBounds, "");
-
             DrawRectangleLinesEx(
                 blockBounds,
                 constants::interface_layout::timeline::BlockBorderThicknessInPixels,
@@ -99,17 +159,15 @@ float NavigationBar::drawTimelineBlocksAndMarkers(
                     : GetColor(GuiGetStyle(DEFAULT, BORDER_COLOR_NORMAL))
             );
         }else{
-
             draggedBlockBounds = Rectangle{
-                mousePosition.x - navigationBarState.timelineDragGrabOffsetInPixelsX,
-                blockBounds.y,
+                mousePosition.x + constants::interface_layout::timeline::DraggedBlockCursorOffsetXInPixels,
+                mousePosition.y + constants::interface_layout::timeline::DraggedBlockCursorOffsetYInPixels,
                 blockBounds.width,
                 blockBounds.height
             };
         }
 
         if(pageIndex + constants::interface_layout::timeline::FirstPageNumber < projectData.pages.size()){
-
             const Rectangle markerBounds{
                 blockBounds.x + blockBounds.width
               + (constants::interface_layout::timeline::BlockSpacingInPixels * constants::interface_layout::timeline::MarkerHalfWidthScale)
@@ -121,25 +179,14 @@ float NavigationBar::drawTimelineBlocksAndMarkers(
                 constants::interface_layout::timeline::InsertionMarkerHeightInPixels
             };
 
-            const bool isMarkerHovered{isMouseInsideScrollPanel && CheckCollisionPointRec(mousePosition, markerBounds)};
-            if(isMarkerHovered){
-                hoveredMarkerIndex = static_cast<int>(pageIndex) + constants::interface_layout::timeline::FirstPageNumber;
-            }
-
-
             DrawRectangleRec(
                 markerBounds,
-                isMarkerHovered
-                    ? constants::interface_layout::note_canvas::selection::BorderColor
-                    : GetColor(GuiGetStyle(DEFAULT, BORDER_COLOR_NORMAL))
+                GetColor(GuiGetStyle(DEFAULT, BORDER_COLOR_NORMAL))
             );
 
             currentPositionX += blockWidthInPixels + constants::interface_layout::timeline::BlockSpacingInPixels;
-
         }else{
-
             currentPositionX += blockWidthInPixels;
-
         }
     }
 
@@ -148,123 +195,163 @@ float NavigationBar::drawTimelineBlocksAndMarkers(
 
 void NavigationBar::handleTimelineMousePress(
     program_states::InterfaceContext   &context,
-    program_states::ProjectData        &projectData,
+    const program_states::ProjectData  &projectData,
     const Rectangle &scrollPanelBounds,
     const Vector2   &mousePosition,
     bool            isMouseInsideScrollPanel,
-    int             hoveredBlockIndex,
-    int             hoveredMarkerIndex
+    int             hoveredBlockIndex
 ){
     if(!isMouseInsideScrollPanel || !IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
-
         return;
     }
 
     auto &navigationBarState{context.interface.navigationBar};
 
-    if(hoveredBlockIndex >= constants::interface_layout::timeline::MinimumIndex && !navigationBarState.isPageSelectEnabled){
+    if(hoveredBlockIndex < constants::interface_layout::timeline::MinimumIndex){
+        return;
+    }
+
+    if(navigationBarState.isPageSelectEnabled){
+        navigationBarState.requestedPageNumber = hoveredBlockIndex + constants::interface_layout::timeline::FirstPageNumber;
+        return;
+    }
+
+    if(hoveredBlockIndex >= constants::interface_layout::timeline::MinimumIndex
+    && !navigationBarState.isPageSelectEnabled
+    ){
         navigationBarState.isTimelineDragCandidate = true;
         navigationBarState.timelineDragCandidatePageIndex = hoveredBlockIndex;
         navigationBarState.timelineDragStartMouseScreenPosition = mousePosition;
+        navigationBarState.timelineDragCandidateStartTimeInSeconds = GetTime();
 
-        float grabPositionX{constants::interface_layout::timeline::ContentLeftPaddingInPixels};
-        for(size_t pageIndex{0}; pageIndex <= static_cast<size_t>(hoveredBlockIndex); pageIndex++){
-            if(pageIndex == static_cast<size_t>(hoveredBlockIndex)){
-                navigationBarState.timelineDragGrabOffsetInPixelsX = mousePosition.x
-                                                                   - (
-                                                                        scrollPanelBounds.x 
-                                                                      + navigationBarState.timelineScrollPanelScrollOffset.x 
-                                                                      + grabPositionX
-                                                                    );
-
-                break;
-            }
-
-            grabPositionX += timelineBlockWidthInPixels(projectData, pageIndex)
-                           + constants::interface_layout::timeline::BlockSpacingInPixels;
-
-        }
-    }else if(hoveredBlockIndex >= constants::interface_layout::timeline::MinimumIndex){
-        navigationBarState.requestedPageNumber = hoveredBlockIndex + constants::interface_layout::timeline::FirstPageNumber;
+        navigationBarState.timelineDragGrabOffsetInPixelsX = mousePosition.x
+            - (scrollPanelBounds.x + navigationBarState.timelineScrollPanelScrollOffset.x + timelineBlockPositionXInPixels(projectData, hoveredBlockIndex));
     }
-
-    if(hoveredMarkerIndex >= constants::interface_layout::timeline::MinimumIndex){
-        const double currentTimeInSeconds{GetTime()};
-        const bool isDoubleClick{
-            navigationBarState.timelinePreviousClickedInsertionIndex == hoveredMarkerIndex
-                && (currentTimeInSeconds - navigationBarState.timelinePreviousInsertionClickTimeInSeconds)
-                   <= constants::interface_layout::timeline::InsertionDoubleClickThresholdInSeconds
-
-        };
-
-
-        if(isDoubleClick){
-            projectData.pages.insert(projectData.pages.begin() + hoveredMarkerIndex, program_states::ProjectData::Page{});
-            projectData.metadata.numberOfPages = static_cast<int>(projectData.pages.size());
-            navigationBarState.requestedPageNumber = hoveredMarkerIndex + constants::interface_layout::timeline::FirstPageNumber;
-            context.interface.noteCanvas.isGridLayoutDirty = true;
-        }
-
-        navigationBarState.timelinePreviousClickedInsertionIndex = hoveredMarkerIndex;
-        navigationBarState.timelinePreviousInsertionClickTimeInSeconds = currentTimeInSeconds;
-
-    }
-
-
-
 }
 
 void NavigationBar::updateTimelineDragCandidateState(
-    program_states::InterfaceContext &context,
-    int hoveredMarkerIndex
+    program_states::InterfaceContext &context
 ){
-
     auto &navigationBarState{context.interface.navigationBar};
 
-    if(!navigationBarState.isTimelineDragCandidate) return;
+    if(IsKeyPressed(KEY_ESCAPE)){
+        navigationBarState.isTimelineDragCandidate = false;
+        navigationBarState.isTimelineDraggingPage = false;
+        navigationBarState.timelineDragCandidatePageIndex = constants::interface_layout::timeline::InvalidIndex;
+        navigationBarState.timelineDraggedPageIndex = constants::interface_layout::timeline::InvalidIndex;
+        return;
+    }
 
-    if(IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
-
-        const Vector2 mousePosition{GetMousePosition()};
-
-        const float deltaX{mousePosition.x - navigationBarState.timelineDragStartMouseScreenPosition.x};
-        const float deltaY{mousePosition.y - navigationBarState.timelineDragStartMouseScreenPosition.y};
-        const float dragDistanceInPixels{std::sqrt((deltaX * deltaX) + (deltaY * deltaY))};
-
-        if(dragDistanceInPixels >= constants::interface_layout::timeline::DragStartDistanceThresholdInPixels){
-            navigationBarState.isTimelineDraggingPage = true;
-            navigationBarState.timelineDraggedPageIndex = navigationBarState.timelineDragCandidatePageIndex;
-            navigationBarState.timelineDropInsertionIndex = hoveredMarkerIndex >= constants::interface_layout::timeline::MinimumIndex
-                                                                ? hoveredMarkerIndex
-                                                                : navigationBarState.timelineDraggedPageIndex;
-            navigationBarState.isTimelineDragCandidate = false;
-
-        }
+    if(!navigationBarState.isTimelineDragCandidate){
+        return;
     }
 
     if(IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
         navigationBarState.requestedPageNumber = navigationBarState.timelineDragCandidatePageIndex
-                                               + constants::interface_layout::timeline::FirstPageNumber;
+            + constants::interface_layout::timeline::FirstPageNumber;
         context.interface.noteCanvas.isGridLayoutDirty = true;
         navigationBarState.isTimelineDragCandidate = false;
+        navigationBarState.timelineDragCandidatePageIndex = constants::interface_layout::timeline::InvalidIndex;
+        return;
     }
 
+    if(!IsMouseButtonDown(MOUSE_BUTTON_LEFT)) return;
+
+    const Vector2 mousePosition{GetMousePosition()};
+    const double currentTimeInSeconds{GetTime()};
+
+    const float deltaX{mousePosition.x - navigationBarState.timelineDragStartMouseScreenPosition.x};
+    const float deltaY{mousePosition.y - navigationBarState.timelineDragStartMouseScreenPosition.y};
+    const float dragDistanceInPixels{std::sqrt((deltaX * deltaX) + (deltaY * deltaY))};
+    const bool hasHoldDurationReached{
+        (currentTimeInSeconds - navigationBarState.timelineDragCandidateStartTimeInSeconds)
+            >= constants::interface_layout::timeline::HoldToStartDragDurationInSeconds
+    };
+
+    if(dragDistanceInPixels >= constants::interface_layout::timeline::DragStartDistanceThresholdInPixels || hasHoldDurationReached){
+        navigationBarState.isTimelineDraggingPage = true;
+        navigationBarState.timelineDraggedPageIndex = navigationBarState.timelineDragCandidatePageIndex;
+        navigationBarState.timelineDropInsertionIndex = navigationBarState.timelineDraggedPageIndex;
+        navigationBarState.isTimelineDragCandidate = false;
+    }
 }
 
 void NavigationBar::updateTimelineDraggingState(
     program_states::InterfaceContext &context,
     program_states::ProjectData     &projectData,
-    int                             hoveredMarkerIndex,
+    const Rectangle                 &scrollPanelBounds,
+    const Vector2                   &mousePosition,
     const Rectangle                 &draggedBlockBounds
 ){
-
     auto &navigationBarState{context.interface.navigationBar};
 
     if(!navigationBarState.isTimelineDraggingPage) return;
-    
 
-    if(hoveredMarkerIndex >= constants::interface_layout::timeline::MinimumIndex){
-        navigationBarState.timelineDropInsertionIndex = hoveredMarkerIndex;
+    if(IsKeyPressed(KEY_ESCAPE)){
+        navigationBarState.isTimelineDraggingPage = false;
+        navigationBarState.timelineDraggedPageIndex = constants::interface_layout::timeline::InvalidIndex;
+        return;
+    }
+
+    navigationBarState.timelineDropInsertionIndex = timelineDropInsertionIndexFromMouseXInPixels(
+        projectData,
+        scrollPanelBounds,
+        navigationBarState.timelineScrollPanelScrollOffset.x,
+        mousePosition.x
+    );
+
+    if(projectData.pages.size() >= static_cast<size_t>(constants::interface_layout::timeline::FirstPageNumber)){
+        const int maximumInsertionIndex{static_cast<int>(projectData.pages.size())};
+        navigationBarState.timelineDropInsertionIndex = std::clamp(
+            navigationBarState.timelineDropInsertionIndex,
+            constants::interface_layout::timeline::MinimumIndex,
+            maximumInsertionIndex
+        );
+
+        const float dropIndicatorCenterXInPixels{timelineDropIndicatorCenterPositionXInPixels(
+            projectData,
+            scrollPanelBounds,
+            navigationBarState.timelineScrollPanelScrollOffset.x,
+            navigationBarState.timelineDropInsertionIndex
+        )};
+        const float dropIndicatorTopYInPixels{
+            scrollPanelBounds.y + navigationBarState.timelineScrollPanelScrollOffset.y
+          + constants::interface_layout::timeline::ContentTopPaddingInPixels
+          - constants::interface_layout::timeline::DropIndicatorVerticalExtraHeightInPixels
+        };
+        const float dropIndicatorBottomYInPixels{
+            scrollPanelBounds.y + navigationBarState.timelineScrollPanelScrollOffset.y
+          + constants::interface_layout::timeline::ContentTopPaddingInPixels
+          + constants::interface_layout::timeline::BlockHeightInPixels
+          + constants::interface_layout::timeline::DropIndicatorVerticalExtraHeightInPixels
+        };
+        const float dropIndicatorCapLeftXInPixels{
+            dropIndicatorCenterXInPixels
+          - (constants::interface_layout::timeline::DropIndicatorCapWidthInPixels * constants::interface_layout::timeline::MarkerHalfWidthScale)
+        };
+        const float dropIndicatorCapRightXInPixels{
+            dropIndicatorCenterXInPixels
+          + (constants::interface_layout::timeline::DropIndicatorCapWidthInPixels * constants::interface_layout::timeline::MarkerHalfWidthScale)
+        };
+
+        DrawLineEx(
+            Vector2{dropIndicatorCenterXInPixels, dropIndicatorTopYInPixels},
+            Vector2{dropIndicatorCenterXInPixels, dropIndicatorBottomYInPixels},
+            constants::interface_layout::timeline::DropIndicatorLineThicknessInPixels,
+            RED
+        );
+        DrawLineEx(
+            Vector2{dropIndicatorCapLeftXInPixels, dropIndicatorTopYInPixels},
+            Vector2{dropIndicatorCapRightXInPixels, dropIndicatorTopYInPixels},
+            constants::interface_layout::timeline::DropIndicatorLineThicknessInPixels,
+            RED
+        );
+        DrawLineEx(
+            Vector2{dropIndicatorCapLeftXInPixels, dropIndicatorBottomYInPixels},
+            Vector2{dropIndicatorCapRightXInPixels, dropIndicatorBottomYInPixels},
+            constants::interface_layout::timeline::DropIndicatorLineThicknessInPixels,
+            RED
+        );
     }
 
     const bool canDropPage{
@@ -274,37 +361,20 @@ void NavigationBar::updateTimelineDraggingState(
     };
 
     if(canDropPage){
-        auto movedPage{projectData.pages[navigationBarState.timelineDraggedPageIndex]};
-        projectData.pages.erase(projectData.pages.begin() + navigationBarState.timelineDraggedPageIndex);
-
-        const int insertionIndexOffset{
-            navigationBarState.timelineDraggedPageIndex < navigationBarState.timelineDropInsertionIndex
-                ? constants::interface_layout::timeline::FirstPageNumber
-                : constants::interface_layout::timeline::MinimumIndex
-        };
-        const int insertionIndex{std::clamp(
-            navigationBarState.timelineDropInsertionIndex - insertionIndexOffset,
-            constants::interface_layout::timeline::MinimumIndex,
-            static_cast<int>(projectData.pages.size())
-        )};
-
-        projectData.pages.insert(projectData.pages.begin() + insertionIndex, std::move(movedPage));
-        navigationBarState.requestedPageNumber = insertionIndex + constants::interface_layout::timeline::FirstPageNumber;
+        navigationBarState.isPageMoveRequested = true;
+        navigationBarState.requestedPageMoveSourceIndex = navigationBarState.timelineDraggedPageIndex;
+        navigationBarState.requestedPageMoveInsertionIndex = navigationBarState.timelineDropInsertionIndex;
         context.interface.noteCanvas.isGridLayoutDirty = true;
         navigationBarState.isTimelineDraggingPage = false;
-
+        navigationBarState.timelineDraggedPageIndex = constants::interface_layout::timeline::InvalidIndex;
     }else{
-
-        
         DrawRectangleRec(draggedBlockBounds, GetColor(GuiGetStyle(BUTTON, BASE_COLOR_PRESSED)));
         DrawRectangleLinesEx(
             draggedBlockBounds,
             constants::interface_layout::timeline::BlockBorderThicknessInPixels,
             GetColor(GuiGetStyle(BUTTON, BORDER_COLOR_FOCUSED))
         );
-
     }
-
 }
 
 void NavigationBar::drawTimeline(program_states::InterfaceContext &context){
@@ -360,10 +430,8 @@ void NavigationBar::drawTimeline(program_states::InterfaceContext &context){
 
     const Vector2 mousePosition{GetMousePosition()};
     const bool isMouseInsideScrollPanel{CheckCollisionPointRec(mousePosition, scrollPanelBounds)};
-    int hoveredMarkerIndex{constants::interface_layout::timeline::InvalidIndex};
     int hoveredBlockIndex{constants::interface_layout::timeline::InvalidIndex};
     Rectangle draggedBlockBounds{};
-    float contentRightEdgePositionInPixels{constants::interface_layout::timeline::ContentLeftPaddingInPixels};
 
 
     BeginScissorMode(
@@ -374,43 +442,26 @@ void NavigationBar::drawTimeline(program_states::InterfaceContext &context){
     ); {
 
         if(projectData){
-            contentRightEdgePositionInPixels = drawTimelineBlocksAndMarkers(
+            drawTimelineBlocksAndMarkers(
                 context,
                 *projectData,
                 scrollPanelBounds,
                 mousePosition,
                 isMouseInsideScrollPanel,
                 hoveredBlockIndex,
-                hoveredMarkerIndex,
                 draggedBlockBounds
             );
-
-            if(GuiButton(
-                Rectangle{
-                    scrollPanelBounds.x + navigationBarState.timelineScrollPanelScrollOffset.x + contentRightEdgePositionInPixels
-                  + constants::interface_layout::timeline::PlusButtonOffsetInPixels,
-                    scrollPanelBounds.y + navigationBarState.timelineScrollPanelScrollOffset.y
-                  + constants::interface_layout::timeline::ContentTopPaddingInPixels
-                  + ((constants::interface_layout::timeline::BlockHeightInPixels
-                    - constants::interface_layout::timeline::PlusButtonSizeInPixels)
-                    * constants::interface_layout::timeline::PlusButtonVerticalCenterScale),
-                    constants::interface_layout::timeline::PlusButtonSizeInPixels,
-                    constants::interface_layout::timeline::PlusButtonSizeInPixels
-                },
-                "+"
-            )){
-                projectData->pages.push_back(program_states::ProjectData::Page{});
-                projectData->metadata.numberOfPages = static_cast<int>(projectData->pages.size());
-                navigationBarState.requestedPageNumber = static_cast<int>(projectData->pages.size());
-
-                context.interface.noteCanvas.isGridLayoutDirty = true;
-
-            }
 
         }
     } EndScissorMode();
 
     if(projectData){
+        if(navigationBarState.isPageSelectEnabled){
+            navigationBarState.isTimelineDragCandidate = false;
+            navigationBarState.isTimelineDraggingPage = false;
+            navigationBarState.timelineDragCandidatePageIndex = constants::interface_layout::timeline::InvalidIndex;
+            navigationBarState.timelineDraggedPageIndex = constants::interface_layout::timeline::InvalidIndex;
+        }
 
         handleTimelineMousePress(
             context,
@@ -418,11 +469,12 @@ void NavigationBar::drawTimeline(program_states::InterfaceContext &context){
             scrollPanelBounds,
             mousePosition,
             isMouseInsideScrollPanel,
-            hoveredBlockIndex,
-            hoveredMarkerIndex
+            hoveredBlockIndex
         );
-        updateTimelineDragCandidateState(context, hoveredMarkerIndex);
-        updateTimelineDraggingState(context, *projectData, hoveredMarkerIndex, draggedBlockBounds);
+        if(!navigationBarState.isPageSelectEnabled){
+            updateTimelineDragCandidateState(context);
+            updateTimelineDraggingState(context, *projectData, scrollPanelBounds, mousePosition, draggedBlockBounds);
+        }
 
     }
 
@@ -439,17 +491,24 @@ void NavigationBar::drawTimeline(program_states::InterfaceContext &context){
         TextFormat("%d/%d", context.system.project.currentPage, maximumPageNumber)
     );
 
+    if(GuiButton(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.addPageButton), "+")){
+        navigationBarState.isAddPageRequested = true;
+        navigationBarState.requestedPageInsertionIndex = projectData
+            ? utilities::currentPageIndexFrom(*projectData, context.system.project.currentPage) + constants::interface_layout::timeline::FirstPageNumber
+            : constants::action_center::MinimumPageIndex;
+        context.interface.noteCanvas.isGridLayoutDirty = true;
+    }
+
     navigationBarState.isPageCopyButtonPressed = GuiButton(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.pageCopyButton), PageCopyButtonText);
     navigationBarState.isPagePasteButtonPressed = GuiButton(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.pagePasteButton), PagePasteButtonText);
     navigationBarState.isPageCutButtonPressed = GuiButton(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.pageCutButton), PageCutButtonText);
     GuiToggle(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.pageSelectToggle), PageSelectToggleText, &navigationBarState.isPageSelectEnabled);
 
     DEBUG_PRINT_IF_CHANGED(
-        "NavigationBar::drawTimeline()\n\tmaximumPageNumber={}, contentWidthInPixels={}, hoveredBlockIndex={}, hoveredMarkerIndex={},\n\tisTimelineDragCandidate={}, isTimelineDraggingPage={}, timelineDraggedPageIndex={}, timelineDropInsertionIndex={}, requestedPageNumber={}",
+        "NavigationBar::drawTimeline()\n\tmaximumPageNumber={}, contentWidthInPixels={}, hoveredBlockIndex={},\n\tisTimelineDragCandidate={}, isTimelineDraggingPage={}, timelineDraggedPageIndex={}, timelineDropInsertionIndex={}, requestedPageNumber={}",
         maximumPageNumber,
         contentWidthInPixels,
         hoveredBlockIndex,
-        hoveredMarkerIndex,
         navigationBarState.isTimelineDragCandidate,
         navigationBarState.isTimelineDraggingPage,
         navigationBarState.timelineDraggedPageIndex,

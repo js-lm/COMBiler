@@ -16,4 +16,8 @@ namespace constants::action_center{
     constexpr int MinimumVolume{1};
     constexpr int MaximumVolume{10};
 
+    constexpr int MinimumPageIndex{0};
+    constexpr int FirstPageNumber{1};
+    constexpr int InvalidPageInsertionIndex{-1};
+
 } // namespace constants::action_center

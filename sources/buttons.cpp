@@ -8,6 +8,32 @@
 #include <algorithm>
 
 void MainWindow::handlePageChangeButtonsEvents(){
+    if(interfaceState_.navigationBar.isAddPageRequested){
+        if(actionCenter_){
+            actionCenter_->addPage(interfaceState_.navigationBar.requestedPageInsertionIndex);
+            applyProjectTransientNavigationState();
+        }
+
+        interfaceState_.navigationBar.isAddPageRequested = false;
+        interfaceState_.navigationBar.requestedPageInsertionIndex = constants::action_center::InvalidPageInsertionIndex;
+        interfaceState_.noteCanvas.isGridLayoutDirty = true;
+    }
+
+    if(interfaceState_.navigationBar.isPageMoveRequested){
+        if(actionCenter_){
+            actionCenter_->movePage(
+                interfaceState_.navigationBar.requestedPageMoveSourceIndex,
+                interfaceState_.navigationBar.requestedPageMoveInsertionIndex
+            );
+            applyProjectTransientNavigationState();
+        }
+
+        interfaceState_.navigationBar.isPageMoveRequested = false;
+        interfaceState_.navigationBar.requestedPageMoveSourceIndex = constants::action_center::InvalidPageInsertionIndex;
+        interfaceState_.navigationBar.requestedPageMoveInsertionIndex = constants::action_center::InvalidPageInsertionIndex;
+        interfaceState_.noteCanvas.isGridLayoutDirty = true;
+    }
+
     const auto projectData{utilities::projectDataWithPagesFrom(systemState_)};
     if(!projectData) return;
 

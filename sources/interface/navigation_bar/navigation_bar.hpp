@@ -25,7 +25,23 @@ namespace interface{
             const program_states::ProjectData &projectData,
             size_t pageIndex
         );
+        static float timelineBlockPositionXInPixels(
+            const program_states::ProjectData &projectData,
+            size_t targetPageIndex
+        );
         static float timelineContentWidthInPixels(const program_states::ProjectData &projectData);
+        static float timelineDropIndicatorCenterPositionXInPixels(
+            const program_states::ProjectData &projectData,
+            const Rectangle &scrollPanelBounds,
+            float   scrollOffsetXInPixels,
+            int     dropInsertionIndex
+        );
+        static int timelineDropInsertionIndexFromMouseXInPixels(
+            const program_states::ProjectData &projectData,
+            const Rectangle &scrollPanelBounds,
+            float scrollOffsetXInPixels,
+            float mousePositionXInPixels
+        );
         static float drawTimelineBlocksAndMarkers(
             program_states::InterfaceContext    &context,
             const program_states::ProjectData   &projectData,
@@ -33,26 +49,24 @@ namespace interface{
             const Vector2                       &mousePosition,
             bool                                isMouseInsideScrollPanel,
             int                                 &hoveredBlockIndex,
-            int                                 &hoveredMarkerIndex,
             Rectangle                           &draggedBlockBounds
         );
         static void handleTimelineMousePress(
             program_states::InterfaceContext    &context,
-            program_states::ProjectData         &projectData,
+            const program_states::ProjectData   &projectData,
             const Rectangle                     &scrollPanelBounds,
             const Vector2                       &mousePosition,
             bool                                isMouseInsideScrollPanel,
-            int                                 hoveredBlockIndex,
-            int                                 hoveredMarkerIndex
+            int                                 hoveredBlockIndex
         );
         static void updateTimelineDragCandidateState(
-            program_states::InterfaceContext &context,
-            int hoveredMarkerIndex
+            program_states::InterfaceContext    &context
         );
         static void updateTimelineDraggingState(
             program_states::InterfaceContext    &context,
             program_states::ProjectData         &projectData,
-            int                                 hoveredMarkerIndex,
+            const Rectangle                     &scrollPanelBounds,
+            const Vector2                       &mousePosition,
             const Rectangle                     &draggedBlockBounds
         );
     };

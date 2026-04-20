@@ -10,6 +10,8 @@ namespace constants::interface_layout{
     constexpr int TimelineScrollPanelRightPadding{72};
     constexpr int TimelinePageNumberLabelOffset{144};
     constexpr int TimelinePageNumberValueLabelOffset{112};
+    constexpr int TimelineAddPageButtonOffset{172};
+
     constexpr int TimelinePageCopyButtonOffset{64};
     constexpr int TimelinePagePasteButtonOffset{32};
     constexpr int TimelinePageCutButtonOffset{32};
@@ -48,7 +50,14 @@ namespace constants::interface_layout{
         constexpr float StaticCornerSizeInPixels{14.0f};
 
         constexpr float DragStartDistanceThresholdInPixels{4.0f};
-        constexpr double InsertionDoubleClickThresholdInSeconds{.3};
+        constexpr double HoldToStartDragDurationInSeconds{.15};
+
+        constexpr float DraggedBlockCursorOffsetXInPixels{1.0f};
+        constexpr float DraggedBlockCursorOffsetYInPixels{1.0f};
+
+        constexpr float DropIndicatorLineThicknessInPixels{2.0f};
+        constexpr float DropIndicatorCapWidthInPixels{12.0f};
+        constexpr float DropIndicatorVerticalExtraHeightInPixels{8.0f};
 
         constexpr float MarkerHalfWidthScale{.5f};
         constexpr float PlusButtonVerticalCenterScale{.5f};

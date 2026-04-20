@@ -90,21 +90,25 @@ namespace program_states{
             bool isPageCutButtonPressed     {false};
 
             bool isPageRepeatEnabled        {true};
-            bool isPageSelectEnabled        {true};
+            bool isPageSelectEnabled        {false};
 
             bool notePerPageSpinnerEditMode{false};
             int notePerPageSpinnerValue     {32};
             int requestedPageNumber         {0};
+            bool isAddPageRequested         {false};
+            int requestedPageInsertionIndex {constants::action_center::InvalidPageInsertionIndex};
+            bool isPageMoveRequested        {false};
+            int requestedPageMoveSourceIndex{constants::action_center::InvalidPageInsertionIndex};
+            int requestedPageMoveInsertionIndex{constants::action_center::InvalidPageInsertionIndex};
 
             bool isTimelineDragCandidate    {false};
             bool isTimelineDraggingPage     {false};
             int timelineDragCandidatePageIndex{-1};
             int timelineDraggedPageIndex    {-1};
             int timelineDropInsertionIndex  {0};
+            double timelineDragCandidateStartTimeInSeconds{.0};
             Vector2 timelineDragStartMouseScreenPosition{0, 0};
             float timelineDragGrabOffsetInPixelsX{.0f};
-            int timelinePreviousClickedInsertionIndex{-1};
-            double timelinePreviousInsertionClickTimeInSeconds{.0};
 
             Rectangle timelineScrollPanelScrollView{0, 0, 0, 0};
             Vector2 timelineScrollPanelScrollOffset{0, 0};

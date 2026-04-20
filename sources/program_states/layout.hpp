@@ -120,6 +120,7 @@ namespace program_states{
                     Rectangle scrollPanel       {120, 24, 768, 72};
                     Rectangle timelineLabel     {120,  0, 120, 24};
 
+                    Rectangle addPageButton     {788,  0,  24, 24};
                     Rectangle pageNumberLabel   {816,  0,  32, 24};
                     Rectangle pageNumberValueLabel{848,0,  72, 24};
                     Rectangle pageCopyButton    {896, 24,  24, 24};

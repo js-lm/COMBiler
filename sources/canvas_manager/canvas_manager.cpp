@@ -1,6 +1,9 @@
 #include "canvas_manager.hpp"
 
 void CanvasManager::update(ActionCenter &actionCenter){
+    if(context_.interface.navigationBar.isTimelineDraggingPage) return;
+    
+
     if(!hasInitializedSelectionTracking_){
         previousSelectedTool_ = context_.interface.toolbar.selectedTool;
         previousSelectedChannelListViewIndex_ = context_.interface.sidebar.selectedChannelListViewIndex;

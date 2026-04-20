@@ -76,6 +76,7 @@ void MainWindow::handleWindowSizeChangeEvent(){
 
         bounds.navigationBar.timeline.pageNumberLabel.x = bounds.navigationBar.timeline.groupBox.width - TimelinePageNumberLabelOffset;
         bounds.navigationBar.timeline.pageNumberValueLabel.x = bounds.navigationBar.timeline.groupBox.width - TimelinePageNumberValueLabelOffset;
+        bounds.navigationBar.timeline.addPageButton.x = bounds.navigationBar.timeline.groupBox.width - TimelineAddPageButtonOffset;
 
         bounds.navigationBar.timeline.pageCopyButton.x = bounds.navigationBar.timeline.groupBox.width - TimelinePageCopyButtonOffset;
         bounds.navigationBar.timeline.pagePasteButton.x = bounds.navigationBar.timeline.groupBox.width - TimelinePagePasteButtonOffset;

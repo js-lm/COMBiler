@@ -58,7 +58,8 @@ public:
     void copy();
     void paste();
 
-    void addPage();
+    void addPage(int requestedPageInsertionIndex);
+    void movePage(int sourcePageIndex, int targetInsertionIndex);
     void removePage();
     void copyPage();
     void pastePage();  
