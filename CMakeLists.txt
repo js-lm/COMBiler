@@ -36,7 +36,13 @@ FetchContent_Declare(
 	GIT_TAG 12.1.0
 )
 
-FetchContent_MakeAvailable(raylib raygui magic_enum fmt)
+FetchContent_Declare(
+	tinysoundfont
+	GIT_REPOSITORY https://github.com/schellingb/TinySoundFont
+	GIT_TAG main
+)
+
+FetchContent_MakeAvailable(raylib raygui magic_enum fmt tinysoundfont)
 
 file(GLOB_RECURSE PROJECT_SOURCES
 	CONFIGURE_DEPENDS
@@ -45,6 +51,12 @@ file(GLOB_RECURSE PROJECT_SOURCES
 
 add_executable(${PROJECT_TARGET} ${PROJECT_SOURCES})
 
+file(GLOB ASSET_ENTRIES 
+     CONFIGURE_DEPENDS 
+     LIST_DIRECTORIES true 
+     "${CMAKE_CURRENT_LIST_DIR}/assets/*"
+)
+
 target_compile_definitions(${PROJECT_TARGET} PRIVATE
 	$<$<CONFIG:Debug>:DEBUG>
 )
@@ -52,6 +64,7 @@ target_compile_definitions(${PROJECT_TARGET} PRIVATE
 target_include_directories(${PROJECT_TARGET} PRIVATE
 	${CMAKE_CURRENT_LIST_DIR}/sources
 	${raygui_SOURCE_DIR}/src
+	${tinysoundfont_SOURCE_DIR}
 )
 
 target_link_libraries(${PROJECT_TARGET}
@@ -59,3 +72,31 @@ target_link_libraries(${PROJECT_TARGET}
 	magic_enum::magic_enum
 	fmt::fmt
 )
+
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+	set_target_properties(${PROJECT_TARGET} PROPERTIES
+		RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/release"
+	)
+
+	add_custom_command(TARGET ${PROJECT_TARGET} POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+			"${CMAKE_CURRENT_LIST_DIR}/assets"
+			"$<TARGET_FILE_DIR:${PROJECT_TARGET}>"
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different
+			"${CMAKE_CURRENT_LIST_DIR}/LICENSE"
+			"$<TARGET_FILE_DIR:${PROJECT_TARGET}>/LICENSE"
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+			"${CMAKE_CURRENT_LIST_DIR}/licenses"
+			"$<TARGET_FILE_DIR:${PROJECT_TARGET}>/licenses"
+	)
+else()
+	foreach(asset_entry IN LISTS ASSET_ENTRIES)
+		get_filename_component(asset_name "${asset_entry}" NAME)
+		add_custom_command(TARGET ${PROJECT_TARGET} POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E rm -rf "$<TARGET_FILE_DIR:${PROJECT_TARGET}>/${asset_name}"
+			COMMAND ${CMAKE_COMMAND} -E create_symlink
+				"${asset_entry}"
+				"$<TARGET_FILE_DIR:${PROJECT_TARGET}>/${asset_name}"
+		)
+	endforeach()
+endif()

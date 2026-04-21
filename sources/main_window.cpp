@@ -140,8 +140,9 @@ void MainWindow::draw(){
             .0f,
             WHITE
         );
-
-        if(DEBUG) DrawFPS(0, 0);
+#ifdef DEBUG
+        DrawFPS(0, 0);
+#endif
 
     } EndDrawing();
 }
