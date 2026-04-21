@@ -62,6 +62,10 @@ namespace constants::interface_layout{
         constexpr float MarkerHalfWidthScale{.5f};
         constexpr float PlusButtonVerticalCenterScale{.5f};
 
+        constexpr float PreviewOverlayAlpha{.35f};
+        constexpr float PreviewNoteHeightInPixels{2.0f};
+        constexpr float PreviewMinimumColumnWidthInPixels{1.0f};
+
         constexpr int InvalidIndex{-1};
         constexpr int MinimumIndex{0};
         constexpr int FirstPageNumber{1};

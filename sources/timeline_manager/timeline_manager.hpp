@@ -7,8 +7,6 @@
 #include "action_center/action_center.hpp"
 #include "program_states/context.hpp"
 
-#include "preview_texture.hpp"
-
 class TimelineManager{
 public:
 	enum class InteractionMode{
@@ -18,10 +16,11 @@ public:
 		WaitingForPasteTarget,
 	};
 
-	struct PagePreviewCacheSlot{
-		int pageIndex{0};
-		PreviewTexture pagePreviewTexture{};
-	};
+	// This is way over engineered
+	// struct PagePreviewCacheSlot{
+	// 	int pageIndex{0};
+	// 	PreviewTexture pagePreviewTexture{};
+	// };
 
 	struct DragAndDropState{
 		bool isDraggingPage{false};
@@ -55,7 +54,7 @@ private:
 	SelectionAndPasteState selectionAndPasteState_{};
 	ViewState viewState_{};
 
-	std::vector<PagePreviewCacheSlot> pagePreviewCache_{};
+	// std::vector<PagePreviewCacheSlot> pagePreviewCache_{};
 
 public:
 	TimelineManager(program_states::InterfaceContext context)
@@ -73,7 +72,7 @@ public:
 	const ViewState &viewState() const{return viewState_;}
 	const DragAndDropState &dragAndDropState() const{return dragAndDropState_;}
 	const SelectionAndPasteState &selectionAndPasteState() const{return selectionAndPasteState_;}
-	const std::vector<PagePreviewCacheSlot> &pagePreviewCache() const{return pagePreviewCache_;}
+	// const std::vector<PagePreviewCacheSlot> &pagePreviewCache() const{return pagePreviewCache_;}
 
 private:
 	void updateInteractionMode();
@@ -82,7 +81,7 @@ private:
 	void handlePasteInput(ActionCenter &actionCenter);
 
 private:
-	void synchronizePreviewCacheWithProjectPages();
-	void invalidateCacheForModifiedPages();
-	void redrawInvalidatedPagePreviews();
+	// void synchronizePreviewCacheWithProjectPages();
+	// void invalidateCacheForModifiedPages();
+	// void redrawInvalidatedPagePreviews();
 };

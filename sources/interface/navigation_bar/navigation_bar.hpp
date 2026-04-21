@@ -30,6 +30,16 @@ namespace interface{
             size_t targetPageIndex
         );
         static float timelineContentWidthInPixels(const program_states::ProjectData &projectData);
+        static int wrappedPreviewRowFromNote(
+            music_data::Note note,
+            int previewRowCount
+        );
+        static Color commandPreviewColor(const command::CommandToken &commandToken);
+        static void drawTimelineBlockPreview(
+            const program_states::ProjectData::Page &page,
+            const Rectangle &blockBounds,
+            int noteCountInThisPage
+        );
         static float timelineDropIndicatorCenterPositionXInPixels(
             const program_states::ProjectData &projectData,
             const Rectangle &scrollPanelBounds,
@@ -45,19 +55,19 @@ namespace interface{
         static float drawTimelineBlocksAndMarkers(
             program_states::InterfaceContext    &context,
             const program_states::ProjectData   &projectData,
-            const Rectangle                     &scrollPanelBounds,
-            const Vector2                       &mousePosition,
-            bool                                isMouseInsideScrollPanel,
-            int                                 &hoveredBlockIndex,
-            Rectangle                           &draggedBlockBounds
+            const Rectangle &scrollPanelBounds,
+            const Vector2   &mousePosition,
+            bool        isMouseInsideScrollPanel,
+            int         &hoveredBlockIndex,
+            Rectangle   &draggedBlockBounds
         );
         static void handleTimelineMousePress(
             program_states::InterfaceContext    &context,
             const program_states::ProjectData   &projectData,
-            const Rectangle                     &scrollPanelBounds,
-            const Vector2                       &mousePosition,
-            bool                                isMouseInsideScrollPanel,
-            int                                 hoveredBlockIndex
+            const Rectangle &scrollPanelBounds,
+            const Vector2   &mousePosition,
+            bool    isMouseInsideScrollPanel,
+            int     hoveredBlockIndex
         );
         static void updateTimelineDragCandidateState(
             program_states::InterfaceContext    &context
@@ -65,9 +75,9 @@ namespace interface{
         static void updateTimelineDraggingState(
             program_states::InterfaceContext    &context,
             program_states::ProjectData         &projectData,
-            const Rectangle                     &scrollPanelBounds,
-            const Vector2                       &mousePosition,
-            const Rectangle                     &draggedBlockBounds
+            const Rectangle &scrollPanelBounds,
+            const Vector2   &mousePosition,
+            const Rectangle &draggedBlockBounds
         );
     };
 

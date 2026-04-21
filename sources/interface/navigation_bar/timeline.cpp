@@ -63,6 +63,141 @@ float NavigationBar::timelineContentWidthInPixels(const program_states::ProjectD
          - constants::interface_layout::timeline::BlockSpacingInPixels;  
 }
 
+int NavigationBar::wrappedPreviewRowFromNote(
+    music_data::Note note,
+    int previewRowCount
+){
+    if(previewRowCount <= 0){
+        return constants::interface_layout::timeline::MinimumIndex;
+    }
+
+    const int semitoneIndex{static_cast<int>(note)};
+    const int wrappedRowIndex{semitoneIndex % previewRowCount};
+
+    return wrappedRowIndex;
+}
+
+Color NavigationBar::commandPreviewColor(const command::CommandToken &commandToken){
+
+    return std::visit([](const auto &commandToken)->Color{
+        using Type = std::decay_t<decltype(commandToken)>;
+
+        if constexpr(std::is_same_v<Type, command::Command>) return BLANK;
+        
+        constexpr auto previewOverlayAlpha{constants::interface_layout::timeline::PreviewOverlayAlpha};
+        
+        if constexpr(std::is_same_v<Type, command::Tempo>){
+            return Fade(constants::interface_layout::note_canvas::commands::TempoColor, previewOverlayAlpha);
+        }else if constexpr(std::is_same_v<Type, command::Volume>){
+            return Fade(constants::interface_layout::note_canvas::commands::VolumeColor, previewOverlayAlpha);
+        }
+
+        return Fade(constants::interface_layout::note_canvas::commands::ArticulationColor, previewOverlayAlpha);
+        
+    }, commandToken);
+}
+
+void NavigationBar::drawTimelineBlockPreview(
+    const program_states::ProjectData::Page &page,
+    const Rectangle &blockBounds,
+    int noteCountInThisPage
+){
+    if(noteCountInThisPage <= 0) return;
+
+    const float columnWidthInPixels{blockBounds.width / static_cast<float>(noteCountInThisPage)};
+    if(columnWidthInPixels <= .0f) return;
+
+    constexpr float noteHeightInPixels{constants::interface_layout::timeline::PreviewNoteHeightInPixels};
+    const int notePreviewRowCount{
+        std::max(
+            constants::interface_layout::timeline::FirstPageNumber,
+            static_cast<int>(blockBounds.height / noteHeightInPixels)
+        )
+    };
+
+    for(int noteIndex{0}; noteIndex < noteCountInThisPage; noteIndex++){
+        const float columnPositionX{blockBounds.x + (columnWidthInPixels * static_cast<float>(noteIndex))};
+
+        if(noteIndex < page.commandChannel.size() && page.commandChannel[noteIndex].has_value()){
+            
+            DrawRectangleRec(
+                Rectangle{
+                    columnPositionX,
+                    blockBounds.y,
+                    std::max(constants::interface_layout::timeline::PreviewMinimumColumnWidthInPixels, columnWidthInPixels),
+                    blockBounds.height
+                },
+                commandPreviewColor(page.commandChannel[noteIndex].value())
+            );
+        }
+
+        for(int channelIndex{constants::project_data::NumberOfInstrumentChannels - 1};
+            channelIndex >= constants::interface_layout::timeline::MinimumIndex;
+            channelIndex--
+        ){
+
+            const auto &instrumentChannel{page.instrumentChannels[static_cast<size_t>(channelIndex)]};
+            if(noteIndex >= instrumentChannel.size() || !instrumentChannel[noteIndex].has_value()){
+                continue;
+            }
+
+            const auto &channelData{instrumentChannel[noteIndex].value()};
+            const Color channelColor{constants::interface_layout::note_canvas::notes::ChannelNoteColors[static_cast<size_t>(channelIndex)]};
+            constexpr float previewOverlayAlpha{constants::interface_layout::timeline::PreviewOverlayAlpha};
+
+            if(std::holds_alternative<music_data::Instrument>(channelData)){
+                
+                DrawRectangleRec(
+                    Rectangle{
+                        columnPositionX,
+                        blockBounds.y,
+                        std::max(constants::interface_layout::timeline::PreviewMinimumColumnWidthInPixels, columnWidthInPixels),
+                        blockBounds.height
+                    },
+                    Fade(channelColor, previewOverlayAlpha)
+                );
+            }
+
+        }
+
+        for(int channelIndex{constants::project_data::NumberOfInstrumentChannels - 1};
+            channelIndex >= constants::interface_layout::timeline::MinimumIndex;
+            channelIndex--
+        ){
+
+            const auto &instrumentChannel{page.instrumentChannels[channelIndex]};
+            if(noteIndex >= instrumentChannel.size() || !instrumentChannel[noteIndex].has_value()){
+                continue;
+            }
+
+            const auto &channelData{instrumentChannel[noteIndex].value()};
+            if(!std::holds_alternative<music_data::Note>(channelData)){
+                continue;
+            }
+
+            const auto note{std::get<music_data::Note>(channelData)};
+            const int wrappedRowIndex{wrappedPreviewRowFromNote(note, notePreviewRowCount)};
+            const float notePositionY{
+                blockBounds.y + blockBounds.height
+              - (static_cast<float>(wrappedRowIndex + constants::interface_layout::timeline::FirstPageNumber) * noteHeightInPixels)
+            };
+
+            DrawRectangleRec(
+                Rectangle{
+                    columnPositionX,
+                    notePositionY,
+                    std::max(constants::interface_layout::timeline::PreviewMinimumColumnWidthInPixels, columnWidthInPixels),
+                    noteHeightInPixels
+                },
+                constants::interface_layout::note_canvas::notes::ChannelNoteColors[static_cast<size_t>(channelIndex)]
+            );
+        }
+
+    }
+
+
+}
+
 float NavigationBar::timelineDropIndicatorCenterPositionXInPixels(
     const program_states::ProjectData &projectData,
     const Rectangle &scrollPanelBounds,
@@ -150,7 +285,19 @@ float NavigationBar::drawTimelineBlocksAndMarkers(
         }
 
         if(!navigationBarState.isTimelineDraggingPage || navigationBarState.timelineDraggedPageIndex != static_cast<int>(pageIndex)){
-            GuiButton(blockBounds, "");
+            DrawRectangleRec(
+                blockBounds,
+                GetColor(GuiGetStyle(BUTTON, BASE_COLOR_NORMAL))
+            );
+
+            const int noteCountInThisPage{
+                std::clamp(
+                    projectData.pages[pageIndex].noteInThisPage.value_or(projectData.metadata.notePerPage),
+                    constants::project_data::MinimumNotePerPage, 
+                    constants::project_data::MaximumNotePerPage
+                )
+            };
+            drawTimelineBlockPreview(projectData.pages[pageIndex], blockBounds, noteCountInThisPage);
             DrawRectangleLinesEx(
                 blockBounds,
                 constants::interface_layout::timeline::BlockBorderThicknessInPixels,
@@ -225,7 +372,10 @@ void NavigationBar::handleTimelineMousePress(
         navigationBarState.timelineDragCandidateStartTimeInSeconds = GetTime();
 
         navigationBarState.timelineDragGrabOffsetInPixelsX = mousePosition.x
-            - (scrollPanelBounds.x + navigationBarState.timelineScrollPanelScrollOffset.x + timelineBlockPositionXInPixels(projectData, hoveredBlockIndex));
+                                                           - (scrollPanelBounds.x 
+                                                            + navigationBarState.timelineScrollPanelScrollOffset.x 
+                                                            + timelineBlockPositionXInPixels(projectData, hoveredBlockIndex)
+                                                           );
     }
 }
 
@@ -248,7 +398,7 @@ void NavigationBar::updateTimelineDragCandidateState(
 
     if(IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
         navigationBarState.requestedPageNumber = navigationBarState.timelineDragCandidatePageIndex
-            + constants::interface_layout::timeline::FirstPageNumber;
+                                               + constants::interface_layout::timeline::FirstPageNumber;
         context.interface.noteCanvas.isGridLayoutDirty = true;
         navigationBarState.isTimelineDragCandidate = false;
         navigationBarState.timelineDragCandidatePageIndex = constants::interface_layout::timeline::InvalidIndex;

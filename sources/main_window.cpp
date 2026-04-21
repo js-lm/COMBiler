@@ -44,7 +44,7 @@ void MainWindow::initialize(){
 
     SetExitKey(KEY_NULL);
 
-    EnableEventWaiting();
+    // EnableEventWaiting(); // TODO: see how to add some delay to it
 
     SetWindowMinSize(
         constants::application_window::MinimalWidth, 
@@ -140,6 +140,9 @@ void MainWindow::draw(){
             .0f,
             WHITE
         );
+
+        if(DEBUG) DrawFPS(0, 0);
+
     } EndDrawing();
 }
 
