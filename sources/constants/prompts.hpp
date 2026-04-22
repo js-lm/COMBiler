@@ -2,7 +2,7 @@
 
 #include <raylib.h>
 
-#include "aliases.h"
+#include "aliases.hpp"
 
 #include "utilities/enum_map.hpp"
 

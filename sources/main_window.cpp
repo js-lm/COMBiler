@@ -11,13 +11,112 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <chrono>
+#include <thread>
+#include <vector>
+#include <string>
 
 #include "resources/styles/chromesthesia.h"
 #include "resources/icons/iconset.h"
 
 #include "debug_utilities.hpp"
 
+#include <tsf.h>
+
+void DEBUG_sf2(){
+    InitAudioDevice();
+
+    std::string soundFontPath{GetApplicationDirectory()};
+    soundFontPath += "soundfonts/gm_bank.sf2";
+    
+    if(!FileExists(soundFontPath.c_str())){
+        DEBUG_PRINT("soundFontPath: {}", soundFontPath.c_str());
+    }
+
+    tsf *soundFont{tsf_load_filename(soundFontPath.c_str())};
+
+    const int sampleRate{10000}; // 44100
+    const int outputChannelCount{2};
+    const int totalFrameCount{sampleRate * 2};
+    const int noteOnFrameCount{sampleRate / 2};
+    const int releaseFrameCount{totalFrameCount - noteOnFrameCount};
+    const int midiChannel{0};
+    const int midiNoteNumber{60};
+
+    tsf_set_output(soundFont, TSF_STEREO_INTERLEAVED, sampleRate, .0f);
+    tsf_note_on(soundFont, midiChannel, midiNoteNumber, .9f);
+
+    std::vector<int16_t> interleavedSamples(static_cast<size_t>(totalFrameCount * outputChannelCount));
+    tsf_render_short(soundFont, interleavedSamples.data(), noteOnFrameCount, 0);
+
+    tsf_note_off(soundFont, midiChannel, midiNoteNumber);
+    tsf_render_short(
+        soundFont,
+        interleavedSamples.data() + (noteOnFrameCount * outputChannelCount),
+        releaseFrameCount,
+        0
+    );
+
+    Wave soundWave{};
+    soundWave.frameCount = totalFrameCount;
+    soundWave.sampleRate = sampleRate;
+    soundWave.sampleSize = 16;
+    soundWave.channels = outputChannelCount;
+    soundWave.data = interleavedSamples.data();
+
+    Sound renderedSound{LoadSoundFromWave(soundWave)};
+    if(renderedSound.stream.buffer){
+        PlaySound(renderedSound);
+        
+        while(IsSoundPlaying(renderedSound)){
+            DEBUG_SLEEP_MS(10);
+        }
+        UnloadSound(renderedSound);
+    }
+
+    // AudioStream outputAudioStream{LoadAudioStream(sampleRate, 16, outputChannelCount)};
+    // if(outputAudioStream.buffer){
+    //     const int streamChunkFrameCount{1024};
+    //     int streamedFrameOffset{0};
+
+    //     PlayAudioStream(outputAudioStream);
+
+    //     while(streamedFrameOffset < totalFrameCount){
+    //         if(IsAudioStreamProcessed(outputAudioStream)){
+    //             const int remainingFrameCount{totalFrameCount - streamedFrameOffset};
+    //             const int currentChunkFrameCount{
+    //                 remainingFrameCount < streamChunkFrameCount
+    //                     ? remainingFrameCount
+    //                     : streamChunkFrameCount
+    //             };
+
+    //             UpdateAudioStream(
+    //                 outputAudioStream,
+    //                 interleavedSamples.data() + (streamedFrameOffset * outputChannelCount),
+    //                 currentChunkFrameCount
+    //             );
+
+    //             streamedFrameOffset += currentChunkFrameCount;
+    //         }else{
+    //             DEBUG_SLEEP_MS(1);
+    //         }
+    //     }
+
+    //     const int playbackDurationMs{(totalFrameCount * 1000) / sampleRate};
+    //     DEBUG_SLEEP_MS(playbackDurationMs + 50);
+
+    //     StopAudioStream(outputAudioStream);
+    //     UnloadAudioStream(outputAudioStream);
+    // }
+
+    tsf_close(soundFont);
+    CloseAudioDevice();
+}
+
 int MainWindow::run(){
+
+    DEBUG_sf2();
+    return 0;
 
     initialize();
 

@@ -26,7 +26,7 @@ namespace music_data{
     // } // commands
 
     enum class Note : uint8_t{
-        C0,
+        C0 = 0,
         C_Sharp_0,
         D_Flat_0 = C_Sharp_0,
         D0,
@@ -44,7 +44,7 @@ namespace music_data{
         B_Flat_0 = A_Sharp_0,
         B0,
 
-        C1,
+        C1 = 12,
         C_Sharp_1,
         D_Flat_1 = C_Sharp_1,
         D1,
@@ -62,7 +62,7 @@ namespace music_data{
         B_Flat_1 = A_Sharp_1,
         B1,
 
-        C2,
+        C2 = 24,
         C_Sharp_2,
         D_Flat_2 = C_Sharp_2,
         D2,
@@ -80,7 +80,7 @@ namespace music_data{
         B_Flat_2 = A_Sharp_2,
         B2,
 
-        C3,
+        C3 = 36,
         C_Sharp_3,
         D_Flat_3 = C_Sharp_3,
         D3,
@@ -98,7 +98,7 @@ namespace music_data{
         B_Flat_3 = A_Sharp_3,
         B3,
 
-        C4,
+        C4 = 48,
         C_Sharp_4,
         D_Flat_4 = C_Sharp_4,
         D4,
@@ -116,7 +116,7 @@ namespace music_data{
         B_Flat_4 = A_Sharp_4,
         B4,
 
-        C5,
+        C5 = 60,
         C_Sharp_5,
         D_Flat_5 = C_Sharp_5,
         D5,
@@ -134,7 +134,7 @@ namespace music_data{
         B_Flat_5 = A_Sharp_5,
         B5,
 
-        C6,
+        C6 = 72,
         C_Sharp_6,
         D_Flat_6 = C_Sharp_6,
         D6,
@@ -152,7 +152,7 @@ namespace music_data{
         B_Flat_6 = A_Sharp_6,
         B6,
 
-        C7,
+        C7 = 84,
         C_Sharp_7,
         D_Flat_7 = C_Sharp_7,
         D7,
@@ -170,7 +170,7 @@ namespace music_data{
         B_Flat_7 = A_Sharp_7,
         B7,
 
-        C8,
+        C8 = 96,
         C_Sharp_8,
         D_Flat_8 = C_Sharp_8,
         D8,
