@@ -82,7 +82,7 @@ private:
 
 private:
     command::Target targetFromToggleIndex(int toggleIndex);
-    command::Articulation::Type articulationFromToggleIndex(int toggleIndex);
+    units::machine::Articulation articulationFromToggleIndex(int toggleIndex);
     command::Command commandFromPromptState(const program_states::Interface::Prompts &promptState);
 
     void updateInstrumentChannelCell(

@@ -62,6 +62,11 @@ program_states::InterfaceContext MainWindow::getInterfaceContext(){
         .interface  {interfaceState_}
     };
 }
+program_states::MidiContext MainWindow::getMidiContext(){
+    return program_states::MidiContext{
+        .machine{machineState_}
+    };
+}
 
 program_states::ReadOnlyContext MainWindow::getReadOnlyContext(){
     return program_states::ReadOnlyContext{

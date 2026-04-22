@@ -3,6 +3,7 @@
 #include "interface.hpp"
 #include "system.hpp"
 #include "layout.hpp"
+#include "machine.hpp"
 
 namespace program_states{
 
@@ -11,6 +12,10 @@ namespace program_states{
         const Layout &layout;
         
         Interface &interface;
+    };
+
+    struct MidiContext{
+        Machine &machine;
     };
 
     struct ReadOnlyContext{

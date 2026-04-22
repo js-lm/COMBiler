@@ -137,11 +137,11 @@ namespace constants::interface_layout::note_canvas{
         constexpr float InstrumentVerticalIconCenterRatio{.3f};
         constexpr float InstrumentVerticalTextTopPaddingInPixels{8.0f};
 
-        inline constexpr int articulationIconIndex(command::Articulation::Type articulationType){
+        inline constexpr int articulationIconIndex(units::machine::Articulation articulationType){
             return ArticulationIconIndices[static_cast<size_t>(articulationType)];
         }
 
-        inline constexpr const char *articulationName(command::Articulation::Type articulationType){
+        inline constexpr const char *articulationName(units::machine::Articulation articulationType){
             return ArticulationNames[static_cast<size_t>(articulationType)];
         }
 

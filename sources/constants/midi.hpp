@@ -6,6 +6,8 @@
 
 namespace constants::midi{
 
+    constexpr size_t MaximumSimultaneousNote{16}; // 64 max / 4 channels
+
     constexpr utilities::EnumMap<music_data::Instrument, units::midi::SoundPresetID> InstrumentsMap{
         // Keyboards
         {music_data::Instrument::Grand_Piano, 0},

@@ -161,6 +161,7 @@ void MainWindow::initialize(){
 
     actionCenter_ = std::make_unique<ActionCenter>();
     canvasManager_ = std::make_unique<CanvasManager>(getInterfaceContext());
+    midiManager_ = std::make_unique<MidiManager>(getMidiContext());
 
     // stagedObserver_ = actionCenter_.getStagedObserver();
     systemState_.project.data = actionCenter_->getStagedObserver();

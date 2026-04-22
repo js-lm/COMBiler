@@ -3,10 +3,12 @@
 #include "program_states/interface.hpp"
 #include "program_states/system.hpp"
 #include "program_states/layout.hpp"
+#include "program_states/machine.hpp"
 
 #include "action_center/action_center.hpp"
 #include "canvas_manager/canvas_manager.hpp"
 #include "timeline_manager/timeline_manager.hpp"
+#include "midi_manager/midi_manager.hpp"
 
 #include "program_states/context.hpp"
 
@@ -19,11 +21,13 @@ private:
     program_states::System      systemState_{};
     program_states::Interface   interfaceState_{};
     program_states::Layout      layoutState_{};
+    program_states::Machine     machineState_{};
 
 private:
-    std::unique_ptr<ActionCenter> actionCenter_;
-    std::unique_ptr<CanvasManager> canvasManager_;
-    std::unique_ptr<TimelineManager> timelineManager_;
+    std::unique_ptr<ActionCenter>       actionCenter_;
+    std::unique_ptr<CanvasManager>      canvasManager_;
+    std::unique_ptr<TimelineManager>    timelineManager_;
+    std::unique_ptr<MidiManager>        midiManager_;
 
 private:
     RenderTexture2D interfaceRenderTexture_{};
@@ -36,6 +40,7 @@ public:
 
 public:
     program_states::InterfaceContext getInterfaceContext();
+    program_states::MidiContext getMidiContext();
     program_states::ReadOnlyContext getReadOnlyContext();
 
 private:

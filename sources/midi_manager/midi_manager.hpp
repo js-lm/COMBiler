@@ -5,16 +5,24 @@
 
 #include "aliases.hpp"
 
+#include "program_states/context.hpp"
+
 class MidiManager{
+private:
+    program_states::MidiContext context_;
+
 public:
-    MidiManager() = default;
+    MidiManager(program_states::MidiContext context)
+        : context_{context}
+    {}
+    MidiManager() = delete;
     ~MidiManager() = default;
 
     void initialization();
 
 public:
     void noteOn(const command::Target channel, const music_data::Note note);
-    void noteOffconst (const command::Target channel, const music_data::Note note);
+    void noteOff(const command::Target channel, const music_data::Note note);
 
     void silence(const command::Target channel);
 
@@ -24,5 +32,6 @@ public:
     void setVolume(const command::Target channel, const units::machine::Volume volume);
     void setArticulation(const command::Target channel, const units::machine::Articulation articulation);
 
-
+private:
+    int targetChannelToVectorIndex(const command::Target channel) const;
 };

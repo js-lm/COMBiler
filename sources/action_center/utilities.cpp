@@ -104,12 +104,12 @@ command::Target ActionCenter::targetFromToggleIndex(int toggleIndex){
     return static_cast<command::Target>(clampedIndex);
 }
 
-command::Articulation::Type ActionCenter::articulationFromToggleIndex(int toggleIndex){
+units::machine::Articulation ActionCenter::articulationFromToggleIndex(int toggleIndex){
     const int clampedIndex{std::clamp(toggleIndex, 
         constants::action_center::MinimumArticulationIndex, 
         constants::action_center::MaximumArticulationIndex
     )};
-    return static_cast<command::Articulation::Type>(clampedIndex);
+    return static_cast<units::machine::Articulation>(clampedIndex);
 }
 
 command::Command ActionCenter::commandFromPromptState(const program_states::Interface::Prompts &promptState){
