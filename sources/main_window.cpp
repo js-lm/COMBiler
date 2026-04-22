@@ -115,8 +115,8 @@ void DEBUG_sf2(){
 
 int MainWindow::run(){
 
-    DEBUG_sf2();
-    return 0;
+    // DEBUG_sf2();
+    // return 0;
 
     initialize();
 

@@ -8,6 +8,34 @@
 
 #include "utilities/enum_map.hpp"
 
+namespace units{
+
+    namespace midi{
+
+        using Channel   = uint8_t;
+        using Velocity  = uint8_t;
+        using SoundPresetID = int8_t;
+
+    } // namespace midi
+
+    namespace machine{
+
+        // using InstrumentChannel = uint8_t;
+        using Tempo = uint8_t;
+        using Volume = uint8_t;
+
+        enum class Articulation : uint8_t{
+            Staccato,
+            Normal,
+            Legato,
+            Sustain,
+            Infinite
+        };
+
+    } // namespace
+
+} // namespace units
+
 namespace music_data{
 
     // enum class Channel{
@@ -342,23 +370,16 @@ namespace command{
 
 
     struct Tempo{
-        uint8_t tempo{80};
+        units::machine::Tempo tempo{80};
     };
 
     struct Volume{
-        uint8_t volume{8};
+        units::machine::Volume volume{8};
         Target target{Target::All_Channels};
     };
 
     struct Articulation{
-        enum class Type : uint8_t{
-            Staccato,
-            Normal,
-            Legato,
-            Sustain,
-            Infinite
-        } articulation;
-
+        units::machine::Articulation articulation;
         Target target{Target::All_Channels};
     };
 
