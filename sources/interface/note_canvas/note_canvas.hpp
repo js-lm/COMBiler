@@ -38,6 +38,7 @@ namespace interface{
         static void drawSelection(program_states::InterfaceContext &context);
         static void drawPasteGhost(program_states::InterfaceContext &context);
 
+        static void drawPlayhead(program_states::InterfaceContext &context);
 
     private:
         static void handleZoom(program_states::InterfaceContext &context);

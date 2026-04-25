@@ -174,4 +174,11 @@ namespace constants::interface_layout::note_canvas{
         constexpr float TransposeTextSpacingInPixels{1.0f};
     } // namespace paste_ghost
 
+    namespace playhead{
+        constexpr Color HeadColor{230, 40, 40, 255}; // TODO: define a proper theme color or use raygui theme color
+        constexpr float HeadThickness{2.0f};
+        constexpr float BackgroundAlpha{.3f};
+
+    } // namespace playhead
+
 } // namespace constants::note_canvas

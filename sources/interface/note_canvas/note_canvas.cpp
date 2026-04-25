@@ -34,4 +34,5 @@ void NoteCanvas::draw(program_states::InterfaceContext &context){
 
 	drawGrid(context);
 	drawScrollBar(context);
+	drawPlayhead(context);
 }
