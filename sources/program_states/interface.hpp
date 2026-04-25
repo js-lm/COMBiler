@@ -80,10 +80,10 @@ namespace program_states{
         } sidebar{};
 
         struct NavigationBar{
+            // bool isPlaying{false};
+
             bool isPreviousPageButtonPressed{false};
             bool isNextPageButtonPressed    {false};
-            bool isPlayButtonPressed        {false};
-            bool isStopButtonPressed        {false};
 
             bool isPageCopyButtonPressed    {false};
             bool isPagePasteButtonPressed   {false};

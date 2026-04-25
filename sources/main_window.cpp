@@ -60,9 +60,6 @@ int MainWindow::run(){
 
     initialize();
 
-    if(midiManager_){
-        DEBUG_sf2(*midiManager_);
-    }
 
     while(!WindowShouldClose()){
         draw();
@@ -107,6 +104,7 @@ void MainWindow::initialize(){
     canvasManager_ = std::make_unique<CanvasManager>(getInterfaceContext());
     midiManager_ = std::make_unique<MidiManager>(getMidiContext());
     midiManager_->initialization();
+    playbackManager_ = std::make_unique<PlaybackManager>(getMidiContext());
 
     // stagedObserver_ = actionCenter_.getStagedObserver();
     systemState_.project.data = actionCenter_->getStagedObserver();
@@ -115,13 +113,9 @@ void MainWindow::initialize(){
 
 void MainWindow::update(){
 
-    if(midiManager_){
-        midiManager_->update();
-    }
-
-    if(canvasManager_ && actionCenter_){
-        canvasManager_->update(*actionCenter_);
-    }
+    // midiManager_->update();
+    canvasManager_->update(*actionCenter_);
+    playbackManager_->update();
 
     handleEvents();
 }

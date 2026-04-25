@@ -16,6 +16,7 @@ namespace program_states{
 
     struct Machine{
         bool isPlaying{false};
+        int playheadIndex{0}; // relative to the page
 
         command::Tempo tempo{};
         

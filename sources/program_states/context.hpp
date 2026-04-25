@@ -11,18 +11,22 @@ namespace program_states{
         const System &system;
         const Layout &layout;
         
-        Interface &interface;
+        Interface   &interface;
+        Machine     &machine;
     };
 
     struct MidiContext{
+        const System &system;
+
         Machine &machine;
     };
 
     struct ReadOnlyContext{
-        const System &system;
-        const Layout &layout;
-        
+        const System    &system;
+        const Machine   &machine;
+        const Layout    &layout;
         const Interface &interface;
+
     };
 
 } // namespace program_states

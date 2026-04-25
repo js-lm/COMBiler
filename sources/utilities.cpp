@@ -59,11 +59,13 @@ program_states::InterfaceContext MainWindow::getInterfaceContext(){
     return program_states::InterfaceContext{
         .system     {systemState_},
         .layout     {layoutState_},
-        .interface  {interfaceState_}
+        .interface  {interfaceState_},
+        .machine    {machineState_}
     };
 }
 program_states::MidiContext MainWindow::getMidiContext(){
     return program_states::MidiContext{
+        .system {systemState_},
         .machine{machineState_}
     };
 }
@@ -71,6 +73,7 @@ program_states::MidiContext MainWindow::getMidiContext(){
 program_states::ReadOnlyContext MainWindow::getReadOnlyContext(){
     return program_states::ReadOnlyContext{
         .system     {systemState_},
+        .machine    {machineState_},
         .layout     {layoutState_},
         .interface  {interfaceState_}
     };

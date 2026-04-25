@@ -9,6 +9,7 @@
 #include "canvas_manager/canvas_manager.hpp"
 #include "timeline_manager/timeline_manager.hpp"
 #include "midi_manager/midi_manager.hpp"
+#include "playback_manager/playback_manager.hpp"
 
 #include "program_states/context.hpp"
 
@@ -28,6 +29,7 @@ private:
     std::unique_ptr<CanvasManager>      canvasManager_;
     std::unique_ptr<TimelineManager>    timelineManager_;
     std::unique_ptr<MidiManager>        midiManager_;
+    std::unique_ptr<PlaybackManager>    playbackManager_;
 
 private:
     RenderTexture2D interfaceRenderTexture_{};

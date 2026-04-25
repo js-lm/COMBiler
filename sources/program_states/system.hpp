@@ -24,7 +24,7 @@ namespace program_states{
 
         struct Project{
 
-            int currentPage{1};
+            int currentPage{1}; // 1 base
 
             std::weak_ptr<ActionCenter::StagedSlot> data{};
 
@@ -39,7 +39,10 @@ namespace program_states{
             };
         } noteCanvas{};
 
+        // struct Machine{
+        //     bool isPlaying{false};
 
+        // } machine{};
 
     };
 

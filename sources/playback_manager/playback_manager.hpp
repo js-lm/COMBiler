@@ -6,6 +6,9 @@ class PlaybackManager{
 private:
     program_states::MidiContext context_;
 
+private:
+    bool wasPlaying_{false};
+
 public:
     PlaybackManager(program_states::MidiContext context)
         : context_{context}
@@ -15,4 +18,10 @@ public:
 
     void initialization();
 
+    void update();
+
+private:
+    void setupPlayback();
+
+    void resetCachedMachineState();
 };
