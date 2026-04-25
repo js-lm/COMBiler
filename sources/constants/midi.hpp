@@ -6,7 +6,19 @@
 
 namespace constants::midi{
 
-    constexpr size_t MaximumSimultaneousNote{16}; // 64 max / 4 channels
+    constexpr size_t MaximumSimultaneousNotePerInstrument{16}; // 64 max / 4 channels
+
+    constexpr int DefaultOutputSampleRate{44100};
+    constexpr int OutputSampleSizeInBits{16};
+    constexpr int OutputChannelCount{2};
+    constexpr int StreamChunkFrameCount{1024};
+    constexpr int MaximumVoiceCount{256};
+    constexpr float GlobalGainInDecibel{.0f};
+
+    constexpr int DrumSoundFontChannel{9};
+    constexpr int DrumSoundPresetNumber{0};
+
+    constexpr const char *SoundFontPath{"soundfonts/gm_bank.sf2"};
 
     constexpr utilities::EnumMap<music_data::Instrument, units::midi::SoundPresetID> InstrumentsMap{
         // Keyboards

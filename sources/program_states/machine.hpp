@@ -41,7 +41,7 @@ namespace program_states{
         //     void clear();
         // };
 
-        using ActiveNotes = utilities::StaticSet<music_data::Note, constants::midi::MaximumSimultaneousNote>;
+        using ActiveNotes = utilities::StaticSet<music_data::Note, constants::midi::MaximumSimultaneousNotePerInstrument>;
 
         std::array<ActiveNotes, constants::project_data::NumberOfInstrumentChannels> activeNotes{};
     };

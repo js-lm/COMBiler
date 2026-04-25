@@ -12,8 +12,8 @@ namespace units{
 
     namespace midi{
 
-        using Channel   = uint8_t;
-        using Velocity  = uint8_t;
+        using SoundFontChannel = uint8_t;
+        
         using SoundPresetID = int8_t;
 
     } // namespace midi

@@ -8,6 +8,7 @@
 #include "interface/interface.hpp"
 
 #include "program_states/context.hpp"
+#include "program_states/project_data.hpp"
 
 #include <cstdlib>
 #include <cstring>
@@ -21,104 +22,47 @@
 
 #include "debug_utilities.hpp"
 
-#include <tsf.h>
+void DEBUG_sf2(MidiManager &midiManager){
+    const auto &projectData{program_states::DEBUG_preset::projectData};
+    const auto &instrumentChannel{projectData.pages[0].instrumentChannels[0]};
 
-void DEBUG_sf2(){
-    InitAudioDevice();
+    constexpr command::Target targetChannel{command::Target::Channel_1};
 
-    std::string soundFontPath{GetApplicationDirectory()};
-    soundFontPath += "soundfonts/gm_bank.sf2";
-    
-    if(!FileExists(soundFontPath.c_str())){
-        DEBUG_PRINT("soundFontPath: {}", soundFontPath.c_str());
-    }
+    midiManager.setInstrument(targetChannel, constants::instruments::DefaultInstrumentByChannel[0]);
+    midiManager.setVolume(targetChannel, 10);
 
-    tsf *soundFont{tsf_load_filename(soundFontPath.c_str())};
+    for(int stepIndex{0};
+        stepIndex < 32;
+        stepIndex++
+    ){
+        const auto &optionalInstrumentChannelData{instrumentChannel[stepIndex]};
+        if(!optionalInstrumentChannelData) continue;
 
-    const int sampleRate{10000}; // 44100
-    const int outputChannelCount{2};
-    const int totalFrameCount{sampleRate * 2};
-    const int noteOnFrameCount{sampleRate / 2};
-    const int releaseFrameCount{totalFrameCount - noteOnFrameCount};
-    const int midiChannel{0};
-    const int midiNoteNumber{60};
-
-    tsf_set_output(soundFont, TSF_STEREO_INTERLEAVED, sampleRate, .0f);
-    tsf_note_on(soundFont, midiChannel, midiNoteNumber, .9f);
-
-    std::vector<int16_t> interleavedSamples(static_cast<size_t>(totalFrameCount * outputChannelCount));
-    tsf_render_short(soundFont, interleavedSamples.data(), noteOnFrameCount, 0);
-
-    tsf_note_off(soundFont, midiChannel, midiNoteNumber);
-    tsf_render_short(
-        soundFont,
-        interleavedSamples.data() + (noteOnFrameCount * outputChannelCount),
-        releaseFrameCount,
-        0
-    );
-
-    Wave soundWave{};
-    soundWave.frameCount = totalFrameCount;
-    soundWave.sampleRate = sampleRate;
-    soundWave.sampleSize = 16;
-    soundWave.channels = outputChannelCount;
-    soundWave.data = interleavedSamples.data();
-
-    Sound renderedSound{LoadSoundFromWave(soundWave)};
-    if(renderedSound.stream.buffer){
-        PlaySound(renderedSound);
-        
-        while(IsSoundPlaying(renderedSound)){
-            DEBUG_SLEEP_MS(10);
+        if(std::holds_alternative<music_data::Instrument>(*optionalInstrumentChannelData)){
+            const music_data::Instrument instrument{std::get<music_data::Instrument>(*optionalInstrumentChannelData)};
+            midiManager.setInstrument(targetChannel, instrument);
+            continue;
         }
-        UnloadSound(renderedSound);
+
+        const music_data::Note note{std::get<music_data::Note>(*optionalInstrumentChannelData)};
+        
+        midiManager.noteOn(targetChannel, note);
+        WaitTime(.35);
+
+        midiManager.noteOff(targetChannel, note);
+        WaitTime(.15);
     }
 
-    // AudioStream outputAudioStream{LoadAudioStream(sampleRate, 16, outputChannelCount)};
-    // if(outputAudioStream.buffer){
-    //     const int streamChunkFrameCount{1024};
-    //     int streamedFrameOffset{0};
-
-    //     PlayAudioStream(outputAudioStream);
-
-    //     while(streamedFrameOffset < totalFrameCount){
-    //         if(IsAudioStreamProcessed(outputAudioStream)){
-    //             const int remainingFrameCount{totalFrameCount - streamedFrameOffset};
-    //             const int currentChunkFrameCount{
-    //                 remainingFrameCount < streamChunkFrameCount
-    //                     ? remainingFrameCount
-    //                     : streamChunkFrameCount
-    //             };
-
-    //             UpdateAudioStream(
-    //                 outputAudioStream,
-    //                 interleavedSamples.data() + (streamedFrameOffset * outputChannelCount),
-    //                 currentChunkFrameCount
-    //             );
-
-    //             streamedFrameOffset += currentChunkFrameCount;
-    //         }else{
-    //             DEBUG_SLEEP_MS(1);
-    //         }
-    //     }
-
-    //     const int playbackDurationMs{(totalFrameCount * 1000) / sampleRate};
-    //     DEBUG_SLEEP_MS(playbackDurationMs + 50);
-
-    //     StopAudioStream(outputAudioStream);
-    //     UnloadAudioStream(outputAudioStream);
-    // }
-
-    tsf_close(soundFont);
-    CloseAudioDevice();
+    midiManager.silence(targetChannel);
 }
 
 int MainWindow::run(){
 
-    // DEBUG_sf2();
-    // return 0;
-
     initialize();
+
+    if(midiManager_){
+        DEBUG_sf2(*midiManager_);
+    }
 
     while(!WindowShouldClose()){
         draw();
@@ -162,6 +106,7 @@ void MainWindow::initialize(){
     actionCenter_ = std::make_unique<ActionCenter>();
     canvasManager_ = std::make_unique<CanvasManager>(getInterfaceContext());
     midiManager_ = std::make_unique<MidiManager>(getMidiContext());
+    midiManager_->initialization();
 
     // stagedObserver_ = actionCenter_.getStagedObserver();
     systemState_.project.data = actionCenter_->getStagedObserver();
@@ -169,6 +114,10 @@ void MainWindow::initialize(){
 }
 
 void MainWindow::update(){
+
+    if(midiManager_){
+        midiManager_->update();
+    }
 
     if(canvasManager_ && actionCenter_){
         canvasManager_->update(*actionCenter_);

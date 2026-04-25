@@ -24,15 +24,17 @@ namespace utilities{
             }
         }
 
-        void add(const Type &value){
-            if(contains(value)) return;
-            if(size_ >= Capacity) return;
+        bool add(const Type &value){
+            if(contains(value)) return false;
+            if(size_ >= Capacity) return false;
 
             data_[size_] = value;
             size_++;
+
+            return true;
         }
 
-        void remove(const Type &value){
+        bool remove(const Type &value){
             for(size_t index{0}; index < size_; index++){
                 if(data_[index] != value) continue;
 
@@ -44,8 +46,10 @@ namespace utilities{
 
                 size_--;
 
-                return;
+                return true;
             }
+            
+            return false;
         }
 
         void clear(){ size_ = 0;}
