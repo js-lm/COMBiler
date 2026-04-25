@@ -90,14 +90,6 @@ namespace constants::instruments{
         {music_data::Instrument::Drum_Sets,         216}
     };
 
-    constexpr std::array<music_data::Instrument, constants::project_data::NumberOfInstrumentChannels> DefaultInstrumentByChannel{
-        music_data::Instrument::Marimba,
-        music_data::Instrument::Violin,
-        music_data::Instrument::Finger_Bass,
-        music_data::Instrument::Shamisen
-    };
-
-    // TODO: I am putting these helper functions everywhere...
     inline std::string instrumentIconMarkupText(music_data::Instrument instrument){
         return "#" + std::to_string(InstrumentIconMappings[instrument]) + "#";
     }
@@ -111,7 +103,5 @@ namespace constants::instruments{
     inline std::string instrumentListViewEntryText(music_data::Instrument instrument){
         return instrumentIconMarkupText(instrument) + " " + instrumentDisplayNameText(instrument);
     }
-    
-
 
 } // namespace constants::instruments

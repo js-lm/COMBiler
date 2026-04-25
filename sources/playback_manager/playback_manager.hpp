@@ -2,12 +2,16 @@
 
 #include "program_states/context.hpp"
 
+#include "midi_manager/midi_manager.hpp"
+
 class PlaybackManager{
 private:
     program_states::MidiContext context_;
 
 private:
     bool wasPlaying_{false};
+
+    float timeSinceLastNote_{.0f};
 
 public:
     PlaybackManager(program_states::MidiContext context)
@@ -18,10 +22,10 @@ public:
 
     void initialization();
 
-    void update();
+    void update(MidiManager &midiManager);
 
 private:
     void setupPlayback();
 
-    void resetCachedMachineState();
+    void nextNote(MidiManager &midiManager);
 };

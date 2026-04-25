@@ -165,7 +165,7 @@ float NoteCanvas::maximumVerticalZoomFactorForSquareCell(program_states::Interfa
 }
 
 music_data::Instrument NoteCanvas::instrumentAtPageStart(const program_states::ProjectData &projectData, size_t instrumentChannelIndex, int currentPageIndex){
-    auto instrument{constants::instruments::DefaultInstrumentByChannel[instrumentChannelIndex]};
+    auto instrument{constants::midi::DefaultInstrument};
 
 	for(int pageIndex{0}; pageIndex < currentPageIndex; pageIndex++){
 		const auto &channel{projectData.pages[pageIndex].instrumentChannels[instrumentChannelIndex]};

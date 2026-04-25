@@ -28,7 +28,7 @@ void DEBUG_sf2(MidiManager &midiManager){
 
     constexpr command::Target targetChannel{command::Target::Channel_1};
 
-    midiManager.setInstrument(targetChannel, constants::instruments::DefaultInstrumentByChannel[0]);
+    midiManager.setInstrument(targetChannel, constants::midi::DefaultInstrument);
     midiManager.setVolume(targetChannel, 10);
 
     for(int stepIndex{0};
@@ -115,7 +115,7 @@ void MainWindow::update(){
 
     // midiManager_->update();
     canvasManager_->update(*actionCenter_);
-    playbackManager_->update();
+    playbackManager_->update(*midiManager_);
 
     handleEvents();
 }

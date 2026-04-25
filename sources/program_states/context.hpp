@@ -18,7 +18,8 @@ namespace program_states{
     struct MidiContext{
         const System &system;
 
-        Machine &machine;
+        Interface   &interface;
+        Machine     &machine;
     };
 
     struct ReadOnlyContext{

@@ -18,7 +18,7 @@ namespace program_states{
         bool isPlaying{false};
         int playheadIndex{0}; // relative to the page
 
-        command::Tempo tempo{};
+        units::machine::Tempo tempo{};
         
         std::array<music_data::Instrument, constants::project_data::NumberOfInstrumentChannels> instruments{};
         // std::array<utilities::EnumSet<music_data::Note>, constants::project_data::NumberOfInstrumentChannels> onNotes{};
@@ -45,6 +45,19 @@ namespace program_states{
         using ActiveNotes = utilities::StaticSet<music_data::Note, constants::midi::MaximumSimultaneousNotePerInstrument>;
 
         std::array<ActiveNotes, constants::project_data::NumberOfInstrumentChannels> activeNotes{};
+
+    public:
+        Machine(){ reset();}
+        ~Machine() = default;
+
+        void reset(){
+            // instruments = constants::midi::DefaultInstruments;
+
+            tempo = constants::midi::DefaultTempo;
+            instruments.fill(constants::midi::DefaultInstrument);
+            volumes.fill(constants::midi::DefaultVolume);
+            articulations.fill(constants::midi::DefaultArticulation);
+        }
     };
 
 } // namespace program_states

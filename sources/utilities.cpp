@@ -65,8 +65,9 @@ program_states::InterfaceContext MainWindow::getInterfaceContext(){
 }
 program_states::MidiContext MainWindow::getMidiContext(){
     return program_states::MidiContext{
-        .system {systemState_},
-        .machine{machineState_}
+        .system     {systemState_},
+        .interface  {interfaceState_},
+        .machine    {machineState_}
     };
 }
 

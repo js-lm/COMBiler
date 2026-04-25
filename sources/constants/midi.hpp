@@ -6,6 +6,8 @@
 
 namespace constants::midi{
 
+    constexpr int MaximumNotePerSecond{8};
+
     constexpr size_t MaximumSimultaneousNotePerInstrument{16}; // 64 max / 4 channels
 
     constexpr int DefaultOutputSampleRate{44100};
@@ -95,5 +97,18 @@ namespace constants::midi{
         // Drum Sets 
         {music_data::Instrument::Drum_Sets, -1} // special: channel 10
     };
+
+    // constexpr std::array<music_data::Instrument, constants::project_data::NumberOfInstrumentChannels> DefaultInstruments{
+    //     music_data::Instrument::Marimba,
+    //     music_data::Instrument::Violin,
+    //     music_data::Instrument::Finger_Bass,
+    //     music_data::Instrument::Shamisen
+    // };
+
+    constexpr music_data::Instrument DefaultInstrument{music_data::Instrument::Grand_Piano};
+    constexpr units::machine::Tempo DefaultTempo{100};
+    constexpr units::machine::Volume DefaultVolume{10};
+
+    constexpr units::machine::Articulation DefaultArticulation{units::machine::Articulation::Normal};
 
 } // namespace constants::midi

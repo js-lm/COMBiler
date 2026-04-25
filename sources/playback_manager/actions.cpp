@@ -6,7 +6,12 @@
 #include "constants.hpp"
 #include "aliases.h"
 
+#include "debug_utilities.hpp"
+
 void PlaybackManager::setupPlayback(){
+    context_.machine.reset();
+    timeSinceLastNote_ = .0f;
+    context_.machine.playheadIndex = 0;
 
     const auto projectDataSlot{context_.system.project.data.lock()};
     if(!projectDataSlot) return;
@@ -25,16 +30,16 @@ void PlaybackManager::setupPlayback(){
         return true;
     }};
 
-    int currentPageNumber{context_.system.project.currentPage - 1};
+    int currentPageIndex{context_.system.project.currentPage - 1};
 
     do{
 
-        const auto &currentPage{projectData->pages[currentPageNumber]};
+        const auto &currentPage{projectData->pages[currentPageIndex]};
         
         const int currentPageNoteCount{currentPage.noteInThisPage.value_or(projectData->metadata.notePerPage)};
 
         int startHead{
-            (currentPageNumber == context_.system.project.currentPage - 1) 
+            (currentPageIndex == context_.system.project.currentPage - 1) 
                 ? context_.machine.playheadIndex
                 : currentPageNoteCount
         };
@@ -65,7 +70,7 @@ void PlaybackManager::setupPlayback(){
 
                         if constexpr(std::is_same_v<command::Tempo, Type>){
                             if(!isTempoFound){
-                                context_.machine.tempo = commandToken;
+                                context_.machine.tempo = commandToken.tempo;
                                 isTempoFound = true;
                             }
                         }else if constexpr(std::is_same_v<command::Volume, Type>){
@@ -121,12 +126,74 @@ void PlaybackManager::setupPlayback(){
             if(isAllFound()) return;
         }
 
-        currentPageNumber--;
+        currentPageIndex--;
 
-    }while(currentPageNumber >= 0);
+    }while(currentPageIndex >= 0);
 
     // while(context_.system.project.currentPage > 1 && )
 
 // interfaceState_.navigationBar.requestedPageNumber
 
+}
+
+void PlaybackManager::nextNote(MidiManager &midiManager){
+    // TODO: duplications
+    const auto projectDataSlot{context_.system.project.data.lock()};
+    if(!projectDataSlot) return;
+    const auto &projectData{projectDataSlot->data};
+
+    int currentPageIndex{context_.system.project.currentPage - 1};
+
+    const auto &currentPage{projectData->pages[currentPageIndex]};
+    const int currentPageNoteCount{currentPage.noteInThisPage.value_or(projectData->metadata.notePerPage)};
+
+    auto &machine{context_.machine};
+    auto &playheadIndex{machine.playheadIndex};
+
+    for(size_t channel{0}; channel < constants::project_data::NumberOfInstrumentChannels; channel++){
+
+        currentPage.instrumentChannels[channel][playheadIndex];
+        
+
+        if(currentPage.commandChannel[playheadIndex]){
+
+            // TODO: constants... my god, do i really want to add that?
+            const auto &commandToken{currentPage.commandChannel[playheadIndex].value()};
+
+            if(const auto *command{std::get_if<command::Command>(&commandToken)}){
+
+                std::visit([&](const auto &command){
+                    using Type = std::decay_t<decltype(command)>;
+
+                    if constexpr(std::is_same_v<command::Tempo, Type>){
+                        midiManager.setTempo(command);
+                    }else if constexpr(std::is_same_v<command::Volume, Type>){
+                        midiManager.setVolume(command.target, command.volume);
+                    }else if constexpr(std::is_same_v<command::Articulation, Type>){
+                        midiManager.setArticulation(command.target, command.articulation);
+                    }
+
+                }, *command);
+            }
+
+            // DEBUG_PRINT("Has command");
+        }
+
+    }
+
+    if(playheadIndex >= currentPageNoteCount - 1){
+        if(context_.interface.navigationBar.isPageRepeatEnabled){
+            setupPlayback();
+        }else{
+            if(context_.system.project.currentPage >= projectData->pages.size()){
+                machine.isPlaying = false;
+            }else{
+                context_.interface.navigationBar.requestedPageNumber = context_.system.project.currentPage + 1;
+            }
+
+            playheadIndex = 0;
+        }
+    }else{
+        playheadIndex++;
+    }
 }
