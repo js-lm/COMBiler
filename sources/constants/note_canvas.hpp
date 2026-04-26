@@ -6,6 +6,10 @@
 
 #include "aliases.hpp"
 
+namespace command{
+    enum class Target : uint8_t;
+}
+
 namespace constants::interface_layout::note_canvas{
 
     constexpr int NumberOfRow{75};

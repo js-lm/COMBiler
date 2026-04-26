@@ -4,6 +4,8 @@
 
 #include "midi_manager/midi_manager.hpp"
 
+#include "command/command_type.hpp"
+
 class PlaybackManager{
 private:
     program_states::MidiContext context_;

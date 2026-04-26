@@ -9,6 +9,8 @@
 #include "aliases.hpp"
 #include "constants.hpp"
 
+#include "command/command_type.hpp"
+
 namespace program_states{
 
     struct Interface{

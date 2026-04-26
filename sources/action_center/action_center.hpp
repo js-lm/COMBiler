@@ -8,6 +8,8 @@
 
 #include "constants.hpp"
 
+#include "command/command_type.hpp"
+
 class ActionCenter{
 public:
     struct StagedSlot{ std::shared_ptr<program_states::ProjectData> data;};

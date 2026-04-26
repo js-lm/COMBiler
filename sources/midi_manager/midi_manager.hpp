@@ -13,6 +13,8 @@
 
 #include "program_states/context.hpp"
 
+#include "command/command_type.hpp"
+
 class MidiManager{
 public:
     inline static tsf *soundFont{nullptr};

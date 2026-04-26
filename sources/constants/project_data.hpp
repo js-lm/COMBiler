@@ -9,5 +9,6 @@ namespace constants::project_data{
     
     constexpr int NumberOfInstrumentChannels{4};
 
+    constexpr int MaximumNumberOfConstants{64};
 
 } // namespace constants::project_data

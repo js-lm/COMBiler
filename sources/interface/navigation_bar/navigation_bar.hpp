@@ -2,6 +2,8 @@
 
 #include "program_states/context.hpp"
 
+#include "command/command_type.hpp"
+
 class TimelineManager;
 
 namespace interface{

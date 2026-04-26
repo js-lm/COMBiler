@@ -8,19 +8,19 @@
 #include "aliases.hpp"
 #include "constants.hpp"
 
+#include "command/command_type.hpp"
+#include "command/command_palette.hpp"
+
 namespace program_states{
 
     struct ProjectData{
 
+        command::CommandPalette commandPalette;
+
         struct Metadata{
 
             int numberOfPages{16};
-
-            int tempo{16};
             int notePerPage{32};
-
-            // std::string author;
-            // std::string 
 
         } metadata{};
 
