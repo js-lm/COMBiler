@@ -8,7 +8,7 @@ void PlaybackManager::update(MidiManager &midiManager){
     auto &machine{context_.machine};
 
     if(machine.isPlaying != wasPlaying_){
-        if(machine.isPlaying) setupPlayback();
+        if(machine.isPlaying) setupPlayback(midiManager);
         else stopPlayback(midiManager);
     }
 
@@ -22,17 +22,17 @@ void PlaybackManager::updatePlayback(MidiManager &midiManager){
 
     if(!machine.isPlaying) return;
 
-    const float tempoPercentage{machine.tempo / 100.0f};
+    const float tempoPercentage{machine.tempo / static_cast<float>(constants::prompts::TempoPercentageMaximumValue)};
     const float notePerSecond{constants::midi::MaximumNotePerSecond * tempoPercentage};
     const float noteDuration{1.0f / notePerSecond};
 
     // DEBUG_PRINT_IF_CHANGED("tempoPercentage:{}, notePerSecond:{}, noteDuration:{}", tempoPercentage, notePerSecond, noteDuration);
 
+    timeSinceLastNote_ += GetFrameTime();
+
     if(timeSinceLastNote_ >= noteDuration){
         timeSinceLastNote_ -= noteDuration;
         nextNote(midiManager);
-    }else{
-        timeSinceLastNote_ += GetFrameTime();
     }
     
 }

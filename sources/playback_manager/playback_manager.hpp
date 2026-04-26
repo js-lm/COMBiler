@@ -25,7 +25,7 @@ public:
     void update(MidiManager &midiManager);
 
 private:
-    void setupPlayback();
+    void setupPlayback(MidiManager &midiManager);
     void updatePlayback(MidiManager &midiManager);
     void stopPlayback(MidiManager &midiManager);
 
@@ -37,4 +37,7 @@ private:
         std::optional<music_data::Note> currentNote, 
         MidiManager &midiManager
     );
+
+private:
+    command::Target channelIndexToChannelTarget(units::midi::SoundFontChannel channel);
 };
