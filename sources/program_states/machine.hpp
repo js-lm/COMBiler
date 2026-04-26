@@ -57,6 +57,10 @@ namespace program_states{
             instruments.fill(constants::midi::DefaultInstrument);
             volumes.fill(constants::midi::DefaultVolume);
             articulations.fill(constants::midi::DefaultArticulation);
+
+            for(auto &notesSet : activeNotes){
+                notesSet.clear();
+            }
         }
     };
 

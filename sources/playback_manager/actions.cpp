@@ -150,35 +150,53 @@ void PlaybackManager::nextNote(MidiManager &midiManager){
     auto &machine{context_.machine};
     auto &playheadIndex{machine.playheadIndex};
 
-    for(size_t channel{0}; channel < constants::project_data::NumberOfInstrumentChannels; channel++){
+    for(units::midi::SoundFontChannel channel{0}; channel < constants::project_data::NumberOfInstrumentChannels; channel++){
 
-        currentPage.instrumentChannels[channel][playheadIndex];
-        
+        std::optional<music_data::Note> currentNote{};
 
-        if(currentPage.commandChannel[playheadIndex]){
+        if(currentPage.instrumentChannels[channel][playheadIndex]){
+            // const auto &instrumentChannelData{currentPage.instrumentChannels[channel][playheadIndex].value()};
+            
+            // if(const auto *data{std::get_if<music_data::Instrument>(&instrumentChannelData)}){
+            std::visit([&](const auto &noteData){
+                using Type = std::decay_t<decltype(noteData)>;
 
-            // TODO: constants... my god, do i really want to add that?
-            const auto &commandToken{currentPage.commandChannel[playheadIndex].value()};
+                if constexpr(std::is_same_v<music_data::Note, Type>){
 
-            if(const auto *command{std::get_if<command::Command>(&commandToken)}){
+                    // midiManager.noteOn(static_cast<command::Target>(channel + 1), noteData);
+                    // updateNoteState(channel, noteData);
+                    currentNote = noteData;
 
-                std::visit([&](const auto &command){
-                    using Type = std::decay_t<decltype(command)>;
+                }else if constexpr(std::is_same_v<music_data::Instrument, Type>){
+                    midiManager.setInstrument(static_cast<command::Target>(channel + 1/* TODO: a bit risky */), noteData);
+                }
 
-                    if constexpr(std::is_same_v<command::Tempo, Type>){
-                        midiManager.setTempo(command);
-                    }else if constexpr(std::is_same_v<command::Volume, Type>){
-                        midiManager.setVolume(command.target, command.volume);
-                    }else if constexpr(std::is_same_v<command::Articulation, Type>){
-                        midiManager.setArticulation(command.target, command.articulation);
-                    }
+            }, currentPage.instrumentChannels[channel][playheadIndex].value());
+            // }else{
 
-                }, *command);
-            }
-
-            // DEBUG_PRINT("Has command");
+            // }
         }
 
+        updateNoteState(channel, currentNote, midiManager);
+
+    }
+
+    if(currentPage.commandChannel[playheadIndex]){
+        // TODO: constants... my god, do i really want to add that?
+        const auto &commandToken{currentPage.commandChannel[playheadIndex].value()};
+        if(const auto *command{std::get_if<command::Command>(&commandToken)}){
+            std::visit([&](const auto &command){
+                using Type = std::decay_t<decltype(command)>;
+
+                if constexpr(std::is_same_v<command::Tempo, Type>){
+                    midiManager.setTempo(command);
+                }else if constexpr(std::is_same_v<command::Volume, Type>){
+                    midiManager.setVolume(command.target, command.volume);
+                }else if constexpr(std::is_same_v<command::Articulation, Type>){
+                    midiManager.setArticulation(command.target, command.articulation);
+                }
+            }, *command);
+        }
     }
 
     if(playheadIndex >= currentPageNoteCount - 1){

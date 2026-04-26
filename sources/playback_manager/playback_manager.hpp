@@ -26,6 +26,15 @@ public:
 
 private:
     void setupPlayback();
+    void updatePlayback(MidiManager &midiManager);
+    void stopPlayback(MidiManager &midiManager);
 
     void nextNote(MidiManager &midiManager);
+
+private:
+    void updateNoteState(
+        units::midi::SoundFontChannel channel, 
+        std::optional<music_data::Note> currentNote, 
+        MidiManager &midiManager
+    );
 };
