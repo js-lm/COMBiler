@@ -1,0 +1,60 @@
+#
+# rgl layout text file (v4.0) - raygui layout file generated using rGuiLayout
+#
+# Number of controls:     41
+#
+# Ref. window:    r <x> <y> <width> <height>
+# Anchor info:    a <id> <name> <posx> <posy> <enabled>
+# Control info:   c <id> <type> <name> <rectangle> <anchor_id> <text>
+#
+r 0 40 -1 -1
+a 001 ConstantsManagerAnchor 0 0 1
+a 002 EditConstantAnchor 432 32 1
+a 003 TempoAnchor 432 112 1
+a 004 TargetAnchor 432 112 1
+a 005 SwapAnchor 504 208 1
+a 006 ArticulationAnchor 432 160 1
+a 007 VolumeAnchor 432 160 1
+a 008 WarningAnchor 0 0 1
+a 009 InfoAnchor 0 0 1
+c 000 0 ConstantsManagerWindowBox 0 0 688 288 1 Constants Manager - Unsaved*
+c 001 20 ConstantsScrollPanel 8 56 416 224 1 
+c 002 1 EditNameGroupBox 0 0 248 40 2 Edit Constant
+c 003 4 TextConstantLabel 8 8 32 24 2 Name:
+c 004 12 EditConstantTextBox 40 8 192 24 2 Untitled Constant
+c 005 9 TypeToggleGroup 440 80 56 24 1 None;Tempo;Volume;Articulation
+c 006 4 ListIdLabel 16 56 16 24 1 00
+c 007 4 ListTypeLabel 200 56 80 24 1 #122#Volume
+c 008 4 ListValueLabel 288 56 120 24 1 Target: Ch3, Value: 8
+c 009 4 ListNameLabel 40 56 152 24 1 Main Volume
+c 010 3 ConstantItem 8 56 408 24 1 
+c 011 1 TempoGroupBox 0 0 248 88 3 Tempo
+c 012 1 TargetGroupBox 0 0 248 40 4 Target
+c 013 9 TargetToggleGroup 64 8 32 24 4 All;1;2;3;4
+c 014 4 TargetChannelLabel 8 8 56 24 4 Channel:
+c 015 16 TempoSlider 64 32 168 16 3 Playback:
+c 016 5 CommitButton 600 256 80 24 1 #112#Commit*
+c 017 5 RevertButton 504 256 80 24 1 #113#Revert
+c 018 1 SwapGroupBox 0 0 176 40 5 Swap
+c 019 5 SwapButton 120 8 40 24 5 Swap
+c 020 4 SwapLeftLabel 8 8 24 24 5 Left:
+c 021 12 SwapLeftTextBox 32 8 24 24 5 32
+c 022 12 SwapRightTextBox 88 8 24 24 5 12
+c 023 4 SwapRightLabel 58 8 32 24 5 Right:
+c 024 1 ArticulationGroupBox 0 0 248 40 6 Articulation
+c 025 9 ArticulationToggleGroup 16 8 40 24 6 #048#;#049#;#050#;#051#;#052#
+c 026 1 VolumeGroupBox 0 0 248 40 7 Volume
+c 027 9 VolumeToggleGroup 56 8 16 24 7 1;2;3;4;5;6;7;8;9;10
+c 028 4 VolumeLabel 8 8 48 24 7 Volume:
+c 029 5 LoadButton 432 208 64 72 1 Load
+c 030 0 WarningWindowBox 0 0 272 80 8 Warning!
+c 031 4 WarningLabel 8 24 256 24 8 You haven't committed your changes. Commit now?
+c 032 5 WarningYesButton 160 48 64 24 8 Yes
+c 033 5 WarningNoButton 48 48 64 24 8 No
+c 034 0 InfoWindowBox 0 0 160 80 9 Info
+c 035 4 InfoLabel 8 24 152 24 9 The constant is not defined
+c 036 5 InfoOKButton 48 48 64 24 9 OK
+c 037 19 IDBar 8 32 24 24 1 ID
+c 038 19 NameBar 32 32 160 24 1 Name
+c 039 19 TypeBar 192 32 88 24 1 Type
+c 040 19 ValueBar 280 32 144 24 1 Value

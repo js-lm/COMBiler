@@ -15,6 +15,15 @@ namespace interface{
 		static void drawInstrumentPrompt(program_states::InterfaceContext &context);
 
 	private:
+		static void drawConstantsManagerPrompt(program_states::InterfaceContext &context);
+		
+		static void drawConstantsManagerWarningPrompt(program_states::InterfaceContext &context);
+		static void drawConstantsManagerInfoPrompt(program_states::InterfaceContext &context);
+
+	private:
+		static void drawConstantsList();
+
+	private:
 		static const Vector2 &windowAnchor(
             const program_states::Layout &layoutState, 
             const program_states::Interface::Prompts &promptState

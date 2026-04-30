@@ -38,6 +38,10 @@ namespace program_states{
                 Vector2 volumeWindow        {0, 0};
                 Vector2 articulationWindow  {0, 0};
                 Vector2 instrumentWindow    {0, 0};
+
+                Vector2 constantsManagerWindow          {0, 0};
+                Vector2 constantsManagerWarningWindow   {0, 0};
+                Vector2 constantsManagerInfoWindow      {0, 0};
             } prompts{};
 
         } anchor{};
@@ -147,6 +151,71 @@ namespace program_states{
             } noteCanvas{};
 
             struct Prompts{
+                struct ConstantsManager{
+                    Rectangle windowBox             {0,  0, 688, 288};
+
+                    Rectangle editConstantGroupBox  {432, 32, 248, 40};
+                    Rectangle textConstantLabel     {440, 40,  32, 24};
+                    Rectangle editConstantTextBox   {472, 40, 192, 24};
+                    Rectangle typeToggleGroup       {440, 80,  56, 24};
+
+                    Rectangle constantsScrollPanel  {8, 55, 416, 225};
+                    Rectangle constantsContentPanel {
+                        8, 55, 402, 
+                        constants::project_data::MaximumNumberOfConstants * 24
+                    };
+
+                    Rectangle idBar                 {  8, 32,  25, 24};
+                    Rectangle nameBar               { 32, 32, 161, 24};
+                    Rectangle typeBar               {192, 32,  89, 24};
+                    Rectangle valueBar              {280, 32, 144, 24};
+
+                    // Rectangle constantsPanel    {  8, 72, 408, 240};
+                    Rectangle constantItemPanel {  9, 56, 402,  24};
+                    Rectangle listIdLabel       { 16, 56,  16,  24};
+                    Rectangle listTypeLabel     {200, 56,  80,  24};
+                    Rectangle listValueLabel    {288, 56, 120,  24};
+                    Rectangle listNameLabel     { 40, 56, 152,  24};
+
+                    Rectangle tempoGroupBox     {432, 112, 248, 88};
+                    Rectangle targetGroupBox    {432, 112, 248, 40};
+                    Rectangle targetToggleGroup {496, 120,  32, 24};
+                    Rectangle targetChannelLabel{440, 120,  56, 24};
+                    Rectangle tempoSlider       {496, 144, 168, 16};
+
+                    Rectangle commitButton      {600, 256, 80, 24};
+                    Rectangle revertButton      {504, 256, 80, 24};
+
+                    Rectangle swapGroupBox      {504, 208, 176, 40};
+                    Rectangle swapButton        {624, 216,  40, 24};
+                    Rectangle swapLeftLabel     {512, 216,  24, 24};
+                    Rectangle swapLeftTextBox   {536, 216,  24, 24};
+                    Rectangle swapRightTextBox  {592, 216,  24, 24};
+                    Rectangle swapRightLabel    {562, 216,  32, 24};
+
+                    Rectangle articulationGroupBox     {432, 160, 248, 40};
+                    Rectangle articulationToggleGroup  {448, 168,  40, 24};
+
+                    Rectangle volumeGroupBox    {432, 160, 248, 40};
+                    Rectangle volumeToggleGroup {488, 168,  16, 24};
+                    Rectangle volumeLabel       {440, 168,  48, 24};
+
+                    Rectangle loadButton        {432, 208,  64, 72};
+                } constantsManager{};
+
+                struct ConstantsManagerWarning{
+                    Rectangle windowBox {  0,  0, 272, 80};
+                    Rectangle label     {  8, 24, 256, 24};
+                    Rectangle yesButton {160, 48,  64, 24};
+                    Rectangle noButton  { 48, 48,  64, 24};
+                } constantsManagerWarning{};
+
+                struct ConstantsManagerInfo{
+                    Rectangle windowBox { 0,  0, 160, 80};
+                    Rectangle label     { 8, 24, 152, 24};
+                    Rectangle okButton  {48, 48,  64, 24};
+                } constantsManagerInfo{};
+
                 struct Tempo{
                     Rectangle windowBox         {  0,   0, 320, 136};
                     Rectangle groupBox          { 16,  32, 288,  64};

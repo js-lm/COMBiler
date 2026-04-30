@@ -134,4 +134,32 @@ namespace constants::prompts{
         return {};
     }
 
+    namespace constants_manager{
+        enum class Type{
+            None,
+            Tempo,
+            Volume,
+            Articulation
+        };
+
+        constexpr int TypeCount{4};
+
+        constexpr int toIndex(Type selectedType){
+            return static_cast<int>(selectedType);
+        }
+
+        inline Type typeFromIndex(int typeIndex){
+            switch(typeIndex){
+            case toIndex(Type::Tempo): return Type::Tempo;
+            case toIndex(Type::Volume): return Type::Volume;
+            case toIndex(Type::Articulation): return Type::Articulation;
+            default: return Type::None;
+            }
+        }
+
+        constexpr int ConstantNameTextMaximumLength{30};
+        constexpr int SwapIndexTextMaximumLength{3};
+
+    } // namespace constants_manager
+
 } // namespace constants::prompts

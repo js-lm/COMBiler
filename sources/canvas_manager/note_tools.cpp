@@ -15,7 +15,11 @@ void CanvasManager::handleNoteTools(ActionCenter &actionCenter){
     handleSelectAll();
     handleCopyAndPasteModeState();
 
-    if(context_.interface.prompts.isCommandWindowVisible) return;
+    if(context_.interface.prompts.isCommandWindowVisible
+    || context_.interface.prompts.isConstantsManagerWindowVisible
+    ){
+        return;
+    }
 
     if(context_.interface.clipboard.isPasteModeEnabled){
         handlePastePlacement(actionCenter);

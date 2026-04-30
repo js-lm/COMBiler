@@ -49,6 +49,29 @@ namespace program_states{
             bool isCommandWindowVisible     {false};
             constants::prompts::CommandPrompt activeCommandPrompt{constants::prompts::CommandPrompt::Tempo};
 
+            bool isConstantsManagerWindowVisible{false};
+            bool isConstantsManagerWarningWindowVisible{false};
+            bool isConstantsManagerInfoWindowVisible{false};
+
+            Rectangle constantsManagerScrollPanelScrollView{0, 0, 0, 0};
+            Vector2 constantsManagerScrollPanelScrollOffset{0, 0};
+            Vector2 constantsManagerScrollPanelBoundsOffset{0, 0};
+
+            bool constantsManagerNameTextBoxEditMode{false};
+            char constantsManagerNameTextBoxText[constants::prompts::constants_manager::ConstantNameTextMaximumLength]{"Untitled Constant"};
+
+            int constantsManagerTypeToggleGroupIndex{constants::prompts::constants_manager::toIndex(constants::prompts::constants_manager::Type::None)};
+            int constantsManagerTargetToggleGroupIndex{0};
+            float constantsManagerTempoSliderValue{80.0f};
+
+            bool constantsManagerSwapLeftTextBoxEditMode{false};
+            char constantsManagerSwapLeftTextBoxText[constants::prompts::constants_manager::SwapIndexTextMaximumLength];
+            bool constantsManagerSwapRightTextBoxEditMode{false};
+            char constantsManagerSwapRightTextBoxText[constants::prompts::constants_manager::SwapIndexTextMaximumLength];
+
+            int constantsManagerArticulationToggleGroupIndex{1};
+            int constantsManagerVolumeToggleGroupIndex{8};
+
             int instrumentFamilyListViewScrollIndex{0};
             int instrumentFamilyListViewIndex{0};
             int instrumentMemberListViewScrollIndex{0};

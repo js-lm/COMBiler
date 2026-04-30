@@ -127,12 +127,15 @@ void MainWindow::draw(){
         // ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
         ClearBackground(BLANK);
 
-        const bool wasCommandWindowVisible{interfaceState_.prompts.isCommandWindowVisible};
-        if(wasCommandWindowVisible) GuiLock();
+        const bool wasPromptWindowVisible{
+            interfaceState_.prompts.isCommandWindowVisible
+         || interfaceState_.prompts.isConstantsManagerWindowVisible
+        };
+        if(wasPromptWindowVisible) GuiLock();
         interface::Toolbar::draw(context);
-        if(wasCommandWindowVisible) GuiUnlock();
+        if(wasPromptWindowVisible) GuiUnlock();
 
-        const bool shouldBlockUnderlyingUi{interfaceState_.prompts.isCommandWindowVisible};
+        const bool shouldBlockUnderlyingUi{wasPromptWindowVisible};
         if(shouldBlockUnderlyingUi) GuiLock();
         interface::Sidebar::draw(context);
         interface::NavigationBar::draw(context);

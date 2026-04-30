@@ -73,6 +73,11 @@ void MainWindow::handleToolbarButtonsEvents(){
         applyProjectTransientNavigationState();
     }
 
+    if(interfaceState_.toolbar.isConstantsButtonPressed){
+        interfaceState_.prompts.isConstantsManagerWindowVisible = true;
+        interfaceState_.prompts.isCommandWindowVisible = false;
+    }
+
     const bool isSystemChannelSelected{
         interfaceState_.sidebar.selectedChannelListViewIndex == constants::interface_layout::note_canvas::notes::SystemChannelListViewIndex
     };

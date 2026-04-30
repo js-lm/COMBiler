@@ -20,7 +20,12 @@ using namespace constants::labels::prompts;
 
 void Prompts::draw(program_states::InterfaceContext &context){
     auto &promptState{context.interface.prompts};
-    if(!promptState.isCommandWindowVisible) return;
+    const bool isAnyPromptVisible{
+        promptState.isCommandWindowVisible
+     || promptState.isConstantsManagerWindowVisible
+    };
+
+    if(!isAnyPromptVisible) return;
 
     const Rectangle overlayBounds{
         0, 0,
@@ -28,6 +33,11 @@ void Prompts::draw(program_states::InterfaceContext &context){
         static_cast<float>(context.system.window.interfaceRenderTextureHeight)
     };
     DrawRectangleRec(overlayBounds, Fade(BLACK, constants::prompts::OverlayDimAlpha));
+
+    if(promptState.isConstantsManagerWindowVisible){
+        drawConstantsManagerPrompt(context);
+        return;
+    }
 
     if(promptState.activeCommandPrompt == constants::prompts::CommandPrompt::Tempo){
         drawTempoPrompt(context);

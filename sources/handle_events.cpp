@@ -129,6 +129,10 @@ void MainWindow::handleWindowSizeChangeEvent(){
         anchor.prompts.volumeWindow = centeredPromptAnchorFrom(bounds.prompts.volume.windowBox);
         anchor.prompts.articulationWindow = centeredPromptAnchorFrom(bounds.prompts.articulation.windowBox);
         anchor.prompts.instrumentWindow = centeredPromptAnchorFrom(bounds.prompts.instrument.windowBox);
+        
+        anchor.prompts.constantsManagerWindow = centeredPromptAnchorFrom(bounds.prompts.constantsManager.windowBox);
+        anchor.prompts.constantsManagerWarningWindow = centeredPromptAnchorFrom(bounds.prompts.constantsManagerWarning.windowBox);
+        anchor.prompts.constantsManagerInfoWindow = centeredPromptAnchorFrom(bounds.prompts.constantsManagerInfo.windowBox);
     } /* prompts */
 
     /* ntoe canvas */ {
@@ -151,6 +155,9 @@ void MainWindow::handleKeyboardEvent(){
 
     if(IsKeyPressed(KEY_ESCAPE)){
         interfaceState_.prompts.isCommandWindowVisible = false;
+        interfaceState_.prompts.isConstantsManagerWindowVisible = false;
+        interfaceState_.prompts.isConstantsManagerWarningWindowVisible = false;
+        interfaceState_.prompts.isConstantsManagerInfoWindowVisible = false;
         if(canvasManager_) canvasManager_->cancelSelectionAndPasteMode();
         if(timelineManager_) timelineManager_->cancelActiveInteraction();
         return;

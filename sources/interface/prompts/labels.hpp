@@ -34,5 +34,41 @@ namespace constants::labels::prompts{
     constexpr const char *InstrumentFamilyLabelText{"Family"};
     constexpr const char *InstrumentMemberLabelText{"Member"};
 
+    // constants manager
+    constexpr const char *ConstantsManagerWindowBoxText{"Constants Manager"};
+    constexpr const char *ConstantsManagerWindowBoxUnsavedText{"Constants Manager - Unsaved*"};
+    constexpr const char *EditNameGroupBoxText{"Edit Constant"};
+    constexpr const char *TextConstantLabelText{"Name:"};
+    constexpr const char *TypeToggleGroupText{"None;#030#;#029#;#028#"};
+
+    constexpr const char *IDBarText{"ID"};
+    constexpr const char *NameBarText{"Name"};
+    constexpr const char *TypeBarText{"Type"};
+    constexpr const char *ValueBarText{"Value"};
+
+    constexpr const char *ConstantsManagerTempoGroupBoxText{"Tempo"};
+    constexpr const char *TargetGroupBoxText{"Target"};
+    constexpr const char *TargetToggleGroupText{"All;1;2;3;4"};
+    constexpr const char *TargetChannelLabelText{"Channel:"};
+    constexpr const char *ConstantsManagerTempoSliderText{"Playback:"};
+
+    constexpr const char *ConstantsManagerCommitButtonText{"#112#Commit"};
+    constexpr const char *ConstantsManagerCommitButtonUnsavedText{"#112#Commit*"};
+    constexpr const char *ConstantsManagerRevertButtonText{"#113#Revert"};
+
+    constexpr const char *SwapGroupBoxText{"Swap"};
+    constexpr const char *SwapButtonText{"Swap"};
+    constexpr const char *SwapLeftLabelText{"Left:"};
+    constexpr const char *SwapRightLabelText{"Right:"};
+
+    constexpr const char *ConstantsManagerArticulationGroupBoxText{"Articulation"};
+    constexpr const char *ConstantsManagerArticulationToggleGroupText{"#032#;#033#;#034#;#035#;#036#"};
+
+    constexpr const char *ConstantsManagerVolumeGroupBoxText{"Volume"};
+    constexpr const char *ConstantsManagerVolumeToggleGroupText{"1;2;3;4;5;6;7;8;9;10"};
+    constexpr const char *VolumeLabelText{"Volume:"};
+
+    constexpr const char *LoadButtonText{"Load"};
+
 
 } // namespace constants::labels::prompts
