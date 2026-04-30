@@ -7,7 +7,7 @@
 #include "interface/utilities.hpp"
 
 using namespace interface;
-using namespace constants::labels::toolbar;
+namespace toolbar_constants = constants::labels::toolbar;
 
 void Toolbar::drawOption(program_states::InterfaceContext &context){
 	const auto anchor{context.layout.anchor.toolbar.toolOption};
@@ -15,8 +15,8 @@ void Toolbar::drawOption(program_states::InterfaceContext &context){
 
 	const auto groupBox{calculateBoundsAtAnchor(anchor, bounds.groupBox)};
 
-	GuiGroupBox(groupBox, ToolOptionsGroupBoxText);
-	context.interface.toolbar.isInfoButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.infoButton), InfoButtonText);
+	GuiGroupBox(groupBox, toolbar_constants::ToolOptionsGroupBoxText);
+	context.interface.toolbar.isInfoButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.infoButton), toolbar_constants::InfoButtonText);
 
     
 }

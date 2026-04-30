@@ -13,7 +13,7 @@
 #include "utilities/project_utilities.hpp"
 
 using namespace interface;
-using namespace constants::labels::navigation_bar;
+namespace bar_labels = constants::labels::navigation_bar;
 
 void NavigationBar::drawPerPageSettings(program_states::InterfaceContext &context){
 	const auto anchor{context.layout.anchor.navigationBar.perPageSettings};
@@ -31,10 +31,10 @@ void NavigationBar::drawPerPageSettings(program_states::InterfaceContext &contex
 
 	const int previousNotePerPageSpinnerValue{context.interface.navigationBar.notePerPageSpinnerValue};
 
-	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.groupBox), PerPageSettingsGroupBoxText);
+	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.groupBox), bar_labels::PerPageSettingsGroupBoxText);
 	if(GuiSpinner(
 		calculateBoundsAtAnchor(anchor, bounds.notePerPageSpinner),
-		NotePerPageSpinnerText,
+		bar_labels::NotePerPageSpinnerText,
 		&context.interface.navigationBar.notePerPageSpinnerValue,
 		constants::project_data::MinimumNotePerPage,
 		constants::project_data::MaximumNotePerPage,

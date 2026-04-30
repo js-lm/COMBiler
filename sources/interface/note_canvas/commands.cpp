@@ -10,7 +10,7 @@
 #include "utilities/project_utilities.hpp"
 
 using namespace interface;
-using namespace constants::interface_layout::note_canvas;
+namespace canvas_constants = constants::interface_layout::note_canvas;
 
 void NoteCanvas::drawCommands(program_states::InterfaceContext &context){
 
@@ -22,7 +22,7 @@ void NoteCanvas::drawCommands(program_states::InterfaceContext &context){
 
 	const int selectedChannelListViewIndex{sidebarState.selectedChannelListViewIndex};
 	const bool isSystemChannelSelection{
-		selectedChannelListViewIndex == notes::SystemChannelListViewIndex
+		selectedChannelListViewIndex == canvas_constants::notes::SystemChannelListViewIndex
 	};
 	const bool shouldShowCommandsEverywhere{sidebarState.isShowCommandsEnabled};
 	const bool shouldDrawCommands{isSystemChannelSelection || shouldShowCommandsEverywhere};
@@ -30,8 +30,8 @@ void NoteCanvas::drawCommands(program_states::InterfaceContext &context){
 
 	const float commandAlpha{
 		isSystemChannelSelection
-			? commands::FullVisibilityAlpha
-			: commands::TransparentVisibilityAlpha
+			? canvas_constants::commands::FullVisibilityAlpha
+			: canvas_constants::commands::TransparentVisibilityAlpha
 	};
 
 
@@ -40,7 +40,7 @@ void NoteCanvas::drawCommands(program_states::InterfaceContext &context){
 	const int currentPageNoteCount{utilities::currentPageNoteCountFrom(*projectData, context.system.project.currentPage)};
 
 	const float topY{rowEdgeY(context, 0)};
-	const float bottomY{rowEdgeY(context, NumberOfRow)};
+	const float bottomY{rowEdgeY(context, canvas_constants::NumberOfRow)};
 	const float commandHeight{bottomY - topY};
 
 
@@ -59,9 +59,9 @@ void NoteCanvas::drawCommands(program_states::InterfaceContext &context){
 			commandHeight
 		};
 
-		const float textWidth{std::max(.0f, columnBounds.width - (commands::HorizontalPadding * 2.0f))};
+		const float textWidth{std::max(.0f, columnBounds.width - (canvas_constants::commands::HorizontalPadding * 2.0f))};
 		const auto commandBigNote{
-			NoteCanvas::createCommandBigNote(commandData.value(), textWidth, commands::TextFontSize)
+			NoteCanvas::createCommandBigNote(commandData.value(), textWidth, canvas_constants::commands::TextFontSize)
 		};
 
 		NoteCanvas::drawBigNote(context, columnBounds, commandBigNote, commandAlpha, false);
@@ -101,11 +101,11 @@ std::string NoteCanvas::trimTextToFitWidth(const std::string &text, float width,
 }
 
 std::string NoteCanvas::targetTextForWidth(command::Target target, float width, int fontSize){
-	const std::string fullTargetName{commands::targetFullName(target)};
+	const std::string fullTargetName{canvas_constants::commands::targetFullName(target)};
 	if(doesTextFitWidth(fullTargetName, width, fontSize)) return fullTargetName;
 
 
-	return commands::targetCompactName(target);
+	return canvas_constants::commands::targetCompactName(target);
 }
 
 NoteCanvas::BigNote NoteCanvas::createCommandBigNote(
@@ -118,18 +118,18 @@ NoteCanvas::BigNote NoteCanvas::createCommandBigNote(
 
         if constexpr(std::is_same_v<Type, command::Tempo>){
             return BigNote{
-                .baseColor{commands::TempoColor},
-                .iconIndex{commands::TempoIconIndex},
-                .firstTextLine{commands::TempoText},
-                .secondTextLine{TextFormat(commands::UnsignedIntegerFormatText, command.tempo)},
-                .thirdTextLine{commands::EmptyText}
+                .baseColor{canvas_constants::commands::TempoColor},
+                .iconIndex{canvas_constants::commands::TempoIconIndex},
+                .firstTextLine{canvas_constants::commands::TempoText},
+                .secondTextLine{TextFormat(canvas_constants::commands::UnsignedIntegerFormatText, command.tempo)},
+                .thirdTextLine{canvas_constants::commands::EmptyText}
             };
         }else if constexpr(std::is_same_v<Type, command::Volume>){
             return BigNote{
-                .baseColor{commands::VolumeColor},
-                .iconIndex{commands::VolumeIconIndex},
-                .firstTextLine{commands::VolumeText},
-                .secondTextLine{TextFormat(commands::UnsignedIntegerFormatText, command.volume)},
+                .baseColor{canvas_constants::commands::VolumeColor},
+                .iconIndex{canvas_constants::commands::VolumeIconIndex},
+                .firstTextLine{canvas_constants::commands::VolumeText},
+                .secondTextLine{TextFormat(canvas_constants::commands::UnsignedIntegerFormatText, command.volume)},
                 .thirdTextLine{targetTextForWidth(command.target, width, fontSize)}
             };
         // }else if constexpr(std::is_same_v<Type, command::Articulation>){
@@ -142,10 +142,10 @@ NoteCanvas::BigNote NoteCanvas::createCommandBigNote(
         //     };
         }else{
 			return BigNote{
-                .baseColor{commands::ArticulationColor},
-                .iconIndex{commands::articulationIconIndex(command.articulation)},
-                .firstTextLine{commands::ArticulationText},
-                .secondTextLine{commands::articulationName(command.articulation)},
+                .baseColor{canvas_constants::commands::ArticulationColor},
+                .iconIndex{canvas_constants::commands::articulationIconIndex(command.articulation)},
+                .firstTextLine{canvas_constants::commands::ArticulationText},
+                .secondTextLine{canvas_constants::commands::articulationName(command.articulation)},
                 .thirdTextLine{targetTextForWidth(command.target, width, fontSize)}
             };
         }

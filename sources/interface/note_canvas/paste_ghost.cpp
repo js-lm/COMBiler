@@ -12,7 +12,7 @@
 #include "utilities/project_utilities.hpp"
 
 using namespace interface;
-using namespace constants::interface_layout::note_canvas;
+namespace canvas_constants = constants::interface_layout::note_canvas;
 
 void NoteCanvas::drawPasteGhost(program_states::InterfaceContext &context){
     const auto &clipboardState{context.interface.clipboard};
@@ -46,9 +46,9 @@ void NoteCanvas::drawPasteGhost(program_states::InterfaceContext &context){
         if(destinationColumnIndex < 0 || destinationColumnIndex >= constants::project_data::MaximumNotePerPage) return;
 
         const int rowIndex{
-            FirstNoteOffsetFromC0 + (NumberOfRow - 1) - (static_cast<int>(note) + transposeSemitoneOffset)
+            canvas_constants::FirstNoteOffsetFromC0 + (canvas_constants::NumberOfRow - 1) - (static_cast<int>(note) + transposeSemitoneOffset)
         };
-        if(rowIndex < 0 || rowIndex >= NumberOfRow) return;
+        if(rowIndex < 0 || rowIndex >= canvas_constants::NumberOfRow) return;
 
         const float topY{rowEdgeY(context, rowIndex)};
         const float bottomY{rowEdgeY(context, rowIndex + 1)};
@@ -60,8 +60,8 @@ void NoteCanvas::drawPasteGhost(program_states::InterfaceContext &context){
             bottomY - topY
         };
 
-        DrawRectangleRec(noteBounds, Fade(color, paste_ghost::NoteFillAlpha));
-        DrawRectangleLinesEx(noteBounds, notes::BorderThicknessInPixels, Fade(WHITE, paste_ghost::NoteBorderAlpha));
+        DrawRectangleRec(noteBounds, Fade(color, canvas_constants::paste_ghost::NoteFillAlpha));
+        DrawRectangleLinesEx(noteBounds, canvas_constants::notes::BorderThicknessInPixels, Fade(WHITE, canvas_constants::paste_ghost::NoteBorderAlpha));
         
     }};
 
@@ -70,7 +70,7 @@ void NoteCanvas::drawPasteGhost(program_states::InterfaceContext &context){
         if(destinationColumnIndex < 0 || destinationColumnIndex >= constants::project_data::MaximumNotePerPage) return;
 
         const float topY{rowEdgeY(context, 0)};
-        const float bottomY{rowEdgeY(context, NumberOfRow)};
+        const float bottomY{rowEdgeY(context, canvas_constants::NumberOfRow)};
 
         const Rectangle bounds{
             context.interface.noteCanvas.gridArea.x + (static_cast<float>(destinationColumnIndex) * context.interface.noteCanvas.columnWidth),
@@ -80,7 +80,7 @@ void NoteCanvas::drawPasteGhost(program_states::InterfaceContext &context){
         };
 
         const auto instrumentBigNote{createInstrumentBigNote(color, instrument)};
-        drawBigNote(context, bounds, instrumentBigNote, paste_ghost::BigNoteAlpha, true);
+        drawBigNote(context, bounds, instrumentBigNote, canvas_constants::paste_ghost::BigNoteAlpha, true);
 
     }};
 
@@ -117,7 +117,7 @@ void NoteCanvas::drawPasteGhost(program_states::InterfaceContext &context){
         }
 
         const float topY{rowEdgeY(context, 0)};
-        const float bottomY{rowEdgeY(context, NumberOfRow)};
+        const float bottomY{rowEdgeY(context, canvas_constants::NumberOfRow)};
 
         const Rectangle columnBounds{
             context.interface.noteCanvas.gridArea.x + (static_cast<float>(destinationColumnIndex) * context.interface.noteCanvas.columnWidth),
@@ -126,10 +126,10 @@ void NoteCanvas::drawPasteGhost(program_states::InterfaceContext &context){
             bottomY - topY
         };
 
-        const float textWidth{std::max(.0f, columnBounds.width - (commands::HorizontalPadding * 2.0f))};
-        const auto commandBigNote{createCommandBigNote(commandData.value(), textWidth, commands::TextFontSize)};
+        const float textWidth{std::max(.0f, columnBounds.width - (canvas_constants::commands::HorizontalPadding * 2.0f))};
+        const auto commandBigNote{createCommandBigNote(commandData.value(), textWidth, canvas_constants::commands::TextFontSize)};
 
-        drawBigNote(context, columnBounds, commandBigNote, paste_ghost::BigNoteAlpha, false);
+        drawBigNote(context, columnBounds, commandBigNote, canvas_constants::paste_ghost::BigNoteAlpha, false);
 
 
     }};
@@ -138,7 +138,7 @@ void NoteCanvas::drawPasteGhost(program_states::InterfaceContext &context){
         const auto &cell{clipboardState.instrumentChannels[channelIndex][sourceColumnOffset]};
         if(!cell.has_value()) return;
 
-        const Color channelColor{notes::ChannelNoteColors[channelIndex]};
+        const Color channelColor{canvas_constants::notes::ChannelNoteColors[channelIndex]};
 
         if(std::holds_alternative<music_data::Note>(cell.value())){
 
@@ -162,7 +162,7 @@ void NoteCanvas::drawPasteGhost(program_states::InterfaceContext &context){
 
             if(cell.has_value()){
 
-                const Color channelColor{notes::ChannelNoteColors[destinationInstrumentChannelIndex]};
+                const Color channelColor{canvas_constants::notes::ChannelNoteColors[destinationInstrumentChannelIndex]};
 
                 if(std::holds_alternative<music_data::Note>(cell.value())){
                     drawGhostNoteCell(destinationColumnIndex, std::get<music_data::Note>(cell.value()), channelColor);
@@ -197,12 +197,12 @@ void NoteCanvas::drawPasteGhost(program_states::InterfaceContext &context){
         GetFontDefault(),
         transposeText.c_str(),
         Vector2{
-            std::round(rightPositionX + paste_ghost::TransposeTextOffsetInPixels),
-            std::round(bottomPositionY + paste_ghost::TransposeTextOffsetInPixels)
+            std::round(rightPositionX + canvas_constants::paste_ghost::TransposeTextOffsetInPixels),
+            std::round(bottomPositionY + canvas_constants::paste_ghost::TransposeTextOffsetInPixels)
         },
-        static_cast<float>(paste_ghost::TransposeTextFontSize),
-        paste_ghost::TransposeTextSpacingInPixels,
-        selection::BorderColor
+        static_cast<float>(canvas_constants::paste_ghost::TransposeTextFontSize),
+        canvas_constants::paste_ghost::TransposeTextSpacingInPixels,
+        canvas_constants::selection::BorderColor
     );
 
 

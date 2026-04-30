@@ -14,7 +14,7 @@
 #include <magic_enum/magic_enum.hpp>
 
 using namespace interface;
-using namespace constants::interface_layout::note_canvas;
+namespace canvas_constants = constants::interface_layout::note_canvas;
 
 void NoteCanvas::drawNotes(program_states::InterfaceContext &context){
 	auto &noteCanvasState{context.interface.noteCanvas};
@@ -38,8 +38,8 @@ void NoteCanvas::drawNotes(program_states::InterfaceContext &context){
 	const int selectedChannelListViewIndex{context.interface.sidebar.selectedChannelListViewIndex};
 	const auto selectedInstrumentChannelIndexValue{utilities::selectedInstrumentChannelIndex(selectedChannelListViewIndex)};
 	const bool isAllOrSystemChannelSelection{
-		selectedChannelListViewIndex == notes::AllChannelsListViewIndex
-	 || selectedChannelListViewIndex == notes::SystemChannelListViewIndex
+		selectedChannelListViewIndex == canvas_constants::notes::AllChannelsListViewIndex
+	 || selectedChannelListViewIndex == canvas_constants::notes::SystemChannelListViewIndex
 	};
 	const bool hasSpecificChannelSelection{selectedInstrumentChannelIndexValue.has_value()};
 	const bool shouldShowLabels{isAllOrSystemChannelSelection};
@@ -64,10 +64,10 @@ void NoteCanvas::drawNotes(program_states::InterfaceContext &context){
 		if(hoveredNoteIndex >= 0
 		&& hoveredNoteIndex < constants::project_data::MaximumNotePerPage
 		&& hoveredRowIndex >= 0
-		&& hoveredRowIndex < NumberOfRow
+		&& hoveredRowIndex < canvas_constants::NumberOfRow
 		){
 			const int hoveredSemitoneFromC0{
-				FirstNoteOffsetFromC0 + (NumberOfRow - 1) - hoveredRowIndex
+				canvas_constants::FirstNoteOffsetFromC0 + (canvas_constants::NumberOfRow - 1) - hoveredRowIndex
 			};
 			const auto hoveredNote{static_cast<music_data::Note>(hoveredSemitoneFromC0)};
 			auto isMatchingCellNote{[&](const auto &cell){
@@ -106,12 +106,12 @@ void NoteCanvas::drawNotes(program_states::InterfaceContext &context){
 		 && channelIndex == static_cast<size_t>(selectedInstrumentChannelIndexValue.value())
 		};
 
-		const Color baseColor{notes::ChannelNoteColors[channelIndex]};
+		const Color baseColor{canvas_constants::notes::ChannelNoteColors[channelIndex]};
 
 		const float noteAlpha{
 			hasSpecificChannelSelection
-				? (isSpecificSelectedChannel ? notes::SelectedChannelAlpha : notes::UnselectedChannelAlpha)
-				: notes::AllChannelsAlpha
+				? (isSpecificSelectedChannel ? canvas_constants::notes::SelectedChannelAlpha : canvas_constants::notes::UnselectedChannelAlpha)
+				: canvas_constants::notes::AllChannelsAlpha
 		};
 		const Color noteColor{Fade(baseColor, noteAlpha)};
 
@@ -142,7 +142,7 @@ void NoteCanvas::drawNotes(program_states::InterfaceContext &context){
 
 				if(isSpecificSelectedChannel){
 					const float topY{rowEdgeY(context, 0)};
-					const float bottomY{rowEdgeY(context, NumberOfRow)};
+					const float bottomY{rowEdgeY(context, canvas_constants::NumberOfRow)};
 					const Rectangle bounds{
 						noteCanvasState.gridArea.x + (static_cast<float>(noteColumnIndex) * noteCanvasState.columnWidth),
 						topY,
@@ -160,9 +160,9 @@ void NoteCanvas::drawNotes(program_states::InterfaceContext &context){
 			}
 
 			const int rowIndex{
-				FirstNoteOffsetFromC0 + (NumberOfRow - 1) - static_cast<int>(std::get<music_data::Note>(cell.value()))
+				canvas_constants::FirstNoteOffsetFromC0 + (canvas_constants::NumberOfRow - 1) - static_cast<int>(std::get<music_data::Note>(cell.value()))
 			};
-			if(rowIndex < 0 || rowIndex >= NumberOfRow) continue;
+			if(rowIndex < 0 || rowIndex >= canvas_constants::NumberOfRow) continue;
 			
 
 			const float topY{rowEdgeY(context, rowIndex)};
@@ -175,10 +175,10 @@ void NoteCanvas::drawNotes(program_states::InterfaceContext &context){
 			};
 
 			DrawRectangleRec(noteBounds, noteColor);
-			DrawRectangleLinesEx(noteBounds, notes::BorderThicknessInPixels, Fade(notes::NoteBorderColor, noteAlpha));
+			DrawRectangleLinesEx(noteBounds, canvas_constants::notes::BorderThicknessInPixels, Fade(canvas_constants::notes::NoteBorderColor, noteAlpha));
 
 			if(shouldShowLabels && (shouldLabelFirstNoteInPage || shouldLabelNextNoteAfterInstrumentChange)){
-				const Rectangle iconBounds{noteBounds.x, noteBounds.y - IconSize - InstrumentIconPadding, IconSize, IconSize};
+				const Rectangle iconBounds{noteBounds.x, noteBounds.y - canvas_constants::IconSize - canvas_constants::InstrumentIconPadding, canvas_constants::IconSize, canvas_constants::IconSize};
 				const int previousTextColor{GuiGetStyle(DEFAULT, TEXT_COLOR_NORMAL)};
 				const std::string instrumentIconText{constants::instruments::instrumentIconMarkupText(activeInstrument)};
 
@@ -226,8 +226,8 @@ NoteCanvas::BigNote NoteCanvas::createInstrumentBigNote(Color baseColor, music_d
 		.baseColor{baseColor},
 		.iconIndex{constants::instruments::InstrumentIconMappings[instrument]},
 		.firstTextLine{instrumentName},
-		.secondTextLine{commands::EmptyText},
-		.thirdTextLine{commands::EmptyText},
+		.secondTextLine{canvas_constants::commands::EmptyText},
+		.thirdTextLine{canvas_constants::commands::EmptyText},
 		.shouldDrawFirstTextLineVertically{true}
 	};
 }

@@ -16,7 +16,7 @@
 #include <magic_enum/magic_enum.hpp>
 
 using namespace interface;
-using namespace constants::labels::prompts;
+namespace prompts_constants = constants::labels::prompts;
 
 void Prompts::draw(program_states::InterfaceContext &context){
     auto &promptState{context.interface.prompts};
@@ -62,7 +62,7 @@ void Prompts::drawTempoPrompt(program_states::InterfaceContext &context){
     const auto &promptBounds{context.layout.bounds.prompts.tempo};
 
     const Rectangle windowBounds{calculateBoundsAtPromptAnchor(context.layout, context.interface, promptBounds.windowBox)};
-    if(GuiWindowBox(windowBounds, TempoWindowBoxText)){
+    if(GuiWindowBox(windowBounds, prompts_constants::TempoWindowBoxText)){
         promptState.isCommandWindowVisible = false;
         return;
     }
@@ -76,11 +76,11 @@ void Prompts::drawTempoPrompt(program_states::InterfaceContext &context){
     const Rectangle backButtonBounds{calculateBoundsAtPromptAnchor(context.layout, context.interface, promptBounds.backButton)};
     const Rectangle confirmButtonBounds{calculateBoundsAtPromptAnchor(context.layout, context.interface, promptBounds.confirmButton)};
 
-    GuiGroupBox(tempoGroupBoxBounds, TempoGroupBoxText);
+    GuiGroupBox(tempoGroupBoxBounds, prompts_constants::TempoGroupBoxText);
 
     GuiSlider(
         tempoSliderBounds,
-        TempoSliderText,
+        prompts_constants::TempoSliderText,
         nullptr,
         &promptState.tempoPlaybackSpeedPercentage,
         constants::prompts::TempoPercentageMinimumValue,
@@ -117,12 +117,12 @@ void Prompts::drawTempoPrompt(program_states::InterfaceContext &context){
     //     promptState.tempoPercentageValue
     // );
 
-    GuiLabel(tempoPercentageLabelBounds, TempoPercentageLabelText);
+    GuiLabel(tempoPercentageLabelBounds, prompts_constants::TempoPercentageLabelText);
     GuiLine(tempoDescriptionLineBounds, nullptr);
-    GuiLabel(tempoDescriptionLabelBounds, TempoDescriptionLabelText);
+    GuiLabel(tempoDescriptionLabelBounds, prompts_constants::TempoDescriptionLabelText);
 
-    const bool isBackButtonPressed{static_cast<bool>(GuiButton(backButtonBounds, BackButtonText))};
-    const bool isConfirmButtonPressed{static_cast<bool>(GuiButton(confirmButtonBounds, ConfirmButtonText))};
+    const bool isBackButtonPressed{static_cast<bool>(GuiButton(backButtonBounds, prompts_constants::BackButtonText))};
+    const bool isConfirmButtonPressed{static_cast<bool>(GuiButton(confirmButtonBounds, prompts_constants::ConfirmButtonText))};
 
     if(isBackButtonPressed || isConfirmButtonPressed){
         promptState.isCommandWindowVisible = false;
@@ -134,7 +134,7 @@ void Prompts::drawVolumePrompt(program_states::InterfaceContext &context){
     const auto &promptBounds{context.layout.bounds.prompts.volume};
 
     const Rectangle windowBounds{calculateBoundsAtPromptAnchor(context.layout, context.interface, promptBounds.windowBox)};
-    if(GuiWindowBox(windowBounds, VolumeWindowBoxText)){
+    if(GuiWindowBox(windowBounds, prompts_constants::VolumeWindowBoxText)){
         promptState.isCommandWindowVisible = false;
         return;
     }
@@ -148,17 +148,17 @@ void Prompts::drawVolumePrompt(program_states::InterfaceContext &context){
     const Rectangle backButtonBounds{calculateBoundsAtPromptAnchor(context.layout, context.interface, promptBounds.backButton)};
     const Rectangle confirmButtonBounds{calculateBoundsAtPromptAnchor(context.layout, context.interface, promptBounds.confirmButton)};
 
-    GuiGroupBox(volumeGroupBoxBounds, VolumeGroupBoxText);
-    GuiToggleGroup(volumeLevelToggleGroupBounds, VolumeLevelToggleGroupText, &promptState.volumeLevelToggleIndex);
+    GuiGroupBox(volumeGroupBoxBounds, prompts_constants::VolumeGroupBoxText);
+    GuiToggleGroup(volumeLevelToggleGroupBounds, prompts_constants::VolumeLevelToggleGroupText, &promptState.volumeLevelToggleIndex);
 
-    GuiGroupBox(volumeTargetGroupBoxBounds, VolumeTargetGroupBoxText);
-    GuiLabel(volumeTargetLabelBounds, VolumeTargetLabelText);
-    GuiToggleGroup(volumeTargetToggleGroupBounds, VolumeTargetToggleGroupText, &promptState.volumeTargetToggleIndex);
+    GuiGroupBox(volumeTargetGroupBoxBounds, prompts_constants::VolumeTargetGroupBoxText);
+    GuiLabel(volumeTargetLabelBounds, prompts_constants::VolumeTargetLabelText);
+    GuiToggleGroup(volumeTargetToggleGroupBounds, prompts_constants::VolumeTargetToggleGroupText, &promptState.volumeTargetToggleIndex);
 
-    GuiLabel(volumeDescriptionLabelBounds, VolumeDescriptionLabelText);
+    GuiLabel(volumeDescriptionLabelBounds, prompts_constants::VolumeDescriptionLabelText);
 
-    const bool isBackButtonPressed{static_cast<bool>(GuiButton(backButtonBounds, BackButtonText))};
-    const bool isConfirmButtonPressed{static_cast<bool>(GuiButton(confirmButtonBounds, ConfirmButtonText))};
+    const bool isBackButtonPressed{static_cast<bool>(GuiButton(backButtonBounds, prompts_constants::BackButtonText))};
+    const bool isConfirmButtonPressed{static_cast<bool>(GuiButton(confirmButtonBounds, prompts_constants::ConfirmButtonText))};
 
     if(isBackButtonPressed || isConfirmButtonPressed){
         promptState.isCommandWindowVisible = false;
@@ -170,7 +170,7 @@ void Prompts::drawArticulationPrompt(program_states::InterfaceContext &context){
     const auto &promptBounds{context.layout.bounds.prompts.articulation};
 
     const Rectangle windowBounds{calculateBoundsAtPromptAnchor(context.layout, context.interface, promptBounds.windowBox)};
-    if(GuiWindowBox(windowBounds, ArticulationWindowBoxText)){
+    if(GuiWindowBox(windowBounds, prompts_constants::ArticulationWindowBoxText)){
         promptState.isCommandWindowVisible = false;
         return;
     }
@@ -187,18 +187,18 @@ void Prompts::drawArticulationPrompt(program_states::InterfaceContext &context){
     const Rectangle backButtonBounds{calculateBoundsAtPromptAnchor(context.layout, context.interface, promptBounds.backButton)};
     const Rectangle confirmButtonBounds{calculateBoundsAtPromptAnchor(context.layout, context.interface, promptBounds.confirmButton)};
 
-    GuiGroupBox(articulationGroupBoxBounds, ArticulationGroupBoxText);
-    GuiToggleGroup(articulationStateToggleGroupBounds, ArticulationStateToggleGroupText, &promptState.articulationStateToggleIndex);
+    GuiGroupBox(articulationGroupBoxBounds, prompts_constants::ArticulationGroupBoxText);
+    GuiToggleGroup(articulationStateToggleGroupBounds, prompts_constants::ArticulationStateToggleGroupText, &promptState.articulationStateToggleIndex);
 
     GuiLine(articulationLineBounds, nullptr);
-    GuiLabel(articulationStateLabelBounds, ArticulationStateLabelText);
-    GuiLabel(articulationDescriptionLabelBounds, ArticulationDescriptionLabelText);
+    GuiLabel(articulationStateLabelBounds, prompts_constants::ArticulationStateLabelText);
+    GuiLabel(articulationDescriptionLabelBounds, prompts_constants::ArticulationDescriptionLabelText);
 
-    GuiGroupBox(articulationTargetGroupBoxBounds, ArticulationTargetGroupBoxText);
-    GuiToggleGroup(articulationTargetToggleGroupBounds, ArticulationTargetToggleGroupText, &promptState.articulationTargetToggleIndex);
+    GuiGroupBox(articulationTargetGroupBoxBounds, prompts_constants::ArticulationTargetGroupBoxText);
+    GuiToggleGroup(articulationTargetToggleGroupBounds, prompts_constants::ArticulationTargetToggleGroupText, &promptState.articulationTargetToggleIndex);
 
-    const bool isBackButtonPressed{static_cast<bool>(GuiButton(backButtonBounds, BackButtonText))};
-    const bool isConfirmButtonPressed{static_cast<bool>(GuiButton(confirmButtonBounds, ConfirmButtonText))};
+    const bool isBackButtonPressed{static_cast<bool>(GuiButton(backButtonBounds, prompts_constants::BackButtonText))};
+    const bool isConfirmButtonPressed{static_cast<bool>(GuiButton(confirmButtonBounds, prompts_constants::ConfirmButtonText))};
 
     if(isBackButtonPressed || isConfirmButtonPressed){
         promptState.isCommandWindowVisible = false;
@@ -210,7 +210,7 @@ void Prompts::drawInstrumentPrompt(program_states::InterfaceContext &context){
     const auto &promptBounds{context.layout.bounds.prompts.instrument};
 
     const Rectangle windowBounds{calculateBoundsAtPromptAnchor(context.layout, context.interface, promptBounds.windowBox)};
-    if(GuiWindowBox(windowBounds, InstrumentWindowBoxText)){
+    if(GuiWindowBox(windowBounds, prompts_constants::InstrumentWindowBoxText)){
         promptState.isCommandWindowVisible = false;
         return;
     }
@@ -222,7 +222,7 @@ void Prompts::drawInstrumentPrompt(program_states::InterfaceContext &context){
 
     GuiListView(
         calculateBoundsAtPromptAnchor(context.layout, context.interface, promptBounds.familyListView),
-        InstrumentFamilyListViewText,
+        prompts_constants::InstrumentFamilyListViewText,
         &promptState.instrumentFamilyListViewScrollIndex,
         &promptState.instrumentFamilyListViewIndex
     );
@@ -264,10 +264,10 @@ void Prompts::drawInstrumentPrompt(program_states::InterfaceContext &context){
 
     GuiLabel(
         calculateBoundsAtPromptAnchor(context.layout, context.interface, promptBounds.familyLabel),
-        InstrumentFamilyLabelText
+        prompts_constants::InstrumentFamilyLabelText
     );
     GuiLabel(
         calculateBoundsAtPromptAnchor(context.layout, context.interface, promptBounds.memberLabel),
-        InstrumentMemberLabelText
+        prompts_constants::InstrumentMemberLabelText
     );
 }

@@ -18,7 +18,7 @@
 #include "timeline_manager/timeline_manager.hpp"
 
 using namespace interface;
-using namespace constants::labels::navigation_bar;
+namespace bar_labels = constants::labels::navigation_bar;
 
 float NavigationBar::timelineBlockWidthInPixels(
     const program_states::ProjectData &projectData,
@@ -544,8 +544,8 @@ void NavigationBar::drawTimeline(program_states::InterfaceContext &context){
         navigationBarState.timelineScrollPanelScrollOffset = NavigationBar::timelineManager_->viewState().scrollOffsetInPixels;
     }
 
-    GuiGroupBox(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.groupBox), TimelineGroupBoxText);
-    GuiStatusBar(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.statusBar), TimelineStatusBarText);
+    GuiGroupBox(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.groupBox), bar_labels::TimelineGroupBoxText);
+    GuiStatusBar(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.statusBar), bar_labels::TimelineStatusBarText);
     GuiScrollPanel(
         Rectangle{
             scrollPanelBounds.x,
@@ -629,8 +629,8 @@ void NavigationBar::drawTimeline(program_states::InterfaceContext &context){
     }
 
 
-    GuiLabel(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.timelineLabel), TimelineLabelText);
-    GuiLabel(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.pageNumberLabel), PageNumberLabelText);
+    GuiLabel(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.timelineLabel), bar_labels::TimelineLabelText);
+    GuiLabel(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.pageNumberLabel), bar_labels::PageNumberLabelText);
     const int maximumPageNumber{
         projectData
             ? static_cast<int>(projectData->pages.size())
@@ -649,10 +649,10 @@ void NavigationBar::drawTimeline(program_states::InterfaceContext &context){
         context.interface.noteCanvas.isGridLayoutDirty = true;
     }
 
-    navigationBarState.isPageCopyButtonPressed = GuiButton(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.pageCopyButton), PageCopyButtonText);
-    navigationBarState.isPagePasteButtonPressed = GuiButton(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.pagePasteButton), PagePasteButtonText);
-    navigationBarState.isPageCutButtonPressed = GuiButton(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.pageCutButton), PageCutButtonText);
-    GuiToggle(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.pageSelectToggle), PageSelectToggleText, &navigationBarState.isPageSelectEnabled);
+    navigationBarState.isPageCopyButtonPressed = GuiButton(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.pageCopyButton), bar_labels::PageCopyButtonText);
+    navigationBarState.isPagePasteButtonPressed = GuiButton(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.pagePasteButton), bar_labels::PagePasteButtonText);
+    navigationBarState.isPageCutButtonPressed = GuiButton(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.pageCutButton), bar_labels::PageCutButtonText);
+    GuiToggle(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.pageSelectToggle), bar_labels::PageSelectToggleText, &navigationBarState.isPageSelectEnabled);
 
     DEBUG_PRINT_IF_CHANGED(
         "NavigationBar::drawTimeline()\n\tmaximumPageNumber={}, contentWidthInPixels={}, hoveredBlockIndex={},\n\tisTimelineDragCandidate={}, isTimelineDraggingPage={}, timelineDraggedPageIndex={}, timelineDropInsertionIndex={}, requestedPageNumber={}",

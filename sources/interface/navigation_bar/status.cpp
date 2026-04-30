@@ -7,7 +7,7 @@
 #include "interface/utilities.hpp"
 
 using namespace interface;
-using namespace constants::labels::navigation_bar;
+namespace bar_labels = constants::labels::navigation_bar;
 
 void NavigationBar::drawStatus(program_states::InterfaceContext &context){
 	const auto anchor{context.layout.anchor.navigationBar.status};
@@ -15,5 +15,5 @@ void NavigationBar::drawStatus(program_states::InterfaceContext &context){
 
 	const auto groupBox{calculateBoundsAtAnchor(anchor, bounds.groupBox)};
 
-	GuiGroupBox(groupBox, StatusGroupBoxText);
+	GuiGroupBox(groupBox, bar_labels::StatusGroupBoxText);
 }

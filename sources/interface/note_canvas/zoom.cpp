@@ -14,7 +14,7 @@
 #include <cmath>
 
 using namespace interface;
-using namespace constants::interface_layout::note_canvas;
+namespace canvas_constants = constants::interface_layout::note_canvas;
 
 void NoteCanvas::drawScrollBar(program_states::InterfaceContext &context){
 	auto &state{context.interface.noteCanvas};
@@ -54,7 +54,7 @@ void NoteCanvas::handleZoom(program_states::InterfaceContext &context){
 
 	if(!isControlPressed){
 		const float updatedVerticalScrollInPixels{
-			state.verticalScrollInPixels - (mouseWheelMovement * zoom::MouseWheelPixelStep)
+			state.verticalScrollInPixels - (mouseWheelMovement * canvas_constants::zoom::MouseWheelPixelStep)
 		};
 		state.verticalScrollInPixels = std::clamp(
 			updatedVerticalScrollInPixels,
@@ -66,8 +66,8 @@ void NoteCanvas::handleZoom(program_states::InterfaceContext &context){
 
 	const float updatedVerticalZoomFactor{
 		std::clamp(
-			previousVerticalZoomFactor + (mouseWheelMovement * zoom::MouseWheelStep),
-			zoom::MinimumVerticalFactor,
+			previousVerticalZoomFactor + (mouseWheelMovement * canvas_constants::zoom::MouseWheelStep),
+			canvas_constants::zoom::MinimumVerticalFactor,
 			state.maximumAllowedVerticalZoomFactor
 		)
 	};

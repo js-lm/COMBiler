@@ -10,25 +10,24 @@
 #include "interface/utilities.hpp"
 
 using namespace interface;
-using namespace constants::labels::prompts; // TODO: forgot again
-
+namespace prompts_labels = constants::labels::prompts;
 namespace manager_constants = constants::prompts::constants_manager;
 
 void Prompts::drawConstantsManagerPrompt(program_states::InterfaceContext &context){
-	auto &interfacePromptState{context.interface.prompts};
+	auto &state{context.interface.prompts};
 	const auto &anchor{context.layout.anchor.prompts.constantsManagerWindow};
 	const auto &bounds{context.layout.bounds.prompts.constantsManager};
 
 	const bool isOverlayPromptVisible{
-        interfacePromptState.isConstantsManagerWarningWindowVisible
-     || interfacePromptState.isConstantsManagerInfoWindowVisible
+        state.isConstantsManagerWarningWindowVisible
+     || state.isConstantsManagerInfoWindowVisible
 	};
 
 	if(isOverlayPromptVisible) GuiLock();
 
 	const Rectangle windowBounds{calculateBoundsAtAnchor(anchor, bounds.windowBox)};
-	if(GuiWindowBox(windowBounds, ConstantsManagerWindowBoxText)){
-		interfacePromptState.isConstantsManagerWindowVisible = false;
+	if(GuiWindowBox(windowBounds, prompts_labels::ConstantsManagerWindowBoxText)){
+		state.isConstantsManagerWindowVisible = false;
 		if(isOverlayPromptVisible){
 			GuiUnlock();
 		}
@@ -36,13 +35,13 @@ void Prompts::drawConstantsManagerPrompt(program_states::InterfaceContext &conte
 	}
 
 // left
-	GuiStatusBar(calculateBoundsAtAnchor(anchor, bounds.idBar), IDBarText);
-	GuiStatusBar(calculateBoundsAtAnchor(anchor, bounds.nameBar), NameBarText);
-	GuiStatusBar(calculateBoundsAtAnchor(anchor, bounds.typeBar), TypeBarText);
-	GuiStatusBar(calculateBoundsAtAnchor(anchor, bounds.valueBar), ValueBarText);
+	GuiStatusBar(calculateBoundsAtAnchor(anchor, bounds.idBar), prompts_labels::IDBarText);
+	GuiStatusBar(calculateBoundsAtAnchor(anchor, bounds.nameBar), prompts_labels::NameBarText);
+	GuiStatusBar(calculateBoundsAtAnchor(anchor, bounds.typeBar), prompts_labels::TypeBarText);
+	GuiStatusBar(calculateBoundsAtAnchor(anchor, bounds.valueBar), prompts_labels::ValueBarText);
 
-	auto &scrollOffset{interfacePromptState.constantsManagerScrollPanelScrollOffset};
-	auto &view{interfacePromptState.constantsManagerScrollPanelScrollView};
+	auto &scrollOffset{state.constantsManagerScrollPanelScrollOffset};
+	auto &view{state.constantsManagerScrollPanelScrollView};
 
 	GuiScrollPanel(
 		calculateBoundsAtAnchor(anchor, bounds.constantsScrollPanel),
@@ -78,99 +77,99 @@ void Prompts::drawConstantsManagerPrompt(program_states::InterfaceContext &conte
 	} EndScissorMode();
 
 // right
-	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.editConstantGroupBox), EditNameGroupBoxText);
-	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.textConstantLabel), TextConstantLabelText);
+	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.editConstantGroupBox), prompts_labels::EditNameGroupBoxText);
+	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.textConstantLabel), prompts_labels::TextConstantLabelText);
 	if(GuiTextBox(
 		calculateBoundsAtAnchor(anchor, bounds.editConstantTextBox),
-		interfacePromptState.constantsManagerNameTextBoxText,
+		state.constantsManagerNameTextBoxText,
 		manager_constants::ConstantNameTextMaximumLength,
-		interfacePromptState.constantsManagerNameTextBoxEditMode
+		state.constantsManagerNameTextBoxEditMode
 	)){
-		interfacePromptState.constantsManagerNameTextBoxEditMode = !interfacePromptState.constantsManagerNameTextBoxEditMode;
+		state.constantsManagerNameTextBoxEditMode = !state.constantsManagerNameTextBoxEditMode;
 	}
 
 	GuiToggleGroup(
 		calculateBoundsAtAnchor(anchor, bounds.typeToggleGroup),
-		TypeToggleGroupText,
-		&interfacePromptState.constantsManagerTypeToggleGroupIndex
+		prompts_labels::TypeToggleGroupText,
+		&state.constantsManagerTypeToggleGroupIndex
 	);
-	interfacePromptState.constantsManagerTypeToggleGroupIndex = std::clamp(
-		interfacePromptState.constantsManagerTypeToggleGroupIndex,
+	state.constantsManagerTypeToggleGroupIndex = std::clamp(
+		state.constantsManagerTypeToggleGroupIndex,
 		0, manager_constants::TypeCount - 1
 	);
 
-	const auto selectedConstantType{manager_constants::typeFromIndex(interfacePromptState.constantsManagerTypeToggleGroupIndex)};
+	const auto selectedConstantType{manager_constants::typeFromIndex(state.constantsManagerTypeToggleGroupIndex)};
 	const bool isTempoSectionVisible{selectedConstantType == manager_constants::Type::Tempo};
 	const bool isVolumeSectionVisible{selectedConstantType == manager_constants::Type::Volume};
 	const bool isArticulationSectionVisible{selectedConstantType == manager_constants::Type::Articulation};
 	const bool isTargetSectionVisible{isVolumeSectionVisible || isArticulationSectionVisible};
 
 	if(isTempoSectionVisible){
-		GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.tempoGroupBox), ConstantsManagerTempoGroupBoxText);
+		GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.tempoGroupBox), prompts_labels::ConstantsManagerTempoGroupBoxText);
 		GuiSlider(
 			calculateBoundsAtAnchor(anchor, bounds.tempoSlider),
-			ConstantsManagerTempoSliderText,
+			prompts_labels::ConstantsManagerTempoSliderText,
 			nullptr,
-			&interfacePromptState.constantsManagerTempoSliderValue,
+			&state.constantsManagerTempoSliderValue,
 			constants::prompts::TempoPercentageMinimumValue,
 			constants::prompts::TempoPercentageMaximumValue
 		);
 	}else if(isTargetSectionVisible){
-		GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.targetGroupBox), TargetGroupBoxText);
-		GuiLabel(calculateBoundsAtAnchor(anchor, bounds.targetChannelLabel), TargetChannelLabelText);
+		GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.targetGroupBox), prompts_labels::TargetGroupBoxText);
+		GuiLabel(calculateBoundsAtAnchor(anchor, bounds.targetChannelLabel), prompts_labels::TargetChannelLabelText);
 		GuiToggleGroup(
 			calculateBoundsAtAnchor(anchor, bounds.targetToggleGroup),
-			TargetToggleGroupText,
-			&interfacePromptState.constantsManagerTargetToggleGroupIndex
+			prompts_labels::TargetToggleGroupText,
+			&state.constantsManagerTargetToggleGroupIndex
 		);
 	}
 
 	if(isArticulationSectionVisible){
 		GuiGroupBox(
 			calculateBoundsAtAnchor(anchor, bounds.articulationGroupBox),
-			ConstantsManagerArticulationGroupBoxText
+			prompts_labels::ConstantsManagerArticulationGroupBoxText
 		);
 		GuiToggleGroup(
 			calculateBoundsAtAnchor(anchor, bounds.articulationToggleGroup),
-			ConstantsManagerArticulationToggleGroupText,
-			&interfacePromptState.constantsManagerArticulationToggleGroupIndex
+			prompts_labels::ConstantsManagerArticulationToggleGroupText,
+			&state.constantsManagerArticulationToggleGroupIndex
 		);
 	}else if(isVolumeSectionVisible){
-		GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.volumeGroupBox), ConstantsManagerVolumeGroupBoxText);
-		GuiLabel(calculateBoundsAtAnchor(anchor, bounds.volumeLabel), VolumeLabelText);
+		GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.volumeGroupBox), prompts_labels::ConstantsManagerVolumeGroupBoxText);
+		GuiLabel(calculateBoundsAtAnchor(anchor, bounds.volumeLabel), prompts_labels::VolumeLabelText);
 		GuiToggleGroup(
 			calculateBoundsAtAnchor(anchor, bounds.volumeToggleGroup),
-			ConstantsManagerVolumeToggleGroupText,
-			&interfacePromptState.constantsManagerVolumeToggleGroupIndex
+			prompts_labels::ConstantsManagerVolumeToggleGroupText,
+			&state.constantsManagerVolumeToggleGroupIndex
 		);
 	}
 
-	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.swapGroupBox), SwapGroupBoxText);
-	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.swapLeftLabel), SwapLeftLabelText);
-	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.swapRightLabel), SwapRightLabelText);
+	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.swapGroupBox), prompts_labels::SwapGroupBoxText);
+	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.swapLeftLabel), prompts_labels::SwapLeftLabelText);
+	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.swapRightLabel), prompts_labels::SwapRightLabelText);
 
 	if(GuiTextBox(
 		calculateBoundsAtAnchor(anchor, bounds.swapLeftTextBox),
-		interfacePromptState.constantsManagerSwapLeftTextBoxText,
+		state.constantsManagerSwapLeftTextBoxText,
 		manager_constants::SwapIndexTextMaximumLength,
-		interfacePromptState.constantsManagerSwapLeftTextBoxEditMode
+		state.constantsManagerSwapLeftTextBoxEditMode
 	)){
-		interfacePromptState.constantsManagerSwapLeftTextBoxEditMode = !interfacePromptState.constantsManagerSwapLeftTextBoxEditMode;
+		state.constantsManagerSwapLeftTextBoxEditMode = !state.constantsManagerSwapLeftTextBoxEditMode;
 	}
 
 	if(GuiTextBox(
 		calculateBoundsAtAnchor(anchor, bounds.swapRightTextBox),
-		interfacePromptState.constantsManagerSwapRightTextBoxText,
+		state.constantsManagerSwapRightTextBoxText,
 		manager_constants::SwapIndexTextMaximumLength,
-		interfacePromptState.constantsManagerSwapRightTextBoxEditMode
+		state.constantsManagerSwapRightTextBoxEditMode
 	)){
-		interfacePromptState.constantsManagerSwapRightTextBoxEditMode = !interfacePromptState.constantsManagerSwapRightTextBoxEditMode;
+		state.constantsManagerSwapRightTextBoxEditMode = !state.constantsManagerSwapRightTextBoxEditMode;
 	}
 
-	GuiButton(calculateBoundsAtAnchor(anchor, bounds.commitButton), ConstantsManagerCommitButtonText);
-	GuiButton(calculateBoundsAtAnchor(anchor, bounds.revertButton), ConstantsManagerRevertButtonText);
-	GuiButton(calculateBoundsAtAnchor(anchor, bounds.swapButton), SwapButtonText);
-	GuiButton(calculateBoundsAtAnchor(anchor, bounds.loadButton), LoadButtonText);
+	GuiButton(calculateBoundsAtAnchor(anchor, bounds.commitButton), prompts_labels::ConstantsManagerCommitButtonText);
+	GuiButton(calculateBoundsAtAnchor(anchor, bounds.revertButton), prompts_labels::ConstantsManagerRevertButtonText);
+	GuiButton(calculateBoundsAtAnchor(anchor, bounds.swapButton), prompts_labels::SwapButtonText);
+	GuiButton(calculateBoundsAtAnchor(anchor, bounds.loadButton), prompts_labels::LoadButtonText);
 
 	if(isOverlayPromptVisible) GuiUnlock();
 }

@@ -9,12 +9,12 @@
 #include "debug_utilities.hpp"
 
 using namespace interface;
-using namespace constants::interface_layout::note_canvas;
+namespace canvas_constants = constants::interface_layout::note_canvas;
 
 void NoteCanvas::drawPitchLabels(program_states::InterfaceContext &context){
     auto &state{context.interface.noteCanvas};
 
-    for(int rowIndex{0}; rowIndex < NumberOfRow; rowIndex++){
+    for(int rowIndex{0}; rowIndex < canvas_constants::NumberOfRow; rowIndex++){
         const int semitoneFromC0{semitoneFromRowIndex(rowIndex)};
         const int pitchClass{pitchClassFromSemitone(semitoneFromC0)};
 
@@ -35,7 +35,7 @@ void NoteCanvas::drawPitchLabels(program_states::InterfaceContext &context){
 
         }
 
-        const int octaveNumber{semitoneFromC0 / NumberOfSemitoneInOctave};
+        const int octaveNumber{semitoneFromC0 / canvas_constants::NumberOfSemitoneInOctave};
         const float snappedRowTopY{rowEdgeY(context, rowIndex)};
         const float snappedRowBottomY{rowEdgeY(context, rowIndex + 1)};
         const Color pitchLabelColor{
@@ -47,12 +47,12 @@ void NoteCanvas::drawPitchLabels(program_states::InterfaceContext &context){
         GuiLabel(
             
             Rectangle{
-                state.pitchLabelArea.x + layouts::PitchLabelHorizontalPadding,
+                state.pitchLabelArea.x + canvas_constants::layouts::PitchLabelHorizontalPadding,
                 snappedRowTopY,
-                state.pitchLabelArea.width - (layouts::PitchLabelHorizontalPadding * 2.0f),
+                state.pitchLabelArea.width - (canvas_constants::layouts::PitchLabelHorizontalPadding * 2.0f),
                 snappedRowBottomY - snappedRowTopY
             },
-            TextFormat("%s%d", PitchNames.at(pitchClass), octaveNumber)
+            TextFormat("%s%d", canvas_constants::PitchNames.at(pitchClass), octaveNumber)
         );
         GuiSetStyle(DEFAULT, TEXT_COLOR_NORMAL, previousTextColorStyleValue);
         
@@ -63,7 +63,7 @@ void NoteCanvas::drawPitchLabels(program_states::InterfaceContext &context){
 void NoteCanvas::drawBlackKeyRows(program_states::InterfaceContext &context){
     auto &state{context.interface.noteCanvas};
 
-    for(int rowIndex{0}; rowIndex < NumberOfRow; rowIndex++){
+    for(int rowIndex{0}; rowIndex < canvas_constants::NumberOfRow; rowIndex++){
         const int semitoneFromC0{semitoneFromRowIndex(rowIndex)};
         const int pitchClass{pitchClassFromSemitone(semitoneFromC0)};
 
@@ -94,11 +94,11 @@ void NoteCanvas::drawHorizontalGridLines(program_states::InterfaceContext &conte
     //     "h
     // );
 
-    for(int rowLineIndex{0}; rowLineIndex <= NumberOfRow; rowLineIndex++){
+    for(int rowLineIndex{0}; rowLineIndex <= canvas_constants::NumberOfRow; rowLineIndex++){
         const float linePositionY{rowEdgeY(context, rowLineIndex)};
         bool isCBoundary{false};
 
-        if(rowLineIndex > 0 && rowLineIndex < NumberOfRow){
+        if(rowLineIndex > 0 && rowLineIndex < canvas_constants::NumberOfRow){
             const int upperRowIndex{rowLineIndex - 1};
             const int lowerRowIndex{rowLineIndex};
 
@@ -110,7 +110,7 @@ void NoteCanvas::drawHorizontalGridLines(program_states::InterfaceContext &conte
         DrawLineEx(
             Vector2{state.gridArea.x, linePositionY},
             Vector2{state.gridArea.x + state.gridArea.width, linePositionY},
-            layouts::GridLineThickness,
+            canvas_constants::layouts::GridLineThickness,
             isCBoundary ? state.octaveLineColor : state.softGridColor
         );
     }
@@ -120,7 +120,7 @@ void NoteCanvas::drawHorizontalGridLines(program_states::InterfaceContext &conte
 void NoteCanvas::drawVerticalGridLines(program_states::InterfaceContext &context){
     auto &state{context.interface.noteCanvas};
 
-    const float topLinePositionY{rowEdgeY(context, NumberOfRow)};
+    const float topLinePositionY{rowEdgeY(context, canvas_constants::NumberOfRow)};
     const float bottomLinePositionY{rowEdgeY(context, 0)};
 
 
@@ -133,10 +133,10 @@ void NoteCanvas::drawVerticalGridLines(program_states::InterfaceContext &context
             columnLineIndex == 0 || columnLineIndex == state.activeColumnCount
         };
         const bool isMeasureBoundary{
-            (columnLineIndex % layouts::MeasureColumnStep) == 0
+            (columnLineIndex % canvas_constants::layouts::MeasureColumnStep) == 0
         };
         const bool isBeatBoundary{
-            (columnLineIndex % layouts::BeatColumnStep) == 0
+            (columnLineIndex % canvas_constants::layouts::BeatColumnStep) == 0
         };
         const Color lineColor{
             isPageBoundary
@@ -150,7 +150,7 @@ void NoteCanvas::drawVerticalGridLines(program_states::InterfaceContext &context
         DrawLineEx(
             Vector2{linePositionX, topLinePositionY},
             Vector2{linePositionX, bottomLinePositionY},
-            layouts::GridLineThickness,
+            canvas_constants::layouts::GridLineThickness,
             lineColor
         );
 

@@ -9,7 +9,7 @@
 #include "interface/utilities.hpp"
 
 using namespace interface;
-using namespace constants::labels::prompts;
+namespace prompts_constants = constants::labels::prompts;
 
 const Vector2 &Prompts::windowAnchor(const program_states::Layout &layoutState, const program_states::Interface::Prompts &promptState){
     

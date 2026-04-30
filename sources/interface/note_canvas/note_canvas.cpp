@@ -9,7 +9,7 @@
 #include "debug_utilities.hpp"
 
 using namespace interface;
-using namespace constants::labels::note_canvas;
+namespace note_canvas_labels = constants::labels::note_canvas;
 
 void NoteCanvas::draw(program_states::InterfaceContext &context){
 	const auto anchor{context.layout.anchor.noteCanvas.noteCanvas};
@@ -29,7 +29,7 @@ void NoteCanvas::draw(program_states::InterfaceContext &context){
 	// 	context.interface.noteCanvas.isGridLayoutDirty
 	// );
 
-	GuiGroupBox(groupBox, NoteCanvasGroupBoxText);
+	GuiGroupBox(groupBox, note_canvas_labels::NoteCanvasGroupBoxText);
 	handleZoom(context);
 
 	drawGrid(context);

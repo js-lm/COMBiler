@@ -12,7 +12,7 @@
 #include <cmath>
 
 using namespace interface;
-using namespace constants::labels::sidebar;
+namespace sidebar_constants = constants::labels::sidebar;
 
 void Sidebar::drawInspector(program_states::InterfaceContext &context){
 	const auto anchor{context.layout.anchor.sidebar.inspect};
@@ -35,20 +35,20 @@ void Sidebar::drawInspector(program_states::InterfaceContext &context){
 
 	const int previousNotesValue{context.interface.sidebar.notesValue};
 
-	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.groupBox), InspectorGroupBoxText);
+	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.groupBox), sidebar_constants::InspectorGroupBoxText);
 	GuiListView(
 		calculateBoundsAtAnchor(anchor, bounds.channelListView),
-		ChannelListViewText,
+		sidebar_constants::ChannelListViewText,
 		&context.interface.sidebar.selectedChannelListViewScrollIndex,
 		&context.interface.sidebar.selectedChannelListViewIndex
 	);
 	context.interface.sidebar.selectedChannelListViewIndex = std::max(0, context.interface.sidebar.selectedChannelListViewIndex);
-	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.channelLabel), ChannelLabelText);
-	GuiLine(calculateBoundsAtAnchor(anchor, bounds.structureLine), StructureLineText);
+	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.channelLabel), sidebar_constants::ChannelLabelText);
+	GuiLine(calculateBoundsAtAnchor(anchor, bounds.structureLine), sidebar_constants::StructureLineText);
 
 	if(GuiValueBox(
 		calculateBoundsAtAnchor(anchor, bounds.tempoValueBox),
-		TempoValueBoxText,
+		sidebar_constants::TempoValueBoxText,
 		&context.interface.sidebar.tempoValue,
 		0,
 		100, // TODO: magic numbers
@@ -59,7 +59,7 @@ void Sidebar::drawInspector(program_states::InterfaceContext &context){
 
 	if(GuiValueBox(
 		calculateBoundsAtAnchor(anchor, bounds.notesValueBox),
-		NotesValueBoxText,
+		sidebar_constants::NotesValueBoxText,
 		&context.interface.sidebar.notesValue,
 		constants::project_data::MinimumNotePerPage,
 		constants::project_data::MaximumNotePerPage,
@@ -81,10 +81,10 @@ void Sidebar::drawInspector(program_states::InterfaceContext &context){
 		context.interface.noteCanvas.isGridLayoutDirty = true;
 	}
 
-	GuiLine(calculateBoundsAtAnchor(anchor, bounds.sideSettingLine), SideSettingLineText);
+	GuiLine(calculateBoundsAtAnchor(anchor, bounds.sideSettingLine), sidebar_constants::SideSettingLineText);
 	GuiCheckBox(
 		calculateBoundsAtAnchor(anchor, bounds.showCommandsCheckBox),
-		ShowCommandsCheckBoxText,
+		sidebar_constants::ShowCommandsCheckBoxText,
 		&context.interface.sidebar.isShowCommandsEnabled
 	);
 }

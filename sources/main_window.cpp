@@ -22,44 +22,9 @@
 
 #include "debug_utilities.hpp"
 
-void DEBUG_sf2(MidiManager &midiManager){
-    const auto &projectData{program_states::DEBUG_preset::projectData};
-    const auto &instrumentChannel{projectData.pages[0].instrumentChannels[0]};
-
-    constexpr command::Target targetChannel{command::Target::Channel_1};
-
-    midiManager.setInstrument(targetChannel, constants::midi::DefaultInstrument);
-    midiManager.setVolume(targetChannel, 10);
-
-    for(int stepIndex{0};
-        stepIndex < 32;
-        stepIndex++
-    ){
-        const auto &optionalInstrumentChannelData{instrumentChannel[stepIndex]};
-        if(!optionalInstrumentChannelData) continue;
-
-        if(std::holds_alternative<music_data::Instrument>(*optionalInstrumentChannelData)){
-            const music_data::Instrument instrument{std::get<music_data::Instrument>(*optionalInstrumentChannelData)};
-            midiManager.setInstrument(targetChannel, instrument);
-            continue;
-        }
-
-        const music_data::Note note{std::get<music_data::Note>(*optionalInstrumentChannelData)};
-        
-        midiManager.noteOn(targetChannel, note);
-        WaitTime(.35);
-
-        midiManager.noteOff(targetChannel, note);
-        WaitTime(.15);
-    }
-
-    midiManager.silence(targetChannel);
-}
-
 int MainWindow::run(){
 
     initialize();
-
 
     while(!WindowShouldClose()){
         draw();

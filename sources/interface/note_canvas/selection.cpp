@@ -5,7 +5,7 @@
 #include "constants.hpp"
 
 using namespace interface;
-using namespace constants::interface_layout::note_canvas;
+namespace canvas_constants = constants::interface_layout::note_canvas;
 
 void NoteCanvas::drawSelection(program_states::InterfaceContext &context){
     program_states::Interface::Clipboard::SelectionArea area{};
@@ -45,16 +45,16 @@ void NoteCanvas::drawSelection(program_states::InterfaceContext &context){
     const auto drawDottedHorizontalLine{[&](float positionY){
         for(float currentPositionX{leftPositionX}; 
             currentPositionX < rightPositionX; 
-            currentPositionX += selection::DashLengthInPixels + selection::GapLengthInPixels
+            currentPositionX += canvas_constants::selection::DashLengthInPixels + canvas_constants::selection::GapLengthInPixels
         ){
             const float segmentEndPositionX{
-                std::min(currentPositionX + selection::DashLengthInPixels, rightPositionX)
+                std::min(currentPositionX + canvas_constants::selection::DashLengthInPixels, rightPositionX)
             };
             DrawLineEx(
                 Vector2{currentPositionX, positionY},
                 Vector2{segmentEndPositionX, positionY},
-                selection::BorderThicknessInPixels,
-                selection::BorderColor
+                canvas_constants::selection::BorderThicknessInPixels,
+                canvas_constants::selection::BorderColor
             );
         }
     }};
@@ -62,16 +62,16 @@ void NoteCanvas::drawSelection(program_states::InterfaceContext &context){
     const auto drawDottedVerticalLine{[&](float positionX){
         for(float currentPositionY{topPositionY}; 
             currentPositionY < bottomPositionY; 
-            currentPositionY += selection::DashLengthInPixels + selection::GapLengthInPixels
+            currentPositionY += canvas_constants::selection::DashLengthInPixels + canvas_constants::selection::GapLengthInPixels
         ){
             const float segmentEndPositionY{
-                std::min(currentPositionY + selection::DashLengthInPixels, bottomPositionY)
+                std::min(currentPositionY + canvas_constants::selection::DashLengthInPixels, bottomPositionY)
             };
             DrawLineEx(
                 Vector2{positionX, currentPositionY},
                 Vector2{positionX, segmentEndPositionY},
-                selection::BorderThicknessInPixels,
-                selection::BorderColor
+                canvas_constants::selection::BorderThicknessInPixels,
+                canvas_constants::selection::BorderColor
             );
         }
     }};

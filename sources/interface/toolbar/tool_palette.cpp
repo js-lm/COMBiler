@@ -13,7 +13,7 @@
 #include "debug_utilities.hpp"
 
 using namespace interface;
-using namespace constants::labels::toolbar;
+namespace toolbar_constants = constants::labels::toolbar;
 
 void Toolbar::drawToolPalette(program_states::InterfaceContext &context){
 	const auto anchor{context.layout.anchor.toolbar.toolPalette};
@@ -26,7 +26,7 @@ void Toolbar::drawToolPalette(program_states::InterfaceContext &context){
 		context.interface.sidebar.selectedChannelListViewIndex == constants::interface_layout::note_canvas::notes::SystemChannelListViewIndex
 	};
 
-	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.groupBox), ToolPaletteGroupBoxText);
+	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.groupBox), toolbar_constants::ToolPaletteGroupBoxText);
 
 	if(isSystemChannelSelected){
 		int selectedCommandToolIndex{constants::prompts::toIndex(promptState.selectedCommandTool)};
@@ -35,12 +35,12 @@ void Toolbar::drawToolPalette(program_states::InterfaceContext &context){
 
 		Rectangle commandToggleGroupBounds{calculateBoundsAtAnchor(anchor, bounds.toolsToggleGroup)};
 
-		GuiToggleGroup(commandToggleGroupBounds, ToolsToggleGroupCommandText, &selectedCommandToolIndex);
+		GuiToggleGroup(commandToggleGroupBounds, toolbar_constants::ToolsToggleGroupCommandText, &selectedCommandToolIndex);
 		promptState.selectedCommandTool = constants::prompts::commandPromptFromIndex(selectedCommandToolIndex);
 
         const Rectangle openCommandWindowButtonBounds{calculateBoundsAtAnchor(anchor, bounds.openCommandWindowButton)};
 
-		if(GuiButton(openCommandWindowButtonBounds, OpenCommandWindowButtonText)){
+		if(GuiButton(openCommandWindowButtonBounds, toolbar_constants::OpenCommandWindowButtonText)){
 			promptState.activeCommandPrompt = promptState.selectedCommandTool;
 			promptState.isCommandWindowVisible = true;
 
@@ -50,7 +50,7 @@ void Toolbar::drawToolPalette(program_states::InterfaceContext &context){
 		int selectedToolIndex{constants::toolbar::toIndex(toolbarState.selectedTool)};
 
 		selectedToolIndex = std::clamp(selectedToolIndex, 0, constants::toolbar::ToolCount - 1);
-		GuiToggleGroup(calculateBoundsAtAnchor(anchor, bounds.toolsToggleGroup), ToolsToggleGroupNormalText, &selectedToolIndex);
+		GuiToggleGroup(calculateBoundsAtAnchor(anchor, bounds.toolsToggleGroup), toolbar_constants::ToolsToggleGroupNormalText, &selectedToolIndex);
 
 		toolbarState.selectedTool = constants::toolbar::toolFromIndex(selectedToolIndex);
 		if(promptState.activeCommandPrompt != constants::prompts::CommandPrompt::Change_Instrument){
@@ -81,7 +81,7 @@ void Toolbar::drawToolPalette(program_states::InterfaceContext &context){
 	}
 
 
-	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.toolsLabel), ToolsLabelText);
+	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.toolsLabel), toolbar_constants::ToolsLabelText);
 
 	const bool hasSelectionArea{
 		context.interface.clipboard.selectionArea.has_value()
@@ -104,19 +104,19 @@ void Toolbar::drawToolPalette(program_states::InterfaceContext &context){
 
 	context.interface.toolbar.isCutNoteButtonPressed = drawButton(
 		calculateBoundsAtAnchor(anchor, bounds.cutNoteButton),
-		CutNoteButtonText,
+		toolbar_constants::CutNoteButtonText,
 		isCutEnabled
 	);
 	context.interface.toolbar.isCopyNoteButtonPressed = drawButton(
 		calculateBoundsAtAnchor(anchor, bounds.copyNoteButton),
-		CopyNoteButtonText,
+		toolbar_constants::CopyNoteButtonText,
 		isCopyEnabled
 	);
 	context.interface.toolbar.isPasteNoteButtonPressed = false;
 	if(isPasteEnabled){
 		GuiToggle(
 			calculateBoundsAtAnchor(anchor, bounds.pasteNoteButton),
-			PasteNoteButtonText,
+			toolbar_constants::PasteNoteButtonText,
 			&context.interface.clipboard.isPasteModeEnabled
 		);
 	}else{
@@ -124,7 +124,7 @@ void Toolbar::drawToolPalette(program_states::InterfaceContext &context){
 		bool isDisabledPasteToggle{context.interface.clipboard.isPasteModeEnabled};
 		GuiToggle(
 			calculateBoundsAtAnchor(anchor, bounds.pasteNoteButton),
-			PasteNoteButtonText,
+			toolbar_constants::PasteNoteButtonText,
 			&isDisabledPasteToggle
 		);
 		GuiSetState(STATE_NORMAL);
