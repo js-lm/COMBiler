@@ -9,6 +9,10 @@
 #include "labels.hpp"
 #include "interface/utilities.hpp"
 
+#include <magic_enum/magic_enum.hpp>
+
+#include <fmt/format.h>
+
 using namespace interface;
 namespace prompts_labels = constants::labels::prompts;
 namespace manager_constants = constants::prompts::constants_manager;
@@ -26,11 +30,14 @@ void Prompts::drawConstantsManagerPrompt(program_states::InterfaceContext &conte
 	if(isOverlayPromptVisible) GuiLock();
 
 	const Rectangle windowBounds{calculateBoundsAtAnchor(anchor, bounds.windowBox)};
-	if(GuiWindowBox(windowBounds, prompts_labels::ConstantsManagerWindowBoxText)){
+	if(GuiWindowBox(
+		windowBounds, 
+		state.hasModified ? prompts_labels::ConstantsManagerWindowBoxUnsavedText : prompts_labels::ConstantsManagerWindowBoxText
+	)){
 		state.isConstantsManagerWindowVisible = false;
-		if(isOverlayPromptVisible){
-			GuiUnlock();
-		}
+
+		if(isOverlayPromptVisible) GuiUnlock();
+
 		return;
 	}
 
@@ -51,37 +58,91 @@ void Prompts::drawConstantsManagerPrompt(program_states::InterfaceContext &conte
 		&view
 	);
 
-	auto boundAtAnchorWithScrollOffset{[&](Rectangle bounds, size_t index)->Rectangle{
-		bounds.y += scrollOffset.y;
-		bounds.y += context.layout.bounds.prompts.constantsManager.constantItemPanel.height * index;
-		return calculateBoundsAtAnchor(anchor, bounds);
-	}};
+	if(auto projectData{context.system.project.data.lock()}){
 
-	// WIP
-	BeginScissorMode(view.x, view.y, view.width, view.height); {
+		const auto &commandList{projectData->data->commandPalette.getList()};
+
 
 		const auto previousWidth{GuiGetStyle(BUTTON, BORDER_WIDTH)};
-		GuiSetStyle(BUTTON, BORDER_WIDTH, 1);
+		GuiSetStyle(BUTTON, BORDER_WIDTH, 0);
 
-		for(size_t itemIndex{0}; itemIndex < constants::project_data::MaximumNumberOfConstants; itemIndex++){
-			GuiButton(boundAtAnchorWithScrollOffset(bounds.constantItemPanel, itemIndex), nullptr);
-			// GuiPanel(calculateBoundsAtAnchor(anchor, bounds.constantsPanel), nullptr);
-			GuiLabel(boundAtAnchorWithScrollOffset(bounds.listIdLabel, itemIndex), TextFormat("%02d", itemIndex));
-			GuiLabel(boundAtAnchorWithScrollOffset(bounds.listTypeLabel, itemIndex), "#122#Volume");
-			GuiLabel(boundAtAnchorWithScrollOffset(bounds.listValueLabel, itemIndex), "Target: Ch3, Value: 8");
-			GuiLabel(boundAtAnchorWithScrollOffset(bounds.listNameLabel, itemIndex), "Main Volume");
-		}
+		BeginScissorMode(view.x, view.y, view.width, view.height); {
 
-		GuiSetStyle(BUTTON, BORDER_WIDTH, previousWidth);
+			for(size_t itemIndex{0}; 
+				itemIndex < constants::project_data::MaximumNumberOfConstants; 
+				itemIndex++
+			){
 
-	} EndScissorMode();
+				if(itemIndex == state.draft.constantIndex){
+					GuiSetStyle(BUTTON, BORDER_WIDTH, previousWidth);
+				}
+
+				auto boundAtAnchorWithScrollOffset{[&](Rectangle bounds)->Rectangle{
+					bounds.y += scrollOffset.y;
+					bounds.y += context.layout.bounds.prompts.constantsManager.constantItemPanel.height * itemIndex;
+					return calculateBoundsAtAnchor(anchor, bounds);
+				}};
+
+				const auto &commandPair{commandList[itemIndex]};
+
+				if(GuiButton(boundAtAnchorWithScrollOffset(bounds.constantItemPanel), nullptr)){
+
+					if(state.hasModified){
+
+
+					}else{
+						state.draft.constantIndex = itemIndex;
+					}
+
+				}
+
+				std::string nameLabel{prompts_labels::DefaultNameLabel};
+				std::string typeLabel{prompts_labels::DefaultTypeLabel};
+				std::string valueLabel{prompts_labels::DefaultValueLabel};
+
+				if(commandPair.second){
+					nameLabel = commandPair.first;
+
+					std::visit([&](const auto &command){
+						using Type = std::decay_t<decltype(command)>;
+
+						if constexpr(std::is_same_v<command::Tempo, Type>){
+							typeLabel = prompts_labels::TempoTypeLabel;
+							valueLabel = fmt::format("{}", command.tempo);
+
+						}else if constexpr(std::is_same_v<command::Volume, Type>){
+							typeLabel = prompts_labels::VolumeTypeLabel;
+
+							valueLabel = fmt::format("{}; {}", magic_enum::enum_name(command.target), command.volume);
+							
+						}else if constexpr(std::is_same_v<command::Articulation, Type>){
+							typeLabel = prompts_labels::ArticulationTypeLabel;
+							valueLabel = fmt::format("{}; {}", magic_enum::enum_name(command.target), magic_enum::enum_name(command.articulation));
+						}
+
+					}, commandPair.second.value());
+				}
+
+				GuiLabel(boundAtAnchorWithScrollOffset(bounds.listIdLabel), TextFormat("%02d", itemIndex));
+				GuiLabel(boundAtAnchorWithScrollOffset(bounds.listNameLabel), nameLabel.c_str());
+				GuiLabel(boundAtAnchorWithScrollOffset(bounds.listTypeLabel), typeLabel.c_str());
+				GuiLabel(boundAtAnchorWithScrollOffset(bounds.listValueLabel), valueLabel.c_str());
+			
+				GuiSetStyle(BUTTON, BORDER_WIDTH, 0);
+			}
+
+			GuiSetStyle(BUTTON, BORDER_WIDTH, previousWidth);
+
+		} EndScissorMode();
+	}
+
 
 // right
 	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.editConstantGroupBox), prompts_labels::EditNameGroupBoxText);
 	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.textConstantLabel), prompts_labels::TextConstantLabelText);
 	if(GuiTextBox(
 		calculateBoundsAtAnchor(anchor, bounds.editConstantTextBox),
-		state.constantsManagerNameTextBoxText,
+		state.draft.nameTextBoxText,
 		manager_constants::ConstantNameTextMaximumLength,
 		state.constantsManagerNameTextBoxEditMode
 	)){
@@ -110,7 +171,7 @@ void Prompts::drawConstantsManagerPrompt(program_states::InterfaceContext &conte
 			calculateBoundsAtAnchor(anchor, bounds.tempoSlider),
 			prompts_labels::ConstantsManagerTempoSliderText,
 			nullptr,
-			&state.constantsManagerTempoSliderValue,
+			&state.draft.tempoSliderValue,
 			constants::prompts::TempoPercentageMinimumValue,
 			constants::prompts::TempoPercentageMaximumValue
 		);
@@ -120,7 +181,7 @@ void Prompts::drawConstantsManagerPrompt(program_states::InterfaceContext &conte
 		GuiToggleGroup(
 			calculateBoundsAtAnchor(anchor, bounds.targetToggleGroup),
 			prompts_labels::TargetToggleGroupText,
-			&state.constantsManagerTargetToggleGroupIndex
+			&state.draft.targetToggleGroupIndex
 		);
 	}
 
@@ -132,7 +193,7 @@ void Prompts::drawConstantsManagerPrompt(program_states::InterfaceContext &conte
 		GuiToggleGroup(
 			calculateBoundsAtAnchor(anchor, bounds.articulationToggleGroup),
 			prompts_labels::ConstantsManagerArticulationToggleGroupText,
-			&state.constantsManagerArticulationToggleGroupIndex
+			&state.draft.articulationToggleGroupIndex
 		);
 	}else if(isVolumeSectionVisible){
 		GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.volumeGroupBox), prompts_labels::ConstantsManagerVolumeGroupBoxText);
@@ -140,7 +201,7 @@ void Prompts::drawConstantsManagerPrompt(program_states::InterfaceContext &conte
 		GuiToggleGroup(
 			calculateBoundsAtAnchor(anchor, bounds.volumeToggleGroup),
 			prompts_labels::ConstantsManagerVolumeToggleGroupText,
-			&state.constantsManagerVolumeToggleGroupIndex
+			&state.draft.volumeToggleGroupIndex
 		);
 	}
 
@@ -150,7 +211,7 @@ void Prompts::drawConstantsManagerPrompt(program_states::InterfaceContext &conte
 
 	if(GuiTextBox(
 		calculateBoundsAtAnchor(anchor, bounds.swapLeftTextBox),
-		state.constantsManagerSwapLeftTextBoxText,
+		state.draft.swapLeftTextBoxText,
 		manager_constants::SwapIndexTextMaximumLength,
 		state.constantsManagerSwapLeftTextBoxEditMode
 	)){
@@ -159,14 +220,16 @@ void Prompts::drawConstantsManagerPrompt(program_states::InterfaceContext &conte
 
 	if(GuiTextBox(
 		calculateBoundsAtAnchor(anchor, bounds.swapRightTextBox),
-		state.constantsManagerSwapRightTextBoxText,
+		state.draft.swapRightTextBoxText,
 		manager_constants::SwapIndexTextMaximumLength,
 		state.constantsManagerSwapRightTextBoxEditMode
 	)){
 		state.constantsManagerSwapRightTextBoxEditMode = !state.constantsManagerSwapRightTextBoxEditMode;
 	}
 
-	GuiButton(calculateBoundsAtAnchor(anchor, bounds.commitButton), prompts_labels::ConstantsManagerCommitButtonText);
+	GuiButton(calculateBoundsAtAnchor(anchor, bounds.commitButton), 
+		state.hasModified ? prompts_labels::ConstantsManagerCommitButtonUnsavedText : prompts_labels::ConstantsManagerCommitButtonText
+	);
 	GuiButton(calculateBoundsAtAnchor(anchor, bounds.revertButton), prompts_labels::ConstantsManagerRevertButtonText);
 	GuiButton(calculateBoundsAtAnchor(anchor, bounds.swapButton), prompts_labels::SwapButtonText);
 	GuiButton(calculateBoundsAtAnchor(anchor, bounds.loadButton), prompts_labels::LoadButtonText);

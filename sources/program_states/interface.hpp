@@ -49,29 +49,6 @@ namespace program_states{
             bool isCommandWindowVisible     {false};
             constants::prompts::CommandPrompt activeCommandPrompt{constants::prompts::CommandPrompt::Tempo};
 
-            bool isConstantsManagerWindowVisible{false};
-            bool isConstantsManagerWarningWindowVisible{false};
-            bool isConstantsManagerInfoWindowVisible{false};
-
-            Rectangle constantsManagerScrollPanelScrollView{0, 0, 0, 0};
-            Vector2 constantsManagerScrollPanelScrollOffset{0, 0};
-            Vector2 constantsManagerScrollPanelBoundsOffset{0, 0};
-
-            bool constantsManagerNameTextBoxEditMode{false};
-            char constantsManagerNameTextBoxText[constants::prompts::constants_manager::ConstantNameTextMaximumLength]{"Untitled Constant"};
-
-            int constantsManagerTypeToggleGroupIndex{constants::prompts::constants_manager::toIndex(constants::prompts::constants_manager::Type::None)};
-            int constantsManagerTargetToggleGroupIndex{0};
-            float constantsManagerTempoSliderValue{80.0f};
-
-            bool constantsManagerSwapLeftTextBoxEditMode{false};
-            char constantsManagerSwapLeftTextBoxText[constants::prompts::constants_manager::SwapIndexTextMaximumLength];
-            bool constantsManagerSwapRightTextBoxEditMode{false};
-            char constantsManagerSwapRightTextBoxText[constants::prompts::constants_manager::SwapIndexTextMaximumLength];
-
-            int constantsManagerArticulationToggleGroupIndex{1};
-            int constantsManagerVolumeToggleGroupIndex{8};
-
             int instrumentFamilyListViewScrollIndex{0};
             int instrumentFamilyListViewIndex{0};
             int instrumentMemberListViewScrollIndex{0};
@@ -89,6 +66,62 @@ namespace program_states{
 
             int articulationStateToggleIndex{1};
             int articulationTargetToggleIndex{0};
+
+            struct ConstantsManagerDraft{
+                int constantIndex;
+                std::optional<constants::prompts::CommandPrompt> commandType;
+
+                char nameTextBoxText[constants::prompts::constants_manager::ConstantNameTextMaximumLength];
+
+                float tempoSliderValue;
+
+                int targetToggleGroupIndex;
+                int articulationToggleGroupIndex;
+                int volumeToggleGroupIndex;
+
+                char swapLeftTextBoxText[constants::prompts::constants_manager::SwapIndexTextMaximumLength];
+                char swapRightTextBoxText[constants::prompts::constants_manager::SwapIndexTextMaximumLength];
+
+            public:
+                ConstantsManagerDraft(){ reset();}
+
+                void reset(){
+                    constantIndex = 0;
+                
+                    commandType.reset();
+
+                    strcpy(nameTextBoxText, "Untitled Constant");
+
+                    tempoSliderValue = 80.0f;
+
+                    targetToggleGroupIndex = 0;
+                    articulationToggleGroupIndex = 1;
+                    volumeToggleGroupIndex = 8;
+
+                    strcpy(swapLeftTextBoxText, "00");
+                    strcpy(swapRightTextBoxText, "01");
+                }
+            } draft{};
+            
+            bool hasModified{false};
+            // int currentSelectedConstantIndex{0};
+
+            bool isConstantsManagerWindowVisible{false};
+            bool isConstantsManagerWarningWindowVisible{false};
+            bool isConstantsManagerInfoWindowVisible{false};
+
+            Rectangle constantsManagerScrollPanelScrollView{0, 0, 0, 0};
+            Vector2 constantsManagerScrollPanelScrollOffset{0, 0};
+            Vector2 constantsManagerScrollPanelBoundsOffset{0, 0};
+
+            bool constantsManagerNameTextBoxEditMode{false};
+            
+            int constantsManagerTypeToggleGroupIndex{constants::prompts::constants_manager::toIndex(constants::prompts::constants_manager::Type::None)};
+
+
+            bool constantsManagerSwapLeftTextBoxEditMode{false};
+            bool constantsManagerSwapRightTextBoxEditMode{false};
+
         } prompts{};
 
         struct Sidebar{

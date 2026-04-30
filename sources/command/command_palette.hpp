@@ -7,10 +7,11 @@ namespace command{
 
     class CommandPalette{
     public:
-        using List = std::array<std::pair<std::string, Command>, constants::project_data::MaximumNumberOfConstants>;
+        using List = std::array<std::pair<std::string, std::optional<Command>>, constants::project_data::MaximumNumberOfConstants>;
 
     private:
-        std::array<Command, constants::project_data::MaximumNumberOfConstants> commands_{};
+        std::array<std::optional<Command>, constants::project_data::MaximumNumberOfConstants> commands_{};
+
         std::array<std::string, constants::project_data::MaximumNumberOfConstants> names_{};
         std::unordered_map<std::string, ConstantIndex> indicesMap_{};
 

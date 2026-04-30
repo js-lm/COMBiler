@@ -75,6 +75,8 @@ public:
         std::optional<command::CommandToken> commandToken
     );
 
+    void commitConstantModification(const program_states::Interface::Prompts::ConstantsManagerDraft &draft);
+
 public:
     void finishAction();
 
@@ -93,4 +95,6 @@ private:
         int noteIndex,
         std::optional<music_data::InstrumentChannelData> cellValue
     );
+
+    command::Command constantFromPromptState(const program_states::Interface::Prompts &promptState);
 };

@@ -46,6 +46,14 @@ namespace constants::labels::prompts{
     constexpr const char *TypeBarText{"Type"};
     constexpr const char *ValueBarText{"Value"};
 
+    constexpr const char *DefaultNameLabel{"--"};
+    constexpr const char *DefaultTypeLabel{"None"};
+    constexpr const char *DefaultValueLabel{""};
+
+    constexpr const char *TempoTypeLabel{"#030#Tempo"};
+    constexpr const char *VolumeTypeLabel{"#029#Volume"};
+    constexpr const char *ArticulationTypeLabel{"#028#Articulation"};
+
     constexpr const char *ConstantsManagerTempoGroupBoxText{"Tempo"};
     constexpr const char *TargetGroupBoxText{"Target"};
     constexpr const char *TargetToggleGroupText{"All;1;2;3;4"};
@@ -69,6 +77,5 @@ namespace constants::labels::prompts{
     constexpr const char *VolumeLabelText{"Volume:"};
 
     constexpr const char *LoadButtonText{"Load"};
-
 
 } // namespace constants::labels::prompts
