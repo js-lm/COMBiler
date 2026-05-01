@@ -77,5 +77,14 @@ namespace constants::labels::prompts{
     constexpr const char *VolumeLabelText{"Volume:"};
 
     constexpr const char *LoadButtonText{"Load"};
+    
+        constexpr const char *WarningWindowBoxText{"Unsaved changes"};
+        constexpr const char *WarningLabelText{"You haven't committed your changes. Commit now?"};
+        constexpr const char *WarningYesButtonText{"Yes"};
+        constexpr const char *WarningNoButtonText{"No"};
+    
+        constexpr const char *InfoWindowBoxText{"Undefined constant"};
+        constexpr const char *InfoLabelText{"The constant is not defined"};
+        constexpr const char *InfoOKButtonText{"OK"};
 
 } // namespace constants::labels::prompts

@@ -17,11 +17,8 @@ namespace interface{
 	private:
 		static void drawConstantsManagerPrompt(program_states::InterfaceContext &context);
 		
-		static void drawConstantsManagerWarningPrompt(program_states::InterfaceContext &context);
-		static void drawConstantsManagerInfoPrompt(program_states::InterfaceContext &context);
-
-	private:
-		static void drawConstantsList();
+		static void drawConstantsManagerCommitPrompt(program_states::InterfaceContext &context);
+		static void drawConstantsManagerNotDefinedPrompt(program_states::InterfaceContext &context);
 
 	private:
 		static const Vector2 &windowAnchor(
@@ -36,6 +33,13 @@ namespace interface{
 
 	private:
 		static std::string instrumentListViewText(const std::vector<music_data::Instrument> &instruments);
+
+	private:
+		static void rightPanelCleaner();
+
+	private:
+		static void commit(program_states::InterfaceContext &context);
+		static void load(program_states::InterfaceContext &context);
 	};
 
 } // namespace interface

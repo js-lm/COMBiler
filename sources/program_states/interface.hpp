@@ -5,6 +5,7 @@
 #include <optional>
 #include <array>
 #include <vector>
+#include <cstring>
 
 #include "aliases.hpp"
 #include "constants.hpp"
@@ -85,8 +86,8 @@ namespace program_states{
             public:
                 ConstantsManagerDraft(){ reset();}
 
-                void reset(){
-                    constantIndex = 0;
+                void reset(int index = 0){
+                    constantIndex = index;
                 
                     commandType.reset();
 
@@ -104,7 +105,7 @@ namespace program_states{
             } draft{};
             
             bool hasModified{false};
-            // int currentSelectedConstantIndex{0};
+            int requestedConstantIndex{0};
 
             bool isConstantsManagerWindowVisible{false};
             bool isConstantsManagerWarningWindowVisible{false};
