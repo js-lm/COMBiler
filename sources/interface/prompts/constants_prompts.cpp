@@ -65,8 +65,6 @@ void Prompts::drawConstantsManagerPrompt(program_states::InterfaceContext &conte
 
 		const auto &commandList{projectData->data->commandPalette.getList()};
 
-		bool isRightPanelDirty{false};
-
 		const auto previousWidth{GuiGetStyle(BUTTON, BORDER_WIDTH)};
 		GuiSetStyle(BUTTON, BORDER_WIDTH, 0);
 
@@ -101,7 +99,7 @@ void Prompts::drawConstantsManagerPrompt(program_states::InterfaceContext &conte
 						return;
 					}else{
 						state.draft.constantIndex = itemIndex;
-						isRightPanelDirty = true;
+						state.isRightPanelDirty = true;
 					}
 
 				}
@@ -147,10 +145,12 @@ void Prompts::drawConstantsManagerPrompt(program_states::InterfaceContext &conte
 
 
 
-		if(isRightPanelDirty){
-			isRightPanelDirty = false;
+		if(state.isRightPanelDirty){
+			state.isRightPanelDirty = false;
 
 			state.draft.reset(state.draft.constantIndex);
+
+
 
 			if(auto &command{commandList[state.draft.constantIndex].second}){
 
@@ -158,34 +158,39 @@ void Prompts::drawConstantsManagerPrompt(program_states::InterfaceContext &conte
 					using Type = std::decay_t<decltype(command)>;
 
 					if constexpr(std::is_same_v<command::Tempo, Type>){
-						state.draft.commandType = constants::prompts::CommandPrompt::Tempo;
+						state.draft.commandType = constants::prompts::constants_manager::Type::Tempo;
+						
+						state.constantsManagerTypeToggleGroupIndex = constants::prompts::constants_manager::toIndex(*state.draft.commandType);
 
 						state.draft.tempoSliderValue = command.tempo;
 
 					}else if constexpr(std::is_same_v<command::Volume, Type>){
-						state.draft.commandType = constants::prompts::CommandPrompt::Volume;
+						state.draft.commandType = constants::prompts::constants_manager::Type::Volume;
+						
+						state.constantsManagerTypeToggleGroupIndex = constants::prompts::constants_manager::toIndex(*state.draft.commandType);
 
 						state.draft.targetToggleGroupIndex = static_cast<int>(command.target);
 						state.draft.volumeToggleGroupIndex = command.volume;
 
 
 					}else if constexpr(std::is_same_v<command::Articulation, Type>){
-						state.draft.commandType = constants::prompts::CommandPrompt::Articulation;
+						state.draft.commandType = constants::prompts::constants_manager::Type::Articulation;
+						
+						state.constantsManagerTypeToggleGroupIndex = constants::prompts::constants_manager::toIndex(*state.draft.commandType);
 
 						state.draft.targetToggleGroupIndex = static_cast<int>(command.target);
 						state.draft.articulationToggleGroupIndex = static_cast<int>(command.articulation);
-
-					}else{
-						state.draft.commandType = std::nullopt;
 
 					}
 
 				}, command.value());
 
+				strcpy(state.draft.nameTextBoxText, commandList[state.draft.constantIndex].first.c_str());
+			}else{
+				state.draft.commandType = std::nullopt;
+
+				state.constantsManagerTypeToggleGroupIndex = constants::prompts::constants_manager::toIndex(constants::prompts::constants_manager::Type::None);
 			}
-
-
-
 		}
 
 
@@ -303,6 +308,8 @@ void Prompts::drawConstantsManagerPrompt(program_states::InterfaceContext &conte
 	|| previousSwapRight != state.draft.swapRightTextBoxText)
 	{
 		state.hasModified = true;
+
+		if(state.constantsManagerTypeToggleGroupIndex == 0) state.hasModified = false; // TODO: magic number
 	}
 
 	if(GuiButton(
@@ -310,22 +317,20 @@ void Prompts::drawConstantsManagerPrompt(program_states::InterfaceContext &conte
 		state.hasModified ? prompts_labels::ConstantsManagerCommitButtonUnsavedText 
 				: prompts_labels::ConstantsManagerCommitButtonText
 	)){ commit(context);}
-	GuiButton(calculateBoundsAtAnchor(anchor, bounds.revertButton), prompts_labels::ConstantsManagerRevertButtonText);
+	if(GuiButton(calculateBoundsAtAnchor(anchor, bounds.revertButton), prompts_labels::ConstantsManagerRevertButtonText)){
+		state.isRightPanelDirty = true;
+		state.hasModified = false;
+	};
 	GuiButton(calculateBoundsAtAnchor(anchor, bounds.swapButton), prompts_labels::SwapButtonText);
 	
 	if(GuiButton(calculateBoundsAtAnchor(anchor, bounds.loadButton), prompts_labels::LoadButtonText)){
-
-
 		if(auto projectData{context.system.project.data.lock()}){
-
 			const auto &commandList{projectData->data->commandPalette.getList()};
-
 			if(commandList[state.draft.constantIndex].second){
 				load(context);
 			}else{
 				state.isConstantsManagerInfoWindowVisible = true;
 			}
-
 		}
 	}
 
@@ -359,14 +364,17 @@ void Prompts::drawConstantsManagerCommitPrompt(program_states::InterfaceContext 
 		buttons.c_str()
 	)};
 
-	if(result == 1){ // TODO: magic numbers
+	 // TODO: magic numbers
+	if(result == 1){ // Yes
 		state.isConstantsManagerWarningWindowVisible = false;
 		commit(context);
-		state.draft.constantIndex = state.requestedConstantIndex;
-	}else if(result == 2){
+		state.isRightPanelDirty = true;
+	}else if(result == 2){ // No
 		state.isConstantsManagerWarningWindowVisible = false;
 		state.draft.constantIndex = state.requestedConstantIndex;
-	}else if(result == 0 || IsKeyPressed(KEY_ESCAPE)){
+		state.isRightPanelDirty = true;
+		state.hasModified = false;
+	}else if(result == 0 || IsKeyPressed(KEY_ESCAPE)){ // Close button
 		state.isConstantsManagerWarningWindowVisible = false;
 	}
 }

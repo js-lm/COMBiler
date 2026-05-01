@@ -40,6 +40,14 @@ std::optional<Command> CommandPalette::get(const std::string &string) const{
     return commands_[iterator->second];
 }
 
+std::optional<ConstantIndex> CommandPalette::getIndex(const std::string &string) const{
+    auto iterator{indicesMap_.find(string)};
+
+    if(iterator == indicesMap_.end()) return std::nullopt;
+
+    return iterator->second;
+}
+
 CommandPalette::List CommandPalette::getList() const{
     List list{};
 

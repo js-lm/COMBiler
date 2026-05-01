@@ -70,7 +70,7 @@ namespace program_states{
 
             struct ConstantsManagerDraft{
                 int constantIndex;
-                std::optional<constants::prompts::CommandPrompt> commandType;
+                std::optional<constants::prompts::constants_manager::Type> commandType;
 
                 char nameTextBoxText[constants::prompts::constants_manager::ConstantNameTextMaximumLength];
 
@@ -106,6 +106,10 @@ namespace program_states{
             
             bool hasModified{false};
             int requestedConstantIndex{0};
+
+            bool hasRequestedCommit{false};
+
+            bool isRightPanelDirty{false};
 
             bool isConstantsManagerWindowVisible{false};
             bool isConstantsManagerWarningWindowVisible{false};

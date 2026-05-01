@@ -52,7 +52,7 @@ namespace constants::labels::prompts{
 
     constexpr const char *TempoTypeLabel{"#030#Tempo"};
     constexpr const char *VolumeTypeLabel{"#029#Volume"};
-    constexpr const char *ArticulationTypeLabel{"#028#Articulation"};
+    constexpr const char *ArticulationTypeLabel{"#028#Articul."};
 
     constexpr const char *ConstantsManagerTempoGroupBoxText{"Tempo"};
     constexpr const char *TargetGroupBoxText{"Target"};

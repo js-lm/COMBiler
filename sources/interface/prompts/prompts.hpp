@@ -35,7 +35,7 @@ namespace interface{
 		static std::string instrumentListViewText(const std::vector<music_data::Instrument> &instruments);
 
 	private:
-		static void rightPanelCleaner();
+		static void cleanRightPanel(program_states::InterfaceContext &context);
 
 	private:
 		static void commit(program_states::InterfaceContext &context);

@@ -68,6 +68,7 @@ private:
     void handleButtonPressEvents();
     void handlePageChangeButtonsEvents();
     void handleToolbarButtonsEvents();
+    void handleConstantsManagerEvents();
 
 private:
     void applyProjectTransientNavigationState();

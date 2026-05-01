@@ -40,3 +40,7 @@ std::string Prompts::instrumentListViewText(const std::vector<music_data::Instru
 
     return listText;
 }
+
+void Prompts::cleanRightPanel(program_states::InterfaceContext &context){
+
+}

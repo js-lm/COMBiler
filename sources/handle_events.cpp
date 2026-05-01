@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <cmath>
 
+#include "debug_utilities.hpp"
+
 void MainWindow::handleEvents(){
     
     handleKeyboardEvent();
@@ -12,7 +14,7 @@ void MainWindow::handleEvents(){
 
     if(IsWindowResized()) handleWindowSizeChangeEvent();
 
-
+    handleConstantsManagerEvents();
 }
 
 void MainWindow::handleButtonPressEvents(){
@@ -194,5 +196,22 @@ void MainWindow::handleKeyboardEvent(){
     window.scaleFactor = calculateScaleFactor();
 
     if(window.scaleFactor != previousScaleFactor) handleWindowSizeChangeEvent();
+
+}
+
+void MainWindow::handleConstantsManagerEvents(){
+
+    auto &state{interfaceState_.prompts};
+
+    if(!state.hasRequestedCommit || !actionCenter_) return;
+
+    state.hasRequestedCommit = false;
+
+    DEBUG_PRINT("committing...");
+
+
+    actionCenter_->commitConstantModification(state.draft);
+
+    state.draft.constantIndex = state.requestedConstantIndex;
 
 }
