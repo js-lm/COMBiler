@@ -87,7 +87,9 @@ void NoteCanvas::drawPasteGhost(program_states::InterfaceContext &context){
     auto drawGhostCommandCell{[&](int destinationColumnIndex, const command::CommandToken &commandToken){
         if(destinationColumnIndex < 0 || destinationColumnIndex >= constants::project_data::MaximumNotePerPage) return;
 
-        auto commandData{commandFromToken(commandToken)};
+        auto projectDataForGhost{context.system.project.data.lock()};
+        if(!projectDataForGhost) return;
+        auto commandData{commandFromToken(commandToken, *(projectDataForGhost->data))};
         if(!commandData.has_value()) return;
 
         if(!clipboardState.copiedFromAllChannels){
@@ -127,7 +129,18 @@ void NoteCanvas::drawPasteGhost(program_states::InterfaceContext &context){
         };
 
         const float textWidth{std::max(.0f, columnBounds.width - (canvas_constants::commands::HorizontalPadding * 2.0f))};
-        const auto commandBigNote{createCommandBigNote(commandData.value(), textWidth, canvas_constants::commands::TextFontSize)};
+        auto commandBigNote{createCommandBigNote(commandData.value(), textWidth, canvas_constants::commands::TextFontSize)};
+
+		if(std::holds_alternative<command::ConstantIndex>(commandToken)){
+            
+			if(auto projectData{context.system.project.data.lock()}){
+
+				const auto constantIndex{std::get<command::ConstantIndex>(commandToken)};
+				const auto &commandList{projectData->data->commandPalette.getList()};
+
+				commandBigNote.constantName = commandList[constantIndex].first;
+			}
+		}
 
         drawBigNote(context, columnBounds, commandBigNote, canvas_constants::paste_ghost::BigNoteAlpha, false);
 

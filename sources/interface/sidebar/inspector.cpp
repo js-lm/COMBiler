@@ -36,6 +36,8 @@ void Sidebar::drawInspector(program_states::InterfaceContext &context){
 	const int previousNotesValue{context.interface.sidebar.notesValue};
 
 	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.groupBox), sidebar_constants::InspectorGroupBoxText);
+	const int previousChannelIndex{context.interface.sidebar.selectedChannelListViewIndex};
+
 	GuiListView(
 		calculateBoundsAtAnchor(anchor, bounds.channelListView),
 		sidebar_constants::ChannelListViewText,
@@ -43,6 +45,15 @@ void Sidebar::drawInspector(program_states::InterfaceContext &context){
 		&context.interface.sidebar.selectedChannelListViewIndex
 	);
 	context.interface.sidebar.selectedChannelListViewIndex = std::max(0, context.interface.sidebar.selectedChannelListViewIndex);
+
+	// TODO: duplicated
+	if(previousChannelIndex != context.interface.sidebar.selectedChannelListViewIndex){
+        if(context.interface.prompts.activeCommandPrompt == constants::prompts::CommandPrompt::Constant){
+            context.interface.prompts.activeCommandPrompt = constants::prompts::CommandPrompt::Tempo;
+            context.interface.prompts.selectedCommandTool = constants::prompts::CommandPrompt::Tempo;
+        }
+	}
+
 	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.channelLabel), sidebar_constants::ChannelLabelText);
 	GuiLine(calculateBoundsAtAnchor(anchor, bounds.structureLine), sidebar_constants::StructureLineText);
 

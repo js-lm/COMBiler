@@ -16,7 +16,11 @@ void ActionCenter::addCommand(int pageNumber, int noteIndex, const program_state
 	stagedSlot_->data->transient.currentPageNumber = pageNumber;
 	stagedSlot_->data->transient.selectedChannelListViewIndex = constants::sidebar::SystemChannelListViewIndex;
 
-	page.commandChannel[noteIndex] = commandFromPromptState(promptState);
+	if(promptState.selectedCommandTool == constants::prompts::CommandPrompt::Constant){
+		page.commandChannel[noteIndex] = promptState.loadedConstantIndex;
+	}else{
+		page.commandChannel[noteIndex] = commandFromPromptState(promptState);
+	}
 
 	DEBUG_PRINT(
 		"addCommand(); pageNumber: {}, noteIndex: {}, selectedCommandTool: {}",

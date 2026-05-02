@@ -28,23 +28,37 @@ void Toolbar::drawToolPalette(program_states::InterfaceContext &context){
 
 	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.groupBox), toolbar_constants::ToolPaletteGroupBoxText);
 
+	if(promptState.activeCommandPrompt != constants::prompts::CommandPrompt::Constant){
+		GuiLabel(calculateBoundsAtAnchor(anchor, bounds.toolsLabel), toolbar_constants::ToolsLabelText);
+
+	}
+
 	if(isSystemChannelSelected){
-		int selectedCommandToolIndex{constants::prompts::toIndex(promptState.selectedCommandTool)};
-		selectedCommandToolIndex = std::clamp(selectedCommandToolIndex, 0, constants::prompts::CommandToolCount - 1);
-		promptState.selectedCommandTool = constants::prompts::commandPromptFromIndex(selectedCommandToolIndex);
 
-		Rectangle commandToggleGroupBounds{calculateBoundsAtAnchor(anchor, bounds.toolsToggleGroup)};
+		if(promptState.activeCommandPrompt == constants::prompts::CommandPrompt::Constant){
+			if(GuiButton(calculateBoundsAtAnchor(anchor, bounds.constantExitButton), toolbar_constants::ExitConstantModeButtonText)){
+				promptState.activeCommandPrompt = constants::prompts::CommandPrompt::Tempo;
+				promptState.selectedCommandTool = constants::prompts::CommandPrompt::Tempo;
+			}
+		}else{
+			int selectedCommandToolIndex{constants::prompts::toIndex(promptState.selectedCommandTool)};
+			selectedCommandToolIndex = std::clamp(selectedCommandToolIndex, 0, constants::prompts::CommandToolCount - 2);
+			promptState.selectedCommandTool = constants::prompts::commandPromptFromIndex(selectedCommandToolIndex);
 
-		GuiToggleGroup(commandToggleGroupBounds, toolbar_constants::ToolsToggleGroupCommandText, &selectedCommandToolIndex);
-		promptState.selectedCommandTool = constants::prompts::commandPromptFromIndex(selectedCommandToolIndex);
+			if(GuiToggleGroup(calculateBoundsAtAnchor(anchor, bounds.toolsToggleGroup), toolbar_constants::ToolsToggleGroupCommandText, &selectedCommandToolIndex)){
+				promptState.selectedCommandTool = constants::prompts::commandPromptFromIndex(selectedCommandToolIndex);
+				promptState.activeCommandPrompt = promptState.selectedCommandTool;
+			}
 
-        const Rectangle openCommandWindowButtonBounds{calculateBoundsAtAnchor(anchor, bounds.openCommandWindowButton)};
+			const Rectangle openCommandWindowButtonBounds{calculateBoundsAtAnchor(anchor, bounds.openCommandWindowButton)};
 
-		if(GuiButton(openCommandWindowButtonBounds, toolbar_constants::OpenCommandWindowButtonText)){
-			promptState.activeCommandPrompt = promptState.selectedCommandTool;
-			promptState.isCommandWindowVisible = true;
+			if(GuiButton(openCommandWindowButtonBounds, toolbar_constants::OpenCommandWindowButtonText)){
+				promptState.activeCommandPrompt = promptState.selectedCommandTool;
+				promptState.isCommandWindowVisible = true;
 
+			}
 		}
+
 
 	}else{
 		int selectedToolIndex{constants::toolbar::toIndex(toolbarState.selectedTool)};
@@ -79,9 +93,6 @@ void Toolbar::drawToolPalette(program_states::InterfaceContext &context){
 		
 		GuiSetState(STATE_NORMAL);
 	}
-
-
-	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.toolsLabel), toolbar_constants::ToolsLabelText);
 
 	const bool hasSelectionArea{
 		context.interface.clipboard.selectionArea.has_value()

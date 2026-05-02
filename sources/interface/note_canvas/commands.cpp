@@ -49,7 +49,7 @@ void NoteCanvas::drawCommands(program_states::InterfaceContext &context){
 		const auto &commandTokenCell{currentPage.commandChannel[noteColumnIndex]};
 		if(!commandTokenCell.has_value()) continue;
 
-		const auto commandData{NoteCanvas::commandFromToken(commandTokenCell.value())};
+		const auto commandData{commandFromToken(commandTokenCell.value(), *projectData)};
 		if(!commandData) continue;
 
 		const Rectangle columnBounds{
@@ -60,9 +60,17 @@ void NoteCanvas::drawCommands(program_states::InterfaceContext &context){
 		};
 
 		const float textWidth{std::max(.0f, columnBounds.width - (canvas_constants::commands::HorizontalPadding * 2.0f))};
-		const auto commandBigNote{
+		auto commandBigNote{
 			NoteCanvas::createCommandBigNote(commandData.value(), textWidth, canvas_constants::commands::TextFontSize)
 		};
+
+		if(std::holds_alternative<command::ConstantIndex>(commandTokenCell.value())){
+			if(auto projectData{context.system.project.data.lock()}){
+				const auto constantIndex{std::get<command::ConstantIndex>(commandTokenCell.value())};
+				const auto &commandList{projectData->data->commandPalette.getList()};
+				commandBigNote.constantName = commandList[constantIndex].first;
+			}
+		}
 
 		NoteCanvas::drawBigNote(context, columnBounds, commandBigNote, commandAlpha, false);
 
@@ -72,10 +80,8 @@ void NoteCanvas::drawCommands(program_states::InterfaceContext &context){
 
 }
 
-std::optional<command::Command> NoteCanvas::commandFromToken(const command::CommandToken &token){
-	if(!std::holds_alternative<command::Command>(token)) return std::nullopt;
-	return std::get<command::Command>(token);
-
+std::optional<command::Command> NoteCanvas::commandFromToken(const command::CommandToken &token, const program_states::ProjectData &projectData){
+	return projectData.commandPalette.get(token);
 }
 
 bool NoteCanvas::doesTextFitWidth(const std::string &text, float width, int fontSize){

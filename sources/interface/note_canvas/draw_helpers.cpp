@@ -190,8 +190,16 @@ void NoteCanvas::drawBigNote(
 	const float valueCenterY{screenRelativeColumnBounds.y + (columnHeight * canvas_constants::commands::ValueCenterRatio)};
 	const float targetCenterY{screenRelativeColumnBounds.y + (columnHeight * canvas_constants::commands::TargetCenterRatio)};
 
-	// TODO: command constants
-	drawCenteredScreenTextLine(canvas_constants::commands::EmptyText, constantStringCenterY);
+	if(!bigNote.constantName.empty()){
+		drawCenteredScreenTextLine(
+			NoteCanvas::trimTextToFitWidth(
+				bigNote.constantName, 
+				textWidth, 
+				canvas_constants::commands::TextFontSize
+			), 
+			constantStringCenterY
+		);
+	}
 
 	const Vector2 iconWorldPosition{
 		roundedScreenToWorld(

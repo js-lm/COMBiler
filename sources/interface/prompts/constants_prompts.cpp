@@ -121,7 +121,7 @@ void Prompts::drawConstantsManagerPrompt(program_states::InterfaceContext &conte
 						}else if constexpr(std::is_same_v<command::Volume, Type>){
 							typeLabel = prompts_labels::VolumeTypeLabel;
 
-							valueLabel = fmt::format("{}; {}", magic_enum::enum_name(command.target), command.volume);
+							valueLabel = fmt::format("{}; {}", magic_enum::enum_name(command.target), command.volume + 1);
 							
 						}else if constexpr(std::is_same_v<command::Articulation, Type>){
 							typeLabel = prompts_labels::ArticulationTypeLabel;

@@ -97,10 +97,20 @@ void MainWindow::handleToolbarButtonsEvents(){
         if(IsKeyPressed(KEY_R)) interfaceState_.toolbar.selectedTool = constants::toolbar::Tool::Change_Instrument;
     }
 
+    const int previousChannelIndex{interfaceState_.sidebar.selectedChannelListViewIndex};
+
     if(IsKeyPressed(KEY_GRAVE)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::AllChannelsListViewIndex;
     if(IsKeyPressed(KEY_ONE)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::FirstInstrumentChannelListViewIndex;
     if(IsKeyPressed(KEY_TWO)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::SecondInstrumentChannelListViewIndex;
     if(IsKeyPressed(KEY_THREE)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::ThirdInstrumentChannelListViewIndex;
     if(IsKeyPressed(KEY_FOUR)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::FourthInstrumentChannelListViewIndex;
     if(IsKeyPressed(KEY_FIVE)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::SystemChannelListViewIndex;
+
+    // TODO: duplicated, but I don't really have any other good way to deal with keyboard shortcuts (inspector.cpp: void Sidebar::drawInspector())
+    if(previousChannelIndex != interfaceState_.sidebar.selectedChannelListViewIndex){
+        if(interfaceState_.prompts.activeCommandPrompt == constants::prompts::CommandPrompt::Constant){
+            interfaceState_.prompts.activeCommandPrompt = constants::prompts::CommandPrompt::Tempo;
+            interfaceState_.prompts.selectedCommandTool = constants::prompts::CommandPrompt::Tempo;
+        }
+    }
 }

@@ -40,6 +40,15 @@ std::optional<Command> CommandPalette::get(const std::string &string) const{
     return commands_[iterator->second];
 }
 
+std::optional<Command> CommandPalette::get(const CommandToken &token) const{
+    if(const auto *command{std::get_if<Command>(&token)}){
+        return *command;
+    }else if(const auto *constantIndex{std::get_if<ConstantIndex>(&token)}){
+        return get(*constantIndex);
+    }
+    return std::nullopt;
+}
+
 std::optional<ConstantIndex> CommandPalette::getIndex(const std::string &string) const{
     auto iterator{indicesMap_.find(string)};
 

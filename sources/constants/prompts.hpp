@@ -15,11 +15,12 @@ namespace constants::prompts{
         Tempo,
         Volume,
         Articulation,
+        Constant,
         Change_Instrument
     };
 
-    constexpr int CommandToolCount{3};
-    constexpr int OpenCommandPromptButtonToolIndex{3};
+    constexpr int CommandToolCount{4};
+    constexpr int OpenCommandPromptButtonToolIndex{4};
 
     constexpr int toIndex(CommandPrompt selectedPrompt){
         return static_cast<int>(selectedPrompt);
@@ -29,6 +30,7 @@ namespace constants::prompts{
         switch(commandPromptIndex){
         case toIndex(CommandPrompt::Tempo): return CommandPrompt::Tempo;
         case toIndex(CommandPrompt::Volume): return CommandPrompt::Volume;
+        case toIndex(CommandPrompt::Constant): return CommandPrompt::Constant;
         default: return CommandPrompt::Articulation;
         }
     }

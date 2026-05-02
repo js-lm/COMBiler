@@ -160,6 +160,10 @@ void MainWindow::handleKeyboardEvent(){
         interfaceState_.prompts.isConstantsManagerWindowVisible = false;
         interfaceState_.prompts.isConstantsManagerWarningWindowVisible = false;
         interfaceState_.prompts.isConstantsManagerInfoWindowVisible = false;
+        if(interfaceState_.prompts.activeCommandPrompt == constants::prompts::CommandPrompt::Constant){
+            interfaceState_.prompts.activeCommandPrompt = constants::prompts::CommandPrompt::Tempo;
+            interfaceState_.prompts.selectedCommandTool = constants::prompts::CommandPrompt::Tempo;
+        }
         if(canvasManager_) canvasManager_->cancelSelectionAndPasteMode();
         if(timelineManager_) timelineManager_->cancelActiveInteraction();
         return;

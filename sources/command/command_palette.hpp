@@ -23,6 +23,7 @@ namespace command{
 
         std::optional<command::Command> get(command::ConstantIndex index) const;
         std::optional<command::Command> get(const std::string &string) const;
+        std::optional<command::Command> get(const command::CommandToken &token) const;
 
         std::optional<command::ConstantIndex> getIndex(const std::string &string) const;
 

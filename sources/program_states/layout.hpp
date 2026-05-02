@@ -80,6 +80,8 @@ namespace program_states{
                     Rectangle cutNoteButton     {240, 8,  24, 24};
                     Rectangle copyNoteButton    {268, 8,  24, 24};
                     Rectangle pasteNoteButton   {296, 8,  24, 24};
+
+                    Rectangle constantExitButton{ 16, 8, 210, 24};
                 } toolPalette{};
 
                 struct ToolOption{

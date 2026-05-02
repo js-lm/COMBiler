@@ -64,8 +64,9 @@ void PlaybackManager::setupPlayback(MidiManager &midiManager){
             if(commandOptional.has_value()){
                 const auto &commandToken{*commandOptional};
 
-                // TODO: constants
-                if(const auto *command{std::get_if<command::Command>(&commandToken)}){
+                std::optional<command::Command> commandOptional{projectData->commandPalette.get(commandToken)};
+
+                if(commandOptional.has_value()){
 
                     std::visit([&](const auto &commandToken){
                         using Type = std::decay_t<decltype(commandToken)>;
@@ -123,7 +124,7 @@ void PlaybackManager::setupPlayback(MidiManager &midiManager){
                             }
                         }
 
-                    }, *command);
+                    }, commandOptional.value());
 
                 }
             }
@@ -171,9 +172,11 @@ void PlaybackManager::nextNote(MidiManager &midiManager){
     auto &playheadIndex{machine.playheadIndex};
 
     if(currentPage.commandChannel[playheadIndex]){
-        // TODO: constants... my god, do i really want to add that?
         const auto &commandToken{currentPage.commandChannel[playheadIndex].value()};
-        if(const auto *command{std::get_if<command::Command>(&commandToken)}){
+
+        std::optional<command::Command> commandOptional{projectData->commandPalette.get(commandToken)};
+
+        if(commandOptional.has_value()){
             std::visit([&](const auto &command){
                 using Type = std::decay_t<decltype(command)>;
 
@@ -184,7 +187,7 @@ void PlaybackManager::nextNote(MidiManager &midiManager){
                 }else if constexpr(std::is_same_v<command::Articulation, Type>){
                     midiManager.setArticulation(command.target, command.articulation);
                 }
-            }, *command);
+            }, commandOptional.value());
         }
     }
 

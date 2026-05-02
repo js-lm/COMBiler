@@ -111,6 +111,8 @@ namespace program_states{
 
             bool isRightPanelDirty{false};
 
+            command::ConstantIndex loadedConstantIndex{0};
+
             bool isConstantsManagerWindowVisible{false};
             bool isConstantsManagerWarningWindowVisible{false};
             bool isConstantsManagerInfoWindowVisible{false};

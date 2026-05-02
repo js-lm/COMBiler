@@ -18,6 +18,7 @@ namespace interface{
             std::string secondTextLine{};
             std::string thirdTextLine{};
             bool shouldDrawFirstTextLineVertically{false};
+            std::string constantName{};
         };
 
     private:
@@ -62,7 +63,7 @@ namespace interface{
         );
 
     private:
-        static std::optional<command::Command> commandFromToken(const command::CommandToken &token);
+        static std::optional<command::Command> commandFromToken(const command::CommandToken &token, const program_states::ProjectData &projectData);
         static bool doesTextFitWidth(const std::string &text, float width, int fontSize);
         static std::string trimTextToFitWidth(const std::string &text, float width, int fontSize);
         static std::string targetTextForWidth(command::Target target, float width, int fontSize);

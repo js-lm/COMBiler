@@ -18,7 +18,13 @@ void Prompts::commit(program_states::InterfaceContext &context){
 }
 
 void Prompts::load(program_states::InterfaceContext &context){
+    auto &state{context.interface.prompts};
 
-
-
+    state.loadedConstantIndex = state.draft.constantIndex;
+    state.selectedCommandTool = constants::prompts::CommandPrompt::Constant;
+    state.activeCommandPrompt = constants::prompts::CommandPrompt::Constant;
+    state.isConstantsManagerWindowVisible = false;
+    state.isCommandWindowVisible = false;
+    
+    context.interface.sidebar.selectedChannelListViewIndex = constants::sidebar::SystemChannelListViewIndex;
 }

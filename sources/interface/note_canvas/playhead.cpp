@@ -5,7 +5,7 @@
 #include "constants.hpp"
 #include "debug_utilities.hpp"
 
-using namespace interface; // TODO: I hate this, I need to remove all of them
+using namespace interface;
 
 namespace PlayheadConstants = constants::interface_layout::note_canvas::playhead;
 
