@@ -15,6 +15,8 @@
 
 #include <debug_utilities.hpp>
 
+#include "external/raygui/raygui_wrapper.h"
+
 using namespace interface;
 namespace prompts_labels = constants::labels::prompts;
 namespace manager_constants = constants::prompts::constants_manager;
@@ -210,7 +212,7 @@ void Prompts::drawConstantsManagerPrompt(program_states::InterfaceContext &conte
 
 	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.editConstantGroupBox), prompts_labels::EditNameGroupBoxText);
 	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.textConstantLabel), prompts_labels::TextConstantLabelText);
-	if(GuiTextBox(
+	if(GuiTextBoxFPSIndependent(
 		calculateBoundsAtAnchor(anchor, bounds.editConstantTextBox),
 		state.draft.nameTextBoxText,
 		manager_constants::ConstantNameTextMaximumLength,
@@ -289,7 +291,7 @@ void Prompts::drawConstantsManagerPrompt(program_states::InterfaceContext &conte
 	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.swapLeftLabel), prompts_labels::SwapLeftLabelText);
 	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.swapRightLabel), prompts_labels::SwapRightLabelText);
 
-	if(GuiTextBox(
+	if(GuiTextBoxFPSIndependent(
 		calculateBoundsAtAnchor(anchor, bounds.swapLeftTextBox),
 		state.draft.swapLeftTextBoxText,
 		manager_constants::SwapIndexTextMaximumLength,
@@ -298,7 +300,7 @@ void Prompts::drawConstantsManagerPrompt(program_states::InterfaceContext &conte
 		state.constantsManagerSwapLeftTextBoxEditMode = !state.constantsManagerSwapLeftTextBoxEditMode;
 	}
 
-	if(GuiTextBox(
+	if(GuiTextBoxFPSIndependent(
 		calculateBoundsAtAnchor(anchor, bounds.swapRightTextBox),
 		state.draft.swapRightTextBoxText,
 		manager_constants::SwapIndexTextMaximumLength,
