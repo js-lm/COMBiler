@@ -12,6 +12,9 @@ namespace command{
     private:
         std::array<std::optional<Command>, constants::project_data::MaximumNumberOfConstants> commands_{};
 
+        // TODO: I don't remember why I used an unordered map, it just makes things unnecessarily more complicated
+        // Oh! it's because of the save file, but still, do I need strings as keys?
+        // I can just use the ids
         std::array<std::string, constants::project_data::MaximumNumberOfConstants> names_{};
         std::unordered_map<std::string, ConstantIndex> indicesMap_{};
 

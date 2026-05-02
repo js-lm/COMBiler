@@ -216,6 +216,6 @@ void MainWindow::handleConstantsManagerEvents(){
 
     actionCenter_->commitConstantModification(state.draft);
 
-    state.draft.constantIndex = state.requestedConstantIndex;
+    // state.draft.constantIndex = state.requestedConstantIndex;
 
 }

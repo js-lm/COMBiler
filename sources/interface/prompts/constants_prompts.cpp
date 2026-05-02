@@ -148,7 +148,7 @@ void Prompts::drawConstantsManagerPrompt(program_states::InterfaceContext &conte
 		if(state.isRightPanelDirty){
 			state.isRightPanelDirty = false;
 
-			state.draft.reset(state.draft.constantIndex);
+			state.draft.reset(false);
 
 
 
@@ -238,14 +238,23 @@ void Prompts::drawConstantsManagerPrompt(program_states::InterfaceContext &conte
 
 	if(isTempoSectionVisible){
 		GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.tempoGroupBox), prompts_labels::ConstantsManagerTempoGroupBoxText);
+
+		GuiLabel(calculateBoundsAtAnchor(anchor, bounds.tempoTextLabel), prompts_labels::ConstantsManagerTempoSliderText);
 		GuiSlider(
 			calculateBoundsAtAnchor(anchor, bounds.tempoSlider),
-			prompts_labels::ConstantsManagerTempoSliderText,
+			nullptr,
 			nullptr,
 			&state.draft.tempoSliderValue,
 			constants::prompts::TempoPercentageMinimumValue,
 			constants::prompts::TempoPercentageMaximumValue
 		);
+
+		// TODO: duplication
+		int percentageInteger{static_cast<int>(std::round(state.draft.tempoSliderValue))};
+		if(percentageInteger % 2 != 0) state.draft.tempoSliderValue = --percentageInteger;
+		state.draft.tempoSliderValue = static_cast<float>(percentageInteger);
+
+		GuiLabel(calculateBoundsAtAnchor(anchor, bounds.tempoPercentageLabel), TextFormat("%d%%", static_cast<int>(state.draft.tempoSliderValue)));
 	}else if(isTargetSectionVisible){
 		GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.targetGroupBox), prompts_labels::TargetGroupBoxText);
 		GuiLabel(calculateBoundsAtAnchor(anchor, bounds.targetChannelLabel), prompts_labels::TargetChannelLabelText);

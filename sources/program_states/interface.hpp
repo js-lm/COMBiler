@@ -86,8 +86,8 @@ namespace program_states{
             public:
                 ConstantsManagerDraft(){ reset();}
 
-                void reset(int index = 0){
-                    constantIndex = index;
+                void reset(bool shouldResetConstantIndex = true){
+                    if(shouldResetConstantIndex) constantIndex = 0;
                 
                     commandType.reset();
 

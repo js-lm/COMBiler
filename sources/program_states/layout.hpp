@@ -183,7 +183,9 @@ namespace program_states{
                     Rectangle targetGroupBox    {432, 112, 248, 40};
                     Rectangle targetToggleGroup {496, 120,  32, 24};
                     Rectangle targetChannelLabel{440, 120,  56, 24};
-                    Rectangle tempoSlider       {496, 144, 168, 16};
+                    Rectangle tempoSlider       {440, 144, 224, 16};
+                    Rectangle tempoTextLabel    {440, 128, 224, 16};
+                    Rectangle tempoPercentageLabel{496, 128, 224, 16};
 
                     Rectangle commitButton      {600, 256, 80, 24};
                     Rectangle revertButton      {504, 256, 80, 24};

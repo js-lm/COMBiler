@@ -45,10 +45,9 @@ void Toolbar::drawToolPalette(program_states::InterfaceContext &context){
 			selectedCommandToolIndex = std::clamp(selectedCommandToolIndex, 0, constants::prompts::CommandToolCount - 2);
 			promptState.selectedCommandTool = constants::prompts::commandPromptFromIndex(selectedCommandToolIndex);
 
-			if(GuiToggleGroup(calculateBoundsAtAnchor(anchor, bounds.toolsToggleGroup), toolbar_constants::ToolsToggleGroupCommandText, &selectedCommandToolIndex)){
-				promptState.selectedCommandTool = constants::prompts::commandPromptFromIndex(selectedCommandToolIndex);
-				promptState.activeCommandPrompt = promptState.selectedCommandTool;
-			}
+			GuiToggleGroup(calculateBoundsAtAnchor(anchor, bounds.toolsToggleGroup), toolbar_constants::ToolsToggleGroupCommandText, &selectedCommandToolIndex);
+			promptState.selectedCommandTool = constants::prompts::commandPromptFromIndex(selectedCommandToolIndex);
+			promptState.activeCommandPrompt = promptState.selectedCommandTool;
 
 			const Rectangle openCommandWindowButtonBounds{calculateBoundsAtAnchor(anchor, bounds.openCommandWindowButton)};
 
