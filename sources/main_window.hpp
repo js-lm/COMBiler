@@ -10,6 +10,7 @@
 #include "timeline_manager/timeline_manager.hpp"
 #include "midi_manager/midi_manager.hpp"
 #include "playback_manager/playback_manager.hpp"
+#include "serializer/serializer.hpp"
 
 #include "program_states/context.hpp"
 
@@ -30,6 +31,7 @@ private:
     std::unique_ptr<TimelineManager>    timelineManager_;
     std::unique_ptr<MidiManager>        midiManager_;
     std::unique_ptr<PlaybackManager>    playbackManager_;
+    std::unique_ptr<Serializer>         serializer_;
 
 private:
     RenderTexture2D interfaceRenderTexture_{};
@@ -69,6 +71,10 @@ private:
     void handlePageChangeButtonsEvents();
     void handleToolbarButtonsEvents();
     void handleConstantsManagerEvents();
+
+// private:
+//     void save(bool saveAsNewFile = false);
+//     void load();
 
 private:
     void applyProjectTransientNavigationState();

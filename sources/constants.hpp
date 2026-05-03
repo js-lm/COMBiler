@@ -10,3 +10,4 @@
 #include "constants/toolbar.hpp"
 #include "constants/prompts.hpp"
 #include "constants/sidebar.hpp"
+#include "constants/serializer.hpp"

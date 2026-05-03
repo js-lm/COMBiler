@@ -70,6 +70,7 @@ void MainWindow::initialize(){
     midiManager_ = std::make_unique<MidiManager>(getMidiContext());
     midiManager_->initialization();
     playbackManager_ = std::make_unique<PlaybackManager>(getMidiContext());
+    serializer_ = std::make_unique<Serializer>();
 
     // stagedObserver_ = actionCenter_.getStagedObserver();
     systemState_.project.data = actionCenter_->getStagedObserver();

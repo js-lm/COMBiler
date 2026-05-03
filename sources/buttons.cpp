@@ -7,6 +7,8 @@
 
 #include <algorithm>
 
+#include "serializer/serializer.hpp" 
+
 void MainWindow::handlePageChangeButtonsEvents(){
     if(interfaceState_.navigationBar.isAddPageRequested){
         if(actionCenter_){
@@ -77,6 +79,21 @@ void MainWindow::handleToolbarButtonsEvents(){
         interfaceState_.prompts.isConstantsManagerWindowVisible = true;
         interfaceState_.prompts.isCommandWindowVisible = false;
     }
+
+    if(auto projectData{systemState_.project.data.lock()}){
+        // DEBUG_PRINT("{}", Serializer::toString(*projectData.d));
+        if(interfaceState_.toolbar.isSaveFileButtonPressed) serializer_->save(*projectData->data);
+        if(interfaceState_.toolbar.isSaveAsFileButtonPressed) serializer_->save(*projectData->data, true);
+
+        if(const auto filename{serializer_->getCurrentFilename()}; !filename.empty()){
+            std::string newWindowTitle{
+                constants::application_window::Title 
+              + std::string{" - "} + filename
+            };
+            SetWindowTitle(newWindowTitle.c_str());
+        }
+    }
+    if(interfaceState_.toolbar.isLoadFileButtonPressed) serializer_->load();
 
     const bool isSystemChannelSelected{
         interfaceState_.sidebar.selectedChannelListViewIndex == constants::interface_layout::note_canvas::notes::SystemChannelListViewIndex
