@@ -11,3 +11,4 @@
 #include "constants/prompts.hpp"
 #include "constants/sidebar.hpp"
 #include "constants/serializer.hpp"
+#include "constants/enumerator.hpp"

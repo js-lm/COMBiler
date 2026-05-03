@@ -31,6 +31,31 @@ namespace units{
 
     } // namespace
 
+    namespace enumerator{
+
+        enum class Paper{
+            A3, // 297 x 420 mm
+            A4, // 210 x 297 mm
+            A5, // 148 x 210 mm
+
+            Tabloid,// 279 x 432 mm
+            Legal,  // 216 x 356 mm
+            Letter  // 216 x 279 mm
+        };
+
+        using Mm = float; // in mm
+        using Point = float;
+
+        enum class Color{
+            White,
+            Red,
+            Green,
+            Blue,
+            Black
+        };
+
+    } // namespace enumerator
+
 } // namespace units
 
 namespace music_data{
