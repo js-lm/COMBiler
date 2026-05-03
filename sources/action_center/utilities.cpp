@@ -158,3 +158,16 @@ void ActionCenter::updateInstrumentChannelCell(
 
     page.instrumentChannels[channelIndex][noteIndex] = std::move(cellValue);
 }
+
+void ActionCenter::loadFile(program_states::ProjectData &projectData){
+    std::fill(commits_.begin(), commits_.end(), nullptr);
+
+    stagedSlot_->data = std::make_shared<program_states::ProjectData>(projectData);
+    commits_[0] = std::make_shared<program_states::ProjectData>(projectData);
+
+    historyTail_ = 0;
+    historyHead_ = 0;
+    cursorIndex_ = 0;
+    historyStackSize_ = 1;
+    isInAction_ = false;
+}

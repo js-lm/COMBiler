@@ -23,7 +23,7 @@ private:
     size_t historyStackSize_{1};
 
     std::shared_ptr<StagedSlot> stagedSlot_{std::make_shared<StagedSlot>(
-        std::make_shared<program_states::ProjectData>(program_states::DEBUG_preset::projectData)
+        std::make_shared<program_states::ProjectData>(program_states::ProjectData{})
     )};
 
     bool isInAction_{false};
@@ -76,6 +76,9 @@ public:
     );
 
     void commitConstantModification(const program_states::Interface::Prompts::ConstantsManagerDraft &draft);
+
+public:
+    void loadFile(program_states::ProjectData &projectData);
 
 public:
     void finishAction();

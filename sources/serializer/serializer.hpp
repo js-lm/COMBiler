@@ -17,7 +17,7 @@ public:
     ~Serializer() = default;
 
     void save(const program_states::ProjectData &data, bool saveAsNewFile = false);
-    void load();
+    std::optional<program_states::ProjectData> load();
 
     std::string getCurrentFilename() const{ return GetFileNameWithoutExt(currentFilename_.c_str());}
 
@@ -31,8 +31,6 @@ private:
     std::string emitCommand(const command::Command &command) const;
 
     std::optional<music_data::InstrumentChannelData> parseChannelData(const std::string &data) const;
-    std::optional<command::CommandToken> parseCommandToken(const std::string &data);
+    std::optional<command::CommandToken> parseCommandToken(const std::string &data) const;
     command::Command parseCommand(const std::string &data) const;
-
-    std::string trimToken(const std::string &data) const;
 };

@@ -85,6 +85,15 @@ void MainWindow::handleToolbarButtonsEvents(){
         if(interfaceState_.toolbar.isSaveFileButtonPressed) serializer_->save(*projectData->data);
         if(interfaceState_.toolbar.isSaveAsFileButtonPressed) serializer_->save(*projectData->data, true);
 
+        if(interfaceState_.toolbar.isLoadFileButtonPressed){
+
+            projectData->data.reset();
+
+            if(auto loadedData{serializer_->load()}){
+                actionCenter_->loadFile(loadedData.value());
+            }
+        }
+
         if(const auto filename{serializer_->getCurrentFilename()}; !filename.empty()){
             std::string newWindowTitle{
                 constants::application_window::Title 
@@ -93,7 +102,7 @@ void MainWindow::handleToolbarButtonsEvents(){
             SetWindowTitle(newWindowTitle.c_str());
         }
     }
-    if(interfaceState_.toolbar.isLoadFileButtonPressed) serializer_->load();
+
 
     const bool isSystemChannelSelected{
         interfaceState_.sidebar.selectedChannelListViewIndex == constants::interface_layout::note_canvas::notes::SystemChannelListViewIndex
