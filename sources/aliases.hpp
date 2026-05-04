@@ -7,6 +7,11 @@
 
 namespace units{
 
+    using Mm = float;
+    using Point = float;
+
+    using Mm2 = Vector2;
+
     namespace midi{
 
         using SoundFontChannel = uint8_t;
@@ -43,18 +48,28 @@ namespace units{
             Letter  // 216 x 279 mm
         };
 
-        using Mm = float; // in mm
-        using Point = float;
+        inline constexpr Mm2 getPaperDimension(const Paper &paperType){
+            switch(paperType){
+            case Paper::A3: return Vector2{297, 420};
+            case Paper::A4: return Vector2{210, 297};
+            case Paper::A5: return Vector2{148, 210};
+
+            case Paper::Tabloid: return Vector2{279, 432};
+            case Paper::Legal: return Vector2{216, 356};
+            case Paper::Letter: return Vector2{216, 279};
+            }
+        }
 
         enum class Color{
-            White,
-            Red,
-            Green,
-            Blue,
-            Black
+            White   = 0,
+            Red     = 1,
+            Green   = 2,
+            Blue    = 3,
+            Black   = 4
         };
 
     } // namespace enumerator
+
 
 } // namespace units
 

@@ -25,40 +25,69 @@ public:
     //     constants::enumerator::NumberOfDigitCommand
     // >;
 
+    // using CompiledData = std::vector<EncodedRow>;
+
+    using PDF = std::vector<std::string>;
+
+private:
+    int stripPerSheet_{1};
+    int rowsPerStripSegment_{1};
+
+    units::Mm paperWidth_{216};
+    units::Mm paperHeight_{279};
+    units::Mm paperMargin_{10};
+
+    PDF pdfStream_{};
+
+    std::vector<EncodedRow> compiledData_{};
+
 public:
     Enumerator() = delete;
 
-    static std::string print(
+    PDF print(
         const program_states::ProjectData   &projectData, 
         const units::enumerator::Paper      paper,
-        const units::enumerator::Mm         margin
+        const units::Mm                     margin
     );
 
 private:
-    static std::vector<EncodedRow> compileProjectData(const program_states::ProjectData &projectData);
+    std::vector<EncodedRow> compileProjectData(const program_states::ProjectData &projectData) const;
 
 private:
-    static EncodedInstruction encodeCommandData(
+    EncodedInstruction encodeCommandData(
         const std::optional<command::CommandToken>  &commandToken,
         const command::CommandPalette               &commandPalette
-    );
-    static EncodedInstruction encodeInstrumentData(
+    ) const;
+    EncodedInstruction encodeInstrumentData(
         const std::optional<music_data::InstrumentChannelData> &channelData
-    );
+    ) const;
 
-    static Enumerator::EncodedInstruction splitToBase5(int value, int opcodeOffset = 0);
-
-private:
-    static std::string toPdfColor(const units::enumerator::Color);
+    Enumerator::EncodedInstruction splitToBase5(int value, int opcodeOffset = 0) const;
 
 private:
-    static int calculateStripsPerSheet(        
-        const units::enumerator::Paper  paper,
-        const units::enumerator::Mm     margin
-    );
+    // void updateStripsPerSheet();
+    // void updateRowsPerStripSegment();
+    int calculateStripsPerSheet(
+        units::Mm paperHeight,
+        units::Mm paperMargin
+    ) const;
+    int calculatePerStripSegment(
+        units::Mm paperWidth,
+        units::Mm paperMargin
+    ) const;
 
-    static int calculateRowsPerStripSegment(        
-        const units::enumerator::Paper  paper,
-        const units::enumerator::Mm     margin
-    );
+private:
+    void drawOpticalMarkersToString();
+    void drawBoundaryLineToString();
+    void drawCellsToString();
+    void drawGridLinesToString();
+
+// private:
+//     void drawRectangle(units::Mm x, units::Mm y, units::Mm width, units::Mm height, units::enumerator::Color color);
+//     void drawRectangleLines(units::Mm x, units::Mm y, units::Mm width, units::Mm height, units::enumerator::Color color);
+//     void drawLines(units::Mm startX, units::Mm startY, units::Mm endX, units::Mm endY, units::enumerator::Color color);
+//     void draw7SegmentDigit(int digit, units::Mm x, units::Mm y);
+
+private:
+    std::string toPdfColor(const units::enumerator::Color color) const;
 };

@@ -1,6 +1,6 @@
 #include "enumerator.hpp"
 
-std::vector<Enumerator::EncodedRow> Enumerator::compileProjectData(const program_states::ProjectData &projectData){
+std::vector<Enumerator::EncodedRow> Enumerator::compileProjectData(const program_states::ProjectData &projectData) const{
 
     std::vector<EncodedRow> compiledData{};
 
@@ -53,7 +53,7 @@ std::vector<Enumerator::EncodedRow> Enumerator::compileProjectData(const program
     return compiledData;
 }
 
-Enumerator::EncodedInstruction Enumerator::encodeInstrumentData(const std::optional<music_data::InstrumentChannelData> &channelData){
+Enumerator::EncodedInstruction Enumerator::encodeInstrumentData(const std::optional<music_data::InstrumentChannelData> &channelData) const{
     if(!channelData.has_value()){
         return {
             static_cast<units::enumerator::Color>(0), 
@@ -62,7 +62,7 @@ Enumerator::EncodedInstruction Enumerator::encodeInstrumentData(const std::optio
         };
     }
 
-    return std::visit([](const auto &data)->EncodedInstruction{
+    return std::visit([this](const auto &data)->EncodedInstruction{
         using Type = std::decay_t<decltype(data)>;
 
         if constexpr(std::is_same_v<Type, music_data::Note>){
@@ -120,7 +120,7 @@ Enumerator::EncodedInstruction Enumerator::encodeInstrumentData(const std::optio
 Enumerator::EncodedInstruction Enumerator::encodeCommandData(
     const std::optional<command::CommandToken>  &commandToken, 
     const command::CommandPalette               &commandPalette
-){
+) const{
     if(!commandToken.has_value()){
 
         return {
@@ -159,7 +159,7 @@ Enumerator::EncodedInstruction Enumerator::encodeCommandData(
     }
 
 
-    return std::visit([](const auto &data)->EncodedInstruction{
+    return std::visit([this](const auto &data)->EncodedInstruction{
 
         using Type = std::decay_t<decltype(data)>;
 
