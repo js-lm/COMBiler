@@ -20,8 +20,24 @@ namespace constants::enumerator{
     }
 
     constexpr int NumberOfColumn{16};
-    constexpr int NumberOfDigitInstrument{3};
-    constexpr int NumberOfDigitCommand{3};
+    constexpr int NumberOfDigitPerInstruction{3};
+
+    
+    constexpr int EncodingBase{5};
+    constexpr int EncodingBaseSquared{EncodingBase * EncodingBase};
+
+    constexpr int SystemCommandStartIndex{12};
+    constexpr int ChecksumIndex{15};
+
+    constexpr int SetInstrumentOpcodeOffset{3};
+    constexpr int SetVolumeOpcodeOffset{2};
+    constexpr int SetArticulationOpcode{4};
+
+    constexpr int TempoMultiplier{2};
+    constexpr int TempoOffset{1};
+    constexpr int VolumeMultiplier{10};
+    constexpr int VolumeOffset{1};
+    
 
     constexpr const char *PdfColorWhite{"1.0 1.0 1.0 rg"};
     constexpr const char *PdfColorRed{"1.0 0.0 0.0 rg"};

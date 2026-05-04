@@ -16,14 +16,14 @@ public:
         constants::enumerator::NumberOfColumn
     >;
 
-    using EncodedInstrument = std::array<
+    using EncodedInstruction = std::array<
         units::enumerator::Color, 
-        constants::enumerator::NumberOfDigitInstrument
+        constants::enumerator::NumberOfDigitPerInstruction
     >;
-    using EncodedCommand = std::array<
-        units::enumerator::Color, 
-        constants::enumerator::NumberOfDigitCommand
-    >;
+    // using EncodedCommand = std::array<
+    //     units::enumerator::Color, 
+    //     constants::enumerator::NumberOfDigitCommand
+    // >;
 
 public:
     Enumerator() = delete;
@@ -38,13 +38,15 @@ private:
     static std::vector<EncodedRow> compileProjectData(const program_states::ProjectData &projectData);
 
 private:
-    static EncodedCommand encodeCommandData(
+    static EncodedInstruction encodeCommandData(
         const std::optional<command::CommandToken>  &commandToken,
         const command::CommandPalette               &commandPalette
     );
-    static EncodedInstrument encodeInstrumentData(
+    static EncodedInstruction encodeInstrumentData(
         const std::optional<music_data::InstrumentChannelData> &channelData
     );
+
+    static Enumerator::EncodedInstruction splitToBase5(int value, int opcodeOffset = 0);
 
 private:
     static std::string toPdfColor(const units::enumerator::Color);
