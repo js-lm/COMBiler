@@ -1,6 +1,6 @@
 #include "enumerator.hpp"
 
-Enumerator::EncodedInstruction Enumerator::splitToBase5(int value, int opcodeOffset) const{
+Enumerator::EncodedInstruction Enumerator::splitToBase5(int value, int opcodeOffset){
     int operationCode{(value / constants::enumerator::EncodingBaseSquared) + opcodeOffset};
     int remainder{value % constants::enumerator::EncodingBaseSquared};
     int immediateDigit1{remainder / constants::enumerator::EncodingBase};
@@ -16,7 +16,7 @@ Enumerator::EncodedInstruction Enumerator::splitToBase5(int value, int opcodeOff
 int Enumerator::calculateStripsPerSheet(
     units::Mm paperHeight,
     units::Mm paperMargin
-) const{
+){
     units::Mm availableHeight{paperHeight - (paperMargin * 2.0f)};
     
     int stripPerSheet{static_cast<int>(availableHeight / constants::enumerator::TotalHeight)};
@@ -30,7 +30,7 @@ int Enumerator::calculateStripsPerSheet(
 int Enumerator::calculatePerStripSegment(
     units::Mm paperWidth,
     units::Mm paperMargin
-) const{
+){
     units::Mm availableWidth{paperWidth - (paperMargin * 2.0f)};
 
     int rowsPerStripSegment{static_cast<int>(availableWidth / constants::enumerator::CellWidth)};

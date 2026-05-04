@@ -11,6 +11,7 @@
 #include "midi_manager/midi_manager.hpp"
 #include "playback_manager/playback_manager.hpp"
 #include "serializer/serializer.hpp"
+#include "enumerator/enumerator.hpp"
 
 #include "program_states/context.hpp"
 
@@ -32,6 +33,7 @@ private:
     std::unique_ptr<MidiManager>        midiManager_;
     std::unique_ptr<PlaybackManager>    playbackManager_;
     std::unique_ptr<Serializer>         serializer_;
+    // std::unique_ptr<Enumerator>         enumerator_;
 
 private:
     RenderTexture2D interfaceRenderTexture_{};

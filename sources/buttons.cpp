@@ -101,6 +101,15 @@ void MainWindow::handleToolbarButtonsEvents(){
             };
             SetWindowTitle(newWindowTitle.c_str());
         }
+
+        if(interfaceState_.toolbar.isExportFileButtonPressed){
+            // TODO:
+            Enumerator::print(
+                *systemState_.project.data.lock()->data,
+                units::enumerator::Paper::A4,
+                10
+            );
+        }
     }
 
 

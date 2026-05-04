@@ -1,6 +1,6 @@
 #include "serializer.hpp"
 
-#include "external/tinyfiledialogs/tinyfiledialogs.h"
+#include <external/tinyfiledialogs/tinyfiledialogs.h>
 
 #include "constants.hpp"
 
