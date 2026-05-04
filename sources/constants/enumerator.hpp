@@ -66,6 +66,28 @@ namespace constants::enumerator{
         constexpr const char *FillColorBlack{"0.0 0.0 0.0 rg"};
         constexpr const char *StrokeColorBlack{"0.0 0.0 0.0 RG"};
 
+        // constexpr const char *FormatRectangle{"{} {:.2f} {:.2f} {:.2f} {:.2f} re f\n"};
+        // constexpr const char *FormatRectangleLines{"{} {:.2f} {:.2f} {:.2f} {:.2f} re S\n"};
+        // constexpr const char *FormatLine{"{} {:.2f} {:.2f} m {:.2f} {:.2f} l S\n"};
+
+        // constexpr const char *Version{"%PDF-1.4\n"};
+        // constexpr const char *ObjectStart{"{} 0 obj\n"};
+        // constexpr const char *ObjectEnd{"endobj\n"};
+        // constexpr const char *StreamSize{"{}\n"};
+        // constexpr const char *Length{"<< /Length {} 0 R >>\n"};
+        // constexpr const char *StreamStart{"stream\n"};
+        // constexpr const char *StreamEnd{"endstream\n"};
+        // constexpr const char *TypePage{"<< /Type /Page\n"};
+        // constexpr const char *PageParent{"/Parent {} 0 R\n"};
+        // constexpr const char *MediaBox{"/MediaBox [0 0 {:.2f} {:.2f}]\n"};
+        // constexpr const char *Contents{"/Contents {} 0 R\n"};
+        // constexpr const char *DictionaryEnd{">>\n"};
+        // constexpr const char *ObjectReference{"{} 0 R "};
+        // constexpr const char *Newline{"\n"};
+
+        constexpr int PagesObjectId{1};
+        constexpr int InitialObjectCount{2};
+
     } // namespace pdf
 
 } // namespace constants::enumerator
