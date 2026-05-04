@@ -39,13 +39,3 @@ int Enumerator::calculatePerStripSegment(
  
     return rowsPerStripSegment < 1 ? 1 : rowsPerStripSegment;
 }
-
-std::string Enumerator::toPdfColor(const units::enumerator::Color color) const{
-    switch(color){
-    case units::enumerator::Color::White:   return constants::enumerator::PdfColorWhite;
-    case units::enumerator::Color::Red:     return constants::enumerator::PdfColorRed;
-    case units::enumerator::Color::Green:   return constants::enumerator::PdfColorGreen;
-    case units::enumerator::Color::Blue:    return constants::enumerator::PdfColorBlue;
-    case units::enumerator::Color::Black:   return constants::enumerator::PdfColorBlack;
-    }
-}

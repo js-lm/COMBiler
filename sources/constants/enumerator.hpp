@@ -40,11 +40,32 @@ namespace constants::enumerator{
     constexpr int VolumeMultiplier{10};
     constexpr int VolumeOffset{1};
 
-    constexpr const char *PdfColorWhite{"1.0 1.0 1.0 rg"};
-    constexpr const char *PdfColorRed{"1.0 0.0 0.0 rg"};
-    constexpr const char *PdfColorGreen{"0.0 1.0 0.0 rg"};
-    constexpr const char *PdfColorBlue{"0.0 0.0 1.0 rg"};
-    constexpr const char *PdfColorBlack{"0.0 0.0 0.0 rg"};
+    constexpr const bool sevenSegment[][7]{
+        {1,1,1,1,1,1,0}, // 0
+        {0,1,1,0,0,0,0}, // 1
+        {1,1,0,1,1,0,1}, // 2
+        {1,1,1,1,0,0,1}, // 3
+        {0,1,1,0,0,1,1}, // 4
+        {1,0,1,1,0,1,1}, // 5
+        {1,0,1,1,1,1,1}, // 6
+        {1,1,1,0,0,0,0}, // 7
+        {1,1,1,1,1,1,1}, // 8
+        {1,1,1,1,0,1,1}  // 9
+    };
 
+    namespace pdf{
+
+        constexpr const char *FillColorWhite{"1.0 1.0 1.0 rg"};
+        constexpr const char *StrokeColorWhite{"1.0 1.0 1.0 RG"};
+        constexpr const char *FillColorRed{"1.0 0.0 0.0 rg"};
+        constexpr const char *StrokeColorRed{"1.0 0.0 0.0 RG"};
+        constexpr const char *FillColorGreen{"0.0 1.0 0.0 rg"};
+        constexpr const char *StrokeColorGreen{"0.0 1.0 0.0 RG"};
+        constexpr const char *FillColorBlue{"0.0 0.0 1.0 rg"};
+        constexpr const char *StrokeColorBlue{"0.0 0.0 1.0 RG"};
+        constexpr const char *FillColorBlack{"0.0 0.0 0.0 rg"};
+        constexpr const char *StrokeColorBlack{"0.0 0.0 0.0 RG"};
+
+    } // namespace pdf
 
 } // namespace constants::enumerator

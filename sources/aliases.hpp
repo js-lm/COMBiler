@@ -10,7 +10,7 @@ namespace units{
     using Mm = float;
     using Point = float;
 
-    using Mm2 = Vector2;
+    struct Mm2{ float width, height;};
 
     namespace midi{
 
@@ -50,13 +50,13 @@ namespace units{
 
         inline constexpr Mm2 getPaperDimension(const Paper &paperType){
             switch(paperType){
-            case Paper::A3: return Vector2{297, 420};
-            case Paper::A4: return Vector2{210, 297};
-            case Paper::A5: return Vector2{148, 210};
+            case Paper::A3: return {297.0f, 420.0f};
+            case Paper::A4: return {210.0f, 297.0f};
+            case Paper::A5: return {148.0f, 210.0f};
 
-            case Paper::Tabloid: return Vector2{279, 432};
-            case Paper::Legal: return Vector2{216, 356};
-            case Paper::Letter: return Vector2{216, 279};
+            case Paper::Tabloid: return {279.0f, 432.0f};
+            case Paper::Legal: return {216.0f, 356.0f};
+            case Paper::Letter: return {216.0f, 279.0f};
             }
         }
 
