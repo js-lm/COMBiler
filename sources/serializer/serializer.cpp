@@ -13,7 +13,10 @@ void Serializer::save(const program_states::ProjectData &data, bool saveAsNewFil
 
     DEBUG_PRINT("currentFilename_: [{}]", currentFilename_);
 
-    if(currentFilename_.empty() || saveAsNewFile){
+    if(currentFilename_.empty() 
+    || saveAsNewFile 
+    || !FileExists(std::string{currentWorkingDirectory_ + "/" + currentFilename_}.c_str())
+    ){
         const char *saveFilePath{tinyfd_saveFileDialog(
             constants::serializer::SaveDialogTitle,
             currentFilename_.empty() ? constants::serializer::DefaultFilename : currentFilename_.c_str(),

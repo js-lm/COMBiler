@@ -54,13 +54,15 @@ void MainWindow::handlePageChangeButtonsEvents(){
         systemState_.project.currentPage = std::max(1, systemState_.project.currentPage - 1);
         interfaceState_.navigationBar.isPreviousPageButtonPressed = false;
         interfaceState_.noteCanvas.isGridLayoutDirty = true;
+        // machineState_.isPlaying = false;
+        machineState_.shouldResetPlayback = true;
     }
-
-
     if(interfaceState_.navigationBar.isNextPageButtonPressed){
         systemState_.project.currentPage = std::min(maximumPageNumber, systemState_.project.currentPage + 1);
         interfaceState_.navigationBar.isNextPageButtonPressed = false;
         interfaceState_.noteCanvas.isGridLayoutDirty = true;
+        // machineState_.isPlaying = false;
+        machineState_.shouldResetPlayback = true;
     }
 
     // DEBUG_PRINT_IF_CHANGED("maximumPageNumber: {}", maximumPageNumber);
@@ -68,11 +70,13 @@ void MainWindow::handlePageChangeButtonsEvents(){
 }
 
 void MainWindow::handleToolbarButtonsEvents(){
-    if(interfaceState_.toolbar.isUndoButtonPressed && actionCenter_ && actionCenter_->undo()){
-        applyProjectTransientNavigationState();
-    }
-    if(interfaceState_.toolbar.isRedoButtonPressed && actionCenter_ && actionCenter_->redo()){
-        applyProjectTransientNavigationState();
+    if(!machineState_.isPlaying){
+        if(interfaceState_.toolbar.isUndoButtonPressed && actionCenter_ && actionCenter_->undo()){
+            applyProjectTransientNavigationState();
+        }
+        if(interfaceState_.toolbar.isRedoButtonPressed && actionCenter_ && actionCenter_->redo()){
+            applyProjectTransientNavigationState();
+        }
     }
 
     if(interfaceState_.toolbar.isConstantsButtonPressed){
@@ -82,7 +86,9 @@ void MainWindow::handleToolbarButtonsEvents(){
 
     if(auto projectData{systemState_.project.data.lock()}){
         // DEBUG_PRINT("{}", Serializer::toString(*projectData.d));
-        if(interfaceState_.toolbar.isSaveFileButtonPressed) serializer_->save(*projectData->data);
+        if((IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_S)) // TODO: move it out
+        || interfaceState_.toolbar.isSaveFileButtonPressed
+        ) serializer_->save(*projectData->data);
         if(interfaceState_.toolbar.isSaveAsFileButtonPressed) serializer_->save(*projectData->data, true);
 
         if(interfaceState_.toolbar.isLoadFileButtonPressed){
@@ -106,8 +112,8 @@ void MainWindow::handleToolbarButtonsEvents(){
             // TODO:
             Enumerator::print(
                 *systemState_.project.data.lock()->data,
-                units::enumerator::Paper::A4,
-                10
+                units::enumerator::Paper::Letter,
+                12
             );
         }
     }
@@ -117,29 +123,40 @@ void MainWindow::handleToolbarButtonsEvents(){
         interfaceState_.sidebar.selectedChannelListViewIndex == constants::interface_layout::note_canvas::notes::SystemChannelListViewIndex
     };
 
-    if(isSystemChannelSelected){
-        if(IsKeyPressed(KEY_Q)) interfaceState_.prompts.selectedCommandTool = constants::prompts::CommandPrompt::Tempo;
-        if(IsKeyPressed(KEY_W)) interfaceState_.prompts.selectedCommandTool = constants::prompts::CommandPrompt::Volume;
-        if(IsKeyPressed(KEY_E)) interfaceState_.prompts.selectedCommandTool = constants::prompts::CommandPrompt::Articulation;
-        if(IsKeyPressed(KEY_R)){
-            interfaceState_.prompts.activeCommandPrompt = interfaceState_.prompts.selectedCommandTool;
-            interfaceState_.prompts.isCommandWindowVisible = true;
+    const bool wasPromptWindowVisible{
+        interfaceState_.prompts.isCommandWindowVisible
+     || interfaceState_.prompts.isConstantsManagerWindowVisible
+     || interfaceState_.prompts.isConstantsManagerWarningWindowVisible
+     || interfaceState_.prompts.isConstantsManagerInfoWindowVisible
+    };
+
+    if(!machineState_.isPlaying && !wasPromptWindowVisible){
+        if(isSystemChannelSelected){
+            if(IsKeyPressed(KEY_Q)) interfaceState_.prompts.selectedCommandTool = constants::prompts::CommandPrompt::Tempo;
+            if(IsKeyPressed(KEY_W)) interfaceState_.prompts.selectedCommandTool = constants::prompts::CommandPrompt::Volume;
+            if(IsKeyPressed(KEY_E)) interfaceState_.prompts.selectedCommandTool = constants::prompts::CommandPrompt::Articulation;
+            if(IsKeyPressed(KEY_R)){
+                interfaceState_.prompts.activeCommandPrompt = interfaceState_.prompts.selectedCommandTool;
+                interfaceState_.prompts.isCommandWindowVisible = true;
+            }
+        }else{
+            if(IsKeyPressed(KEY_Q)) interfaceState_.toolbar.selectedTool = constants::toolbar::Tool::Cursor;
+            if(IsKeyPressed(KEY_W)) interfaceState_.toolbar.selectedTool = constants::toolbar::Tool::Pen;
+            if(IsKeyPressed(KEY_E)) interfaceState_.toolbar.selectedTool = constants::toolbar::Tool::Eraser;
+            if(IsKeyPressed(KEY_R)) interfaceState_.toolbar.selectedTool = constants::toolbar::Tool::Change_Instrument;
         }
-    }else{
-        if(IsKeyPressed(KEY_Q)) interfaceState_.toolbar.selectedTool = constants::toolbar::Tool::Cursor;
-        if(IsKeyPressed(KEY_W)) interfaceState_.toolbar.selectedTool = constants::toolbar::Tool::Pen;
-        if(IsKeyPressed(KEY_E)) interfaceState_.toolbar.selectedTool = constants::toolbar::Tool::Eraser;
-        if(IsKeyPressed(KEY_R)) interfaceState_.toolbar.selectedTool = constants::toolbar::Tool::Change_Instrument;
     }
 
     const int previousChannelIndex{interfaceState_.sidebar.selectedChannelListViewIndex};
 
-    if(IsKeyPressed(KEY_GRAVE)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::AllChannelsListViewIndex;
-    if(IsKeyPressed(KEY_ONE)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::FirstInstrumentChannelListViewIndex;
-    if(IsKeyPressed(KEY_TWO)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::SecondInstrumentChannelListViewIndex;
-    if(IsKeyPressed(KEY_THREE)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::ThirdInstrumentChannelListViewIndex;
-    if(IsKeyPressed(KEY_FOUR)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::FourthInstrumentChannelListViewIndex;
-    if(IsKeyPressed(KEY_FIVE)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::SystemChannelListViewIndex;
+    if(!wasPromptWindowVisible){
+        if(IsKeyPressed(KEY_GRAVE)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::AllChannelsListViewIndex;
+        if(IsKeyPressed(KEY_ONE)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::FirstInstrumentChannelListViewIndex;
+        if(IsKeyPressed(KEY_TWO)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::SecondInstrumentChannelListViewIndex;
+        if(IsKeyPressed(KEY_THREE)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::ThirdInstrumentChannelListViewIndex;
+        if(IsKeyPressed(KEY_FOUR)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::FourthInstrumentChannelListViewIndex;
+        if(IsKeyPressed(KEY_FIVE)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::SystemChannelListViewIndex;
+    }
 
     // TODO: duplicated, but I don't really have any other good way to deal with keyboard shortcuts (inspector.cpp: void Sidebar::drawInspector())
     if(previousChannelIndex != interfaceState_.sidebar.selectedChannelListViewIndex){

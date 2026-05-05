@@ -154,7 +154,7 @@ namespace program_states{
             bool isPagePasteButtonPressed   {false};
             bool isPageCutButtonPressed     {false};
 
-            bool isPageRepeatEnabled        {true};
+            bool isPageRepeatEnabled        {false};
             bool isPageSelectEnabled        {false};
 
             bool notePerPageSpinnerEditMode{false};

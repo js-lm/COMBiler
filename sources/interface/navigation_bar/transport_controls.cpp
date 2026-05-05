@@ -19,10 +19,11 @@ void NavigationBar::drawTransportControls(program_states::InterfaceContext &cont
 	context.interface.navigationBar.isPreviousPageButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.previousPageButton), bar_labels::PreviousPageButtonText);
 	context.interface.navigationBar.isNextPageButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.nextPageButton), bar_labels::NextPageButtonText);
 
-
 	bool &playingStatus{context.machine.isPlaying};
 	bool isPlaying{playingStatus};
 	bool isNotPlaying{!playingStatus};
+	// if(isPlaying) GuiEnable();
+
 	GuiToggle(calculateBoundsAtAnchor(anchor, bounds.playButton), bar_labels::PlayButtonText, &isPlaying);
 	GuiToggle(calculateBoundsAtAnchor(anchor, bounds.stopButton), bar_labels::StopButtonText, &isNotPlaying);
 	if(isPlaying != playingStatus || isNotPlaying == playingStatus){
@@ -35,4 +36,6 @@ void NavigationBar::drawTransportControls(program_states::InterfaceContext &cont
 	// playingStatus = toggleIndex == 0;
 
 	GuiToggle(calculateBoundsAtAnchor(anchor, bounds.pageRepeatToggle), bar_labels::PageRepeatToggleText, &context.interface.navigationBar.isPageRepeatEnabled);
+
+	// if(isPlaying) GuiDisable();
 }

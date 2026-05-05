@@ -7,9 +7,10 @@
 void PlaybackManager::update(MidiManager &midiManager){
     auto &machine{context_.machine};
 
-    if(machine.isPlaying != wasPlaying_){
+    if(machine.isPlaying != wasPlaying_ || machine.shouldResetPlayback){
+        stopPlayback(midiManager);
         if(machine.isPlaying) setupPlayback(midiManager);
-        else stopPlayback(midiManager);
+        machine.shouldResetPlayback = false;
     }
 
     wasPlaying_ = machine.isPlaying;

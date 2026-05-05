@@ -360,6 +360,7 @@ void NavigationBar::handleTimelineMousePress(
 
     if(navigationBarState.isPageSelectEnabled){
         navigationBarState.requestedPageNumber = hoveredBlockIndex + constants::interface_layout::timeline::FirstPageNumber;
+        context.machine.shouldResetPlayback = true;
         return;
     }
 
@@ -399,6 +400,7 @@ void NavigationBar::updateTimelineDragCandidateState(
     if(IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
         navigationBarState.requestedPageNumber = navigationBarState.timelineDragCandidatePageIndex
                                                + constants::interface_layout::timeline::FirstPageNumber;
+        context.machine.shouldResetPlayback = true;
         context.interface.noteCanvas.isGridLayoutDirty = true;
         navigationBarState.isTimelineDragCandidate = false;
         navigationBarState.timelineDragCandidatePageIndex = constants::interface_layout::timeline::InvalidIndex;
@@ -418,7 +420,7 @@ void NavigationBar::updateTimelineDragCandidateState(
             >= constants::interface_layout::timeline::HoldToStartDragDurationInSeconds
     };
 
-    if(dragDistanceInPixels >= constants::interface_layout::timeline::DragStartDistanceThresholdInPixels || hasHoldDurationReached){
+    if(!context.machine.isPlaying && (dragDistanceInPixels >= constants::interface_layout::timeline::DragStartDistanceThresholdInPixels || hasHoldDurationReached)){
         navigationBarState.isTimelineDraggingPage = true;
         navigationBarState.timelineDraggedPageIndex = navigationBarState.timelineDragCandidatePageIndex;
         navigationBarState.timelineDropInsertionIndex = navigationBarState.timelineDraggedPageIndex;
@@ -641,6 +643,9 @@ void NavigationBar::drawTimeline(program_states::InterfaceContext &context){
         TextFormat("%d/%d", context.system.project.currentPage, maximumPageNumber)
     );
 
+    const bool isPlaying{context.machine.isPlaying};
+    if(isPlaying) GuiDisable();
+
     if(GuiButton(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.addPageButton), "+")){
         navigationBarState.isAddPageRequested = true;
         navigationBarState.requestedPageInsertionIndex = projectData
@@ -653,6 +658,8 @@ void NavigationBar::drawTimeline(program_states::InterfaceContext &context){
     navigationBarState.isPagePasteButtonPressed = GuiButton(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.pagePasteButton), bar_labels::PagePasteButtonText);
     navigationBarState.isPageCutButtonPressed = GuiButton(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.pageCutButton), bar_labels::PageCutButtonText);
     GuiToggle(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.pageSelectToggle), bar_labels::PageSelectToggleText, &navigationBarState.isPageSelectEnabled);
+
+    if(isPlaying) GuiEnable();
 
     DEBUG_PRINT_IF_CHANGED(
         "NavigationBar::drawTimeline()\n\tmaximumPageNumber={}, contentWidthInPixels={}, hoveredBlockIndex={},\n\tisTimelineDragCandidate={}, isTimelineDraggingPage={}, timelineDraggedPageIndex={}, timelineDropInsertionIndex={}, requestedPageNumber={}",

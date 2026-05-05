@@ -169,9 +169,39 @@ void MainWindow::handleKeyboardEvent(){
         return;
     }
 
+    const bool wasPromptWindowVisible{
+        interfaceState_.prompts.isCommandWindowVisible
+     || interfaceState_.prompts.isConstantsManagerWindowVisible
+     || interfaceState_.prompts.isConstantsManagerWarningWindowVisible
+     || interfaceState_.prompts.isConstantsManagerInfoWindowVisible
+    };
+    if(wasPromptWindowVisible) return;
+
     const bool isControlDown{IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)};
     const bool isShiftDown{IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)};
     auto &window{systemState_.window};
+
+    if(IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_A)){
+        interfaceState_.navigationBar.requestedPageNumber = std::max(
+            constants::interface_layout::timeline::FirstPageNumber,
+            systemState_.project.currentPage - 1
+        );
+        machineState_.shouldResetPlayback = true;
+    }
+    if(IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_S)){
+        const int maximumPageNumber{
+            systemState_.project.data.lock()
+                ? static_cast<int>(systemState_.project.data.lock()->data->pages.size())
+                : constants::interface_layout::timeline::FirstPageNumber
+        };
+        interfaceState_.navigationBar.requestedPageNumber = std::min(
+            maximumPageNumber,
+            systemState_.project.currentPage + 1
+        );
+        machineState_.shouldResetPlayback = true;
+    }
+
+    if(IsKeyPressed(KEY_D)) interfaceState_.navigationBar.isPageRepeatEnabled = !interfaceState_.navigationBar.isPageRepeatEnabled;
 
     const float previousScaleFactor{window.scaleFactor};
 
@@ -186,19 +216,30 @@ void MainWindow::handleKeyboardEvent(){
         }
         if(isZoomOutPressed) window.scaleFactor = std::max(constants::application_window::MinimumScaleFactor, std::ceil(window.scaleFactor) - 1.0f);
 
-        if(IsKeyPressed(KEY_Z) && actionCenter_ && actionCenter_->redo()) applyProjectTransientNavigationState();
+        if(!machineState_.isPlaying){
+            if(IsKeyPressed(KEY_Z) && actionCenter_ && actionCenter_->redo()) applyProjectTransientNavigationState();
+        }
     }else if(isControlDown){
         if(isZoomInPressed) window.scaleFactor += .1f; // TODO: magic numbers
         if(isZoomOutPressed) window.scaleFactor -= .1f;
 
-        if(IsKeyPressed(KEY_Z) && actionCenter_ && actionCenter_->undo()) applyProjectTransientNavigationState();
+        if(!machineState_.isPlaying){
+            if(IsKeyPressed(KEY_Z) && actionCenter_ && actionCenter_->undo()) applyProjectTransientNavigationState();
+        }
+    }
+
+    if(IsKeyPressed(KEY_SPACE)){
+        machineState_.isPlaying = !machineState_.isPlaying;
+        if(machineState_.isPlaying){
+            if(canvasManager_) canvasManager_->cancelSelectionAndPasteMode();
+            if(timelineManager_) timelineManager_->cancelActiveInteraction();
+        }
     }
 
     // if(IsKeyPressed(KEY_UP)) window.scaleFactor += .1f;
     // if(IsKeyPressed(KEY_DOWN)) window.scaleFactor -= .1f;
 
     window.scaleFactor = calculateScaleFactor();
-
     if(window.scaleFactor != previousScaleFactor) handleWindowSizeChangeEvent();
 
 }

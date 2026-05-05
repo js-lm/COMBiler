@@ -100,8 +100,8 @@ namespace program_states{
                     Rectangle channelLabel      {32,   8, 48,  24};
                     Rectangle structureLine     { 8, 264, 96,  24};
 
-                    Rectangle tempoValueBox     {48, 288, 56, 24};
-                    Rectangle notesValueBox     {48, 320, 56, 24};
+                    Rectangle tempoValueBox     {48, 288, 56, 24}; // TODO: remove this
+                    Rectangle notesValueBox     {48, 320, 56, 24}; // TODO: move it to the setting menu
                     Rectangle sideSettingLine   { 8, 352, 96, 24};
                     Rectangle showCommandsCheckBox{8,376, 24, 24};
                 } inspector{};

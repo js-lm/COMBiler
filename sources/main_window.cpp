@@ -80,11 +80,11 @@ void MainWindow::initialize(){
 
 void MainWindow::update(){
 
+    handleEvents();
+
     // midiManager_->update();
     canvasManager_->update(*actionCenter_, *midiManager_);
     playbackManager_->update(*midiManager_);
-
-    handleEvents();
 }
 
 void MainWindow::draw(){
@@ -94,6 +94,9 @@ void MainWindow::draw(){
         // ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
         ClearBackground(BLANK);
 
+        const bool shouldDisableToolbar(machineState_.isPlaying);
+        if(shouldDisableToolbar) GuiDisable();
+
         const bool wasPromptWindowVisible{
             interfaceState_.prompts.isCommandWindowVisible
          || interfaceState_.prompts.isConstantsManagerWindowVisible
@@ -101,8 +104,12 @@ void MainWindow::draw(){
         if(wasPromptWindowVisible) GuiLock();
         interface::Toolbar::draw(context);
         if(wasPromptWindowVisible) GuiUnlock();
+        if(shouldDisableToolbar) GuiEnable();
 
-        const bool shouldBlockUnderlyingUi{wasPromptWindowVisible};
+        const bool shouldBlockUnderlyingUi{
+            wasPromptWindowVisible 
+        //  || machineState_.isPlaying
+        };
         if(shouldBlockUnderlyingUi) GuiLock();
         interface::Sidebar::draw(context);
         interface::NavigationBar::draw(context);
@@ -110,9 +117,8 @@ void MainWindow::draw(){
         if(shouldBlockUnderlyingUi) GuiUnlock();
 
         // DEBUG_PRINT_IF_CHANGED(
-        //     "isCommandWindowVisible: {}, wasCommandWindowVisible: {}, shouldBlockUnderlyingUi: {}",
-        //     interfaceState_.prompts.isCommandWindowVisible,
-        //     wasCommandWindowVisible, shouldBlockUnderlyingUi
+        //     " shouldBlockUnderlyingUi: {}",
+        //     shouldBlockUnderlyingUi
         // );
 
         interface::Prompts::draw(context);

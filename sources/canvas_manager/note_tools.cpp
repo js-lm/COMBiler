@@ -13,8 +13,10 @@
 
 void CanvasManager::handleNoteTools(ActionCenter &actionCenter, MidiManager &midiManager){
 
-    handleSelectAll();
-    handleCopyAndPasteModeState();
+    if(!context_.machine.isPlaying){
+        handleSelectAll();
+        handleCopyAndPasteModeState();
+    }
 
     auto stopPreviewing{[&](){
         if(previewingNote_.has_value() && previewingChannel_.has_value()){
@@ -31,8 +33,14 @@ void CanvasManager::handleNoteTools(ActionCenter &actionCenter, MidiManager &mid
 
     if(context_.interface.prompts.isCommandWindowVisible
     || context_.interface.prompts.isConstantsManagerWindowVisible
+    || context_.machine.isPlaying
     ){
         stopPreviewing();
+        isSelectionDragInProgress_ = false;
+        if(hasActionStarted_){
+            actionCenter.finishAction();
+            hasActionStarted_ = false;
+        }
         return;
     }
 

@@ -25,6 +25,9 @@ void Toolbar::drawToolPalette(program_states::InterfaceContext &context){
 	const bool isSystemChannelSelected{
 		context.interface.sidebar.selectedChannelListViewIndex == constants::interface_layout::note_canvas::notes::SystemChannelListViewIndex
 	};
+	const bool isAllChannelSelected{
+		context.interface.sidebar.selectedChannelListViewIndex == constants::interface_layout::note_canvas::notes::AllChannelsListViewIndex
+	};
 
 	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.groupBox), toolbar_constants::ToolPaletteGroupBoxText);
 
@@ -60,18 +63,22 @@ void Toolbar::drawToolPalette(program_states::InterfaceContext &context){
 
 
 	}else{
+		if(isAllChannelSelected) toolbarState.selectedTool = constants::toolbar::Tool::Cursor; // TODO: restore the tool after switching back to other channel
+
 		int selectedToolIndex{constants::toolbar::toIndex(toolbarState.selectedTool)};
 
 		selectedToolIndex = std::clamp(selectedToolIndex, 0, constants::toolbar::ToolCount - 1);
 		GuiToggleGroup(calculateBoundsAtAnchor(anchor, bounds.toolsToggleGroup), toolbar_constants::ToolsToggleGroupNormalText, &selectedToolIndex);
 
 		toolbarState.selectedTool = constants::toolbar::toolFromIndex(selectedToolIndex);
-		if(promptState.activeCommandPrompt != constants::prompts::CommandPrompt::Change_Instrument){
+		if(promptState.activeCommandPrompt != constants::prompts::CommandPrompt::Change_Instrument
+		){
 			promptState.isCommandWindowVisible = false;
 		}
 
 		if(toolbarState.selectedTool != constants::toolbar::Tool::Change_Instrument
-		&& promptState.activeCommandPrompt == constants::prompts::CommandPrompt::Change_Instrument){
+		&& promptState.activeCommandPrompt == constants::prompts::CommandPrompt::Change_Instrument
+		){
 			promptState.isCommandWindowVisible = false;
 		}
 
@@ -110,7 +117,7 @@ void Toolbar::drawToolPalette(program_states::InterfaceContext &context){
 
 	const bool isCutEnabled{!isSystemChannelSelected && !isPasteModeEnabled && hasSelectionArea};
 	const bool isCopyEnabled{!isSystemChannelSelected && !isPasteModeEnabled && hasSelectionArea};
-	const bool isPasteEnabled{!isSystemChannelSelected && hasCopiedSelection};
+	const bool isPasteEnabled{!isSystemChannelSelected && hasCopiedSelection && !context.machine.isPlaying};
 
 	context.interface.toolbar.isCutNoteButtonPressed = drawButton(
 		calculateBoundsAtAnchor(anchor, bounds.cutNoteButton),
@@ -123,22 +130,13 @@ void Toolbar::drawToolPalette(program_states::InterfaceContext &context){
 		isCopyEnabled
 	);
 	context.interface.toolbar.isPasteNoteButtonPressed = false;
-	if(isPasteEnabled){
-		GuiToggle(
-			calculateBoundsAtAnchor(anchor, bounds.pasteNoteButton),
-			toolbar_constants::PasteNoteButtonText,
-			&context.interface.clipboard.isPasteModeEnabled
-		);
-	}else{
-		GuiSetState(STATE_DISABLED);
-		bool isDisabledPasteToggle{context.interface.clipboard.isPasteModeEnabled};
-		GuiToggle(
-			calculateBoundsAtAnchor(anchor, bounds.pasteNoteButton),
-			toolbar_constants::PasteNoteButtonText,
-			&isDisabledPasteToggle
-		);
-		GuiSetState(STATE_NORMAL);
-	}
 
-    
+	const bool isDisabledPasteToggle{context.interface.clipboard.isPasteModeEnabled};
+	if(!isPasteEnabled) GuiDisable();
+	GuiToggle(
+		calculateBoundsAtAnchor(anchor, bounds.pasteNoteButton),
+		toolbar_constants::PasteNoteButtonText,
+		&context.interface.clipboard.isPasteModeEnabled
+	);
+	if(!isPasteEnabled) GuiEnable();
 }

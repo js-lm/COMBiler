@@ -31,6 +31,9 @@ void NavigationBar::drawPerPageSettings(program_states::InterfaceContext &contex
 
 	const int previousNotePerPageSpinnerValue{context.interface.navigationBar.notePerPageSpinnerValue};
 
+	const bool isPlaying{context.machine.isPlaying};
+	if(isPlaying) GuiDisable();
+
 	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.groupBox), bar_labels::PerPageSettingsGroupBoxText);
 	if(GuiSpinner(
 		calculateBoundsAtAnchor(anchor, bounds.notePerPageSpinner),
@@ -42,6 +45,8 @@ void NavigationBar::drawPerPageSettings(program_states::InterfaceContext &contex
 	)){
 		context.interface.navigationBar.notePerPageSpinnerEditMode = !context.interface.navigationBar.notePerPageSpinnerEditMode;
 	}
+
+	if(isPlaying) GuiEnable();
 
 	if(context.interface.navigationBar.notePerPageSpinnerValue != previousNotePerPageSpinnerValue){
 		if(projectData){
