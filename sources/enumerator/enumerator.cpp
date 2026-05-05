@@ -12,35 +12,33 @@ void Enumerator::print(
     const units::enumerator::Paper      paper,
     const units::Mm                     margin
 ){
-    auto compiledPaperStrip{compileProjectData(projectData)};
-
-    if(compiledPaperStrip.empty()) return;
-
-    const std::string pattern{"*.pdf"};
-    const char *filterPattern[1]{pattern.c_str()};
+    const char *filterPattern[]{constants::enumerator::SaveFileExtensionPattern};
 
     const char *saveFilePath{tinyfd_saveFileDialog(
-        "Export your paper strip",
-        "paper_strip.pdf",
+        constants::enumerator::SaveDialogTitle,
+        constants::enumerator::DefaultFilename,
         1, filterPattern,
-        "PDF document (*.pdf)"
+        constants::enumerator::FilterDescription
     )};
+
+    if(!saveFilePath) return;
+
+    const auto compiledPaperStrip{compileProjectData(projectData)};
+    if(compiledPaperStrip.empty()) return;
 
     PdfDocument pdf{saveFilePath};
 
-    PdfCanvas page{200};
+    const auto &paperDimension{units::enumerator::getPaperDimension(paper)};
 
-    page.drawRectangle(100, 100, 100, 100, units::enumerator::Color::Red);
-    page.drawRectangleLines(110, 110, 100, 100, units::enumerator::Color::Green);
-    page.drawLines(25, 25, 25, 125, units::enumerator::Color::Blue);
-    page.draw7SegmentDigit(9, 10, 10, 10, 20, 2, units::enumerator::Color::Black);
-
-    DEBUG_PRINT("{}", page.stream());
-
-    pdf.addPage(page, 200, 200);
+    generatePaperStrip(
+        pdf,
+        paperDimension.width,
+        paperDimension.height,
+        margin,
+        compiledPaperStrip
+    );
 
     pdf.save();
-
 
     if(FileExists(saveFilePath)){
 #if defined(__linux__)
@@ -52,6 +50,134 @@ void Enumerator::print(
 #endif
         std::system(command.c_str());
     }
+}
 
-    return;
+void Enumerator::generatePaperStrip(
+    PdfDocument &pdf, 
+    const units::Mm width,
+    const units::Mm height,
+    const units::Mm margin,
+    const std::vector<Enumerator::EncodedRow> &compiledPaperStrip
+){
+    int stripsPerSheet{calculateStripsPerSheet(height, margin)};
+    int rowsPerStripSegment{calculateRowsPerStripSegment(width, margin)};
+    int totalCellsPerSheet{stripsPerSheet * rowsPerStripSegment};
+
+    units::Mm paperWidth{width};
+    units::Mm paperHeight{height};
+
+    /* try rotating the paper */ {
+
+        int flippedStripsPerSheet{calculateStripsPerSheet(width, margin)};
+        int flippedRowsPerStripSegment{calculateRowsPerStripSegment(height, margin)};
+        int flippedTotalCellsPerSheet{flippedStripsPerSheet * flippedRowsPerStripSegment};
+
+        if(flippedTotalCellsPerSheet > totalCellsPerSheet){
+            stripsPerSheet = flippedStripsPerSheet;
+            rowsPerStripSegment = flippedRowsPerStripSegment;
+            paperWidth = height;
+            paperHeight = width;
+            totalCellsPerSheet = flippedTotalCellsPerSheet;
+
+            DEBUG_PRINT("Rotated");
+        }
+    } /* try rotating the paper */
+
+    DEBUG_PRINT("paperWidth:{}, paperHeight:{}", paperWidth, paperHeight);
+    DEBUG_PRINT("stripsPerSheet:{}, rowsPerStripSegment:{}", stripsPerSheet, rowsPerStripSegment);
+
+    if(totalCellsPerSheet < 1) return;
+
+    // units::Mm availableHeight{paperHeight - (margin * 2.0f)};
+
+    size_t totalRowCount{compiledPaperStrip.size()};
+    size_t currentRowIndex{0};
+
+    // size_t currentSegmentIndex{0};
+    size_t totalSegmentCount{(totalRowCount + (stripsPerSheet * rowsPerStripSegment) - 1) / (stripsPerSheet * rowsPerStripSegment)};
+
+    DEBUG_PRINT("totalRowCount:{}, totalSegmentCount:{}", totalRowCount, totalSegmentCount);
+
+    int stripOrder{0};
+
+    while(currentRowIndex < totalRowCount){
+        PdfCanvas page{paperHeight};
+
+        // center the segments
+        size_t rowsRemainingOnPage{totalRowCount - currentRowIndex};
+        int stripsOnCurrentPage{static_cast<int>(std::min<size_t>(
+            static_cast<size_t>(stripsPerSheet), 
+            (rowsRemainingOnPage + rowsPerStripSegment - 1) / rowsPerStripSegment
+        ))};
+        units::Mm totalContentHeight{
+            (stripsOnCurrentPage * constants::enumerator::TotalHeight) + 
+            ((stripsOnCurrentPage - 1) * constants::enumerator::GapBetweenSegments)
+        };
+        units::Mm startYOffset{(paperHeight - totalContentHeight) / 2.0f};
+
+        // for(size_t currentSegmentIndex{0}; currentSegmentIndex < totalSegmentCount; currentSegmentIndex++){
+        for(size_t currentStripIndex{0}; currentStripIndex < stripsPerSheet; currentStripIndex++){
+            if(currentRowIndex >= totalRowCount) break;
+
+            size_t itemsRemaining{totalRowCount - currentRowIndex};
+            size_t itemsToDraw{std::min<size_t>(rowsPerStripSegment, itemsRemaining)};
+
+            units::Mm startXPosition{(paperWidth - (itemsToDraw * constants::enumerator::CellWidth)) / 2.0f};
+            units::Mm startYPosition{
+                startYOffset 
+              + (constants::enumerator::TotalHeight + constants::enumerator::GapBetweenSegments) * currentStripIndex
+            };
+
+            drawStripSegment(page, startXPosition, startYPosition, compiledPaperStrip, currentRowIndex, itemsToDraw);
+
+            // digits
+            units::Mm digitYPosition{
+                startYPosition 
+              + constants::enumerator::TotalHeight 
+              + constants::enumerator::GapBetweenDigitAndStrip
+            };
+            
+            // int numberToDraw{stripOrder};
+            units::Mm currentDigitXPosition{startXPosition};
+            
+            if(stripOrder == 0){
+                page.draw7SegmentDigit(
+                    0, 
+                    currentDigitXPosition, 
+                    digitYPosition, 
+                    constants::enumerator::DigitWidth, 
+                    constants::enumerator::DigitHeight, 
+                    constants::enumerator::DigitThickness, 
+                    units::enumerator::Color::Black
+                );
+            }else{
+                std::vector<int> digits{};
+                int temporaryNumber{stripOrder};
+                
+                while(temporaryNumber > 0){
+                    digits.push_back(temporaryNumber % 10);
+                    temporaryNumber /= 10;
+                }
+                
+                for(size_t currentDigitIndex{digits.size()}; currentDigitIndex --> 0;){
+                    page.draw7SegmentDigit(
+                        digits[currentDigitIndex], 
+                        currentDigitXPosition, 
+                        digitYPosition, 
+                        constants::enumerator::DigitWidth, 
+                        constants::enumerator::DigitHeight, 
+                        constants::enumerator::DigitThickness, 
+                        units::enumerator::Color::Black
+                    );
+                    currentDigitXPosition += constants::enumerator::DigitWidth + constants::enumerator::GapBetweenDigits;
+                }
+            }
+
+            currentRowIndex += itemsToDraw;
+
+            stripOrder++;
+        }
+
+        pdf.addPage(page, paperWidth, paperHeight);
+    }
 }

@@ -27,7 +27,7 @@ int Enumerator::calculateStripsPerSheet(
     
 }
 
-int Enumerator::calculatePerStripSegment(
+int Enumerator::calculateRowsPerStripSegment(
     units::Mm paperWidth,
     units::Mm paperMargin
 ){

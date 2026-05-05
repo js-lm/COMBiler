@@ -30,7 +30,7 @@ public:
 
     // using CompiledData = std::vector<EncodedRow>;
 
-    using PDF = std::vector<std::string>;
+    // using PDF = std::vector<std::string>;
 
 // private:
 //     int stripPerSheet_{1};
@@ -74,15 +74,18 @@ private:
         units::Mm paperHeight,
         units::Mm paperMargin
     );
-    static int calculatePerStripSegment(
+    static int calculateRowsPerStripSegment(
         units::Mm paperWidth,
         units::Mm paperMargin
     );
 
 private:
-    static void drawPaperStrip(
-        PdfCanvas &canvas, 
-        const std::vector<EncodedRow> &compiledPaperStrip
+    static void generatePaperStrip(
+        PdfDocument &pdf, 
+        const units::Mm width,
+        const units::Mm height,
+        const units::Mm margin,
+        const std::vector<Enumerator::EncodedRow> &compiledPaperStrip
     );
 
 private:

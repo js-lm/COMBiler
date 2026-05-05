@@ -17,14 +17,20 @@ void Enumerator::drawStripSegment(
         drawOpticalMarkers(canvas, currentX, startY);
         drawCells(canvas, currentX, startY, compiledPaperStrip, dataIndex);
         drawBoundaryLine(canvas, currentX, startY);
+        drawBoundaryLine(canvas, currentX, startY + constants::enumerator::TotalHeight);
     }
 }
 
 void Enumerator::drawOpticalMarkers(PdfCanvas &canvas, units::Mm x, units::Mm y){
 
+    // the 4 and 1.5 are used to make the black cell extended on both sides a bit
+    // If for whatever reason I want to revert this, use the code below
+    // x, y, constants::enumerator::CellWidth, ...
+    // no idea what to name them as constants, so I will just leave them as is
     canvas.drawRectangle(
-        x, y, 
-        constants::enumerator::CellWidth, 
+        x - constants::enumerator::CellWidth / 4.0f, 
+        y, 
+        constants::enumerator::CellWidth * 1.5f, 
         constants::enumerator::OpticalMarkHeight, 
         units::enumerator::Color::Black
     );
@@ -40,18 +46,11 @@ void Enumerator::drawOpticalMarkers(PdfCanvas &canvas, units::Mm x, units::Mm y)
 }
 
 void Enumerator::drawBoundaryLine(PdfCanvas &canvas, units::Mm x, units::Mm y){
-
-    units::Mm lineY{
-        y + constants::enumerator::OpticalMarkHeight 
-      + (constants::enumerator::NumberOfColumn * constants::enumerator::CellHeight) 
-      + constants::enumerator::BottomLineOffset
-    };
-    
     canvas.drawLines(
-        x, 
-        lineY, 
+        x, y, 
         x + constants::enumerator::CellWidth, 
-        lineY, units::enumerator::Color::Black
+        y, 
+        units::enumerator::Color::Black
     );
 }
 

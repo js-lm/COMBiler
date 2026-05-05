@@ -90,4 +90,22 @@ namespace constants::enumerator{
 
     } // namespace pdf
 
+    constexpr const char *SaveDialogTitle{"Export Your Project"};
+
+    constexpr const char *SaveFileExtensionPattern{"*.pdf"};
+    constexpr const char *FilterDescription{"PDF document (*.pdf)"};
+
+    constexpr const char *DefaultFilename{"my_paper_strip.pdf"};
+
+    constexpr units::Mm GapBetweenSegments{10.0f};
+    constexpr units::Mm GapBetweenDigitAndStrip{1.0f};
+    constexpr units::Mm GapBetweenDigits{1.0f};
+
+    constexpr units::Mm DigitWidth{4.0f};
+    constexpr units::Mm DigitHeight{4.0f};
+    constexpr units::Mm DigitThickness{.5f};
+
+
+
+
 } // namespace constants::enumerator
