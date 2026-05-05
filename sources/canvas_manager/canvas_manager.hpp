@@ -4,6 +4,8 @@
 
 #include "action_center/action_center.hpp"
 
+class MidiManager;
+
 class CanvasManager{
 private:
     program_states::InterfaceContext context_;
@@ -13,6 +15,9 @@ private:
     bool hasActionStarted_{false};
     bool isSelectionDragInProgress_{false};
     bool hasInitializedSelectionTracking_{false};
+
+    std::optional<music_data::Note> previewingNote_;
+    std::optional<command::Target> previewingChannel_;
 
     int selectionDragStartColumnIndex_{0};
     int selectionDragStartRowIndex_{0};
@@ -28,11 +33,11 @@ public:
     CanvasManager() = delete;
     ~CanvasManager() = default;
 
-    void update(ActionCenter &actionCenter);
+    void update(ActionCenter &actionCenter, MidiManager &midiManager);
     void cancelSelectionAndPasteMode();
 
 private:
-    void handleNoteTools(ActionCenter &actionCenter);
+    void handleNoteTools(ActionCenter &actionCenter, MidiManager &midiManager);
 
     void handleSelection(ActionCenter &actionCenter);
     void handleNoteAdding(ActionCenter &actionCenter);

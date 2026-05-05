@@ -4,24 +4,35 @@
 
 #include "constants.hpp"
 #include "utilities/project_utilities.hpp"
+#include "midi_manager/midi_manager.hpp"
 
 #include <algorithm>
 #include <type_traits>
 
 #include "debug_utilities.hpp"
 
-void CanvasManager::handleNoteTools(ActionCenter &actionCenter){
+void CanvasManager::handleNoteTools(ActionCenter &actionCenter, MidiManager &midiManager){
 
     handleSelectAll();
     handleCopyAndPasteModeState();
 
+    auto stopPreviewing{[&](){
+        if(previewingNote_.has_value()){
+            midiManager.noteOff(previewingChannel_.value(), previewingNote_.value());
+            previewingNote_ = std::nullopt;
+            previewingChannel_ = std::nullopt;
+        }
+    }};
+
     if(context_.interface.prompts.isCommandWindowVisible
     || context_.interface.prompts.isConstantsManagerWindowVisible
     ){
+        stopPreviewing();
         return;
     }
 
     if(context_.interface.clipboard.isPasteModeEnabled){
+        stopPreviewing();
         handlePastePlacement(actionCenter);
         return;
     }
@@ -29,6 +40,7 @@ void CanvasManager::handleNoteTools(ActionCenter &actionCenter){
     const bool isLeftMouseButtonDown{IsMouseButtonDown(MOUSE_BUTTON_LEFT)};
 
     if(!context_.interface.noteCanvas.cursorPosition){
+        stopPreviewing();
         if(!isLeftMouseButtonDown){
             isSelectionDragInProgress_ = false;
 
@@ -40,7 +52,10 @@ void CanvasManager::handleNoteTools(ActionCenter &actionCenter){
         return;
     }
 
-    if(handleCommandTools(actionCenter)) return;
+    if(handleCommandTools(actionCenter)){
+        stopPreviewing();
+        return;
+    }
 
     if(isLeftMouseButtonDown){
         switch(context_.interface.toolbar.selectedTool){
@@ -59,6 +74,24 @@ void CanvasManager::handleNoteTools(ActionCenter &actionCenter){
         }
     }
 
+    const bool isRightMouseButtonDown{IsMouseButtonDown(MOUSE_BUTTON_RIGHT)};
+    const bool isPenMode{context_.interface.toolbar.selectedTool == constants::toolbar::Tool::Pen};
+    const auto channelIndex{selectedInstrumentChannelIndex()};
+
+    if(isPenMode && channelIndex.has_value() && isRightMouseButtonDown){
+        const auto targetChannel{static_cast<command::Target>(channelIndex.value() + 1)};
+        const auto hoveredNote{context_.interface.noteCanvas.cursorPosition.value().note};
+
+        if(previewingNote_ != hoveredNote || previewingChannel_ != targetChannel){
+            stopPreviewing();
+            
+            midiManager.noteOn(targetChannel, hoveredNote);
+            previewingNote_ = hoveredNote;
+            previewingChannel_ = targetChannel;
+        }
+    }else{
+        stopPreviewing();
+    }
 }
 
 bool CanvasManager::handlePastePlacement(ActionCenter &actionCenter){

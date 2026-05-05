@@ -24,6 +24,13 @@ void MidiManager::initialization(){
     tsf_set_max_voices(soundFont, constants::midi::MaximumVoiceCount);
     tsf_set_output(soundFont, TSF_STEREO_INTERLEAVED, outputSampleRate_, constants::midi::GlobalGainInDecibel);
 
+    for(size_t channel{0}; channel < constants::project_data::NumberOfInstrumentChannels; channel++){
+        applyInstrument(channel, context_.machine.instruments[channel]);
+        applyVolume(channel);
+        applyArticulation(channel);
+    }
+    setTempo(command::Tempo{context_.machine.tempo});
+
     outputAudioStream_ = LoadAudioStream(
         outputSampleRate_,
         constants::midi::OutputSampleSizeInBits,

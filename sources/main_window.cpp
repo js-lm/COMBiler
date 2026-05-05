@@ -81,7 +81,7 @@ void MainWindow::initialize(){
 void MainWindow::update(){
 
     // midiManager_->update();
-    canvasManager_->update(*actionCenter_);
+    canvasManager_->update(*actionCenter_, *midiManager_);
     playbackManager_->update(*midiManager_);
 
     handleEvents();

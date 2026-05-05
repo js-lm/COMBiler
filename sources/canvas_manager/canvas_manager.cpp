@@ -1,6 +1,6 @@
 #include "canvas_manager.hpp"
 
-void CanvasManager::update(ActionCenter &actionCenter){
+void CanvasManager::update(ActionCenter &actionCenter, MidiManager &midiManager){
     if(context_.interface.navigationBar.isTimelineDraggingPage) return;
     
 
@@ -17,7 +17,7 @@ void CanvasManager::update(ActionCenter &actionCenter){
 
     if(hasToolSwitched || hasChannelSwitched) clearSelectionState();
 
-    handleNoteTools(actionCenter);
+    handleNoteTools(actionCenter, midiManager);
 
     previousSelectedTool_ = context_.interface.toolbar.selectedTool;
     previousSelectedChannelListViewIndex_ = context_.interface.sidebar.selectedChannelListViewIndex;
