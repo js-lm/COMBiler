@@ -8,6 +8,8 @@
 
 #include "debug_utilities.hpp"
 
+#include "utilities/project_utilities.hpp"
+
 void PlaybackManager::setupPlayback(MidiManager &midiManager){
     context_.machine.reset();
     context_.machine.playheadIndex = 0;
@@ -18,137 +20,25 @@ void PlaybackManager::setupPlayback(MidiManager &midiManager){
     if(!projectDataSlot) return;
     const auto &projectData{projectDataSlot->data};
 
-    bool isTempoFound{false};
-    std::array<bool, constants::project_data::NumberOfInstrumentChannels> isInstrumentFound{};
-    std::array<bool, constants::project_data::NumberOfInstrumentChannels> isVolumeFound{};
-    std::array<bool, constants::project_data::NumberOfInstrumentChannels> isArticulationFound{};
+    // int currentPageIndex{context_.system.project.currentPage - 1};
 
-    auto isAllFound{[&](){
-        if(!isTempoFound) return false;
-        for(bool found : isInstrumentFound){ if(!found) return false;}
-        for(bool found : isVolumeFound){ if(!found) return false;}
-        for(bool found : isArticulationFound){ if(!found) return false;}
-        return true;
-    }};
+    const auto machineState{utilities::machineStateAt(
+        *projectData,
+        context_.system.project.currentPage,
+        context_.machine.playheadIndex
+    )};
 
-    int currentPageIndex{context_.system.project.currentPage - 1};
+    context_.machine.tempo = machineState.tempo;
+    context_.machine.instruments = machineState.instruments;
+    context_.machine.volumes = machineState.volumes;
+    context_.machine.articulations = machineState.articulations;
 
-    do{
-
-        const auto &currentPage{projectData->pages[currentPageIndex]};
-        
-        const int currentPageNoteCount{currentPage.noteInThisPage.value_or(projectData->metadata.notePerPage)};
-
-        int startHead{
-            (currentPageIndex == context_.system.project.currentPage - 1) 
-                ? context_.machine.playheadIndex
-                : currentPageNoteCount
-        };
-
-        for(int head{startHead}; head --> 0;){
-
-            for(units::midi::SoundFontChannel channel{0}; channel < constants::project_data::NumberOfInstrumentChannels; channel++){
-                if(!isInstrumentFound[channel]){
-                    const auto &cell{currentPage.instrumentChannels[channel][head]};
-                    if(cell.has_value()){
-                        if(const auto *instrument{std::get_if<music_data::Instrument>(&*cell)}){
-                            context_.machine.instruments[channel] = *instrument;
-                            midiManager.setInstrument(channelIndexToChannelTarget(channel), *instrument);
-                            isInstrumentFound[channel] = true;
-                        }
-                    }
-                }
-            }
-
-            const auto &commandOptional{currentPage.commandChannel[head]};
-            if(commandOptional.has_value()){
-                const auto &commandToken{*commandOptional};
-
-                std::optional<command::Command> commandOptional{projectData->commandPalette.get(commandToken)};
-
-                if(commandOptional.has_value()){
-
-                    std::visit([&](const auto &commandToken){
-                        using Type = std::decay_t<decltype(commandToken)>;
-
-                        if constexpr(std::is_same_v<command::Tempo, Type>){
-                            if(!isTempoFound){
-                                context_.machine.tempo = commandToken.tempo;
-                                midiManager.setTempo(commandToken);
-                                isTempoFound = true;
-                            }
-                        }else if constexpr(std::is_same_v<command::Volume, Type>){
-                            auto [volume, target]{commandToken};
-
-                            auto assignVolume{[&](size_t channel){
-                                if(!isVolumeFound[channel]){
-                                    context_.machine.volumes[channel] = units::machine::Volume{volume};
-                                    midiManager.setVolume(channelIndexToChannelTarget(channel), volume);
-                                    isVolumeFound[channel] = true;
-                                }
-                            }};
-                            
-                            switch(target){
-                            case command::Target::All_Channels: {
-                                for(size_t channel{0}; channel < constants::project_data::NumberOfInstrumentChannels; channel++){
-                                    assignVolume(channel);
-                                }
-                            } break;
-                            case command::Target::Channel_1: assignVolume(0); break;
-                            case command::Target::Channel_2: assignVolume(1); break;
-                            case command::Target::Channel_3: assignVolume(2); break;
-                            case command::Target::Channel_4: assignVolume(3); break;
-                            }
-
-
-                        }else if constexpr(std::is_same_v<command::Articulation, Type>){
-                            auto [articulation, target]{commandToken};
-                            auto assignArticulation{[&](size_t channel){
-                                if(!isArticulationFound[channel]){
-                                    context_.machine.articulations[channel] = articulation;
-                                    midiManager.setArticulation(channelIndexToChannelTarget(channel), articulation);
-                                    isArticulationFound[channel] = true;
-                                }
-                            }};
-
-                            switch(target){
-                            case command::Target::All_Channels: {
-                                for(size_t channel{0}; channel < constants::project_data::NumberOfInstrumentChannels; channel++){
-                                    assignArticulation(channel);
-                                }
-                            } break;
-                            case command::Target::Channel_1: assignArticulation(0); break;
-                            case command::Target::Channel_2: assignArticulation(1); break;
-                            case command::Target::Channel_3: assignArticulation(2); break;
-                            case command::Target::Channel_4: assignArticulation(3); break;
-                            }
-                        }
-
-                    }, commandOptional.value());
-
-                }
-            }
-
-            if(isAllFound()) return;
-        }
-
-        currentPageIndex--;
-
-    }while(currentPageIndex >= 0);
-
-
-    if(!isTempoFound) midiManager.setTempo(command::Tempo{context_.machine.tempo});
+    midiManager.setTempo(command::Tempo{context_.machine.tempo});
 
     for(size_t channel{0}; channel < constants::project_data::NumberOfInstrumentChannels; channel++){
-        if(!isInstrumentFound[channel]){
-            midiManager.setInstrument(channelIndexToChannelTarget(channel), context_.machine.instruments[channel]);
-        }
-        if(!isVolumeFound[channel]){
-            midiManager.setVolume(channelIndexToChannelTarget(channel), context_.machine.volumes[channel]);
-        }
-        if(!isArticulationFound[channel]){
-            midiManager.setArticulation(channelIndexToChannelTarget(channel), context_.machine.articulations[channel]);
-        }
+        midiManager.setInstrument(channelIndexToChannelTarget(channel), context_.machine.instruments[channel]);
+        midiManager.setVolume(channelIndexToChannelTarget(channel), context_.machine.volumes[channel]);
+        midiManager.setArticulation(channelIndexToChannelTarget(channel), context_.machine.articulations[channel]);
     }
 
     // while(context_.system.project.currentPage > 1 && )

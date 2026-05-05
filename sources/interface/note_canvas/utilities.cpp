@@ -9,6 +9,8 @@
 #include "constants.hpp"
 #include "debug_utilities.hpp"
 
+#include "utilities/project_utilities.hpp"
+
 using namespace interface;
 namespace canvas_constants = constants::interface_layout::note_canvas;
 
@@ -165,23 +167,11 @@ float NoteCanvas::maximumVerticalZoomFactorForSquareCell(program_states::Interfa
 }
 
 music_data::Instrument NoteCanvas::instrumentAtPageStart(const program_states::ProjectData &projectData, size_t instrumentChannelIndex, int currentPageIndex){
-    auto instrument{constants::midi::DefaultInstrument};
+    const auto machineState{utilities::machineStateAt(
+        projectData,
+        currentPageIndex + 1,
+        0
+    )};
 
-	for(int pageIndex{0}; pageIndex < currentPageIndex; pageIndex++){
-		const auto &channel{projectData.pages[pageIndex].instrumentChannels[instrumentChannelIndex]};
-
-		for(int columnIndex{0}; columnIndex < projectData.metadata.notePerPage; columnIndex++){
-
-			if(!channel[columnIndex].has_value()) continue;
-			
-
-			if(std::holds_alternative<music_data::Instrument>(channel[columnIndex].value())){
-				instrument = std::get<music_data::Instrument>(channel[columnIndex].value());
-			}
-		}
-	}
-
-
-	return instrument;
-    
+	return machineState.instruments[instrumentChannelIndex];
 }

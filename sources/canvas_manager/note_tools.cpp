@@ -17,7 +17,12 @@ void CanvasManager::handleNoteTools(ActionCenter &actionCenter, MidiManager &mid
     handleCopyAndPasteModeState();
 
     auto stopPreviewing{[&](){
-        if(previewingNote_.has_value()){
+        if(previewingNote_.has_value() && previewingChannel_.has_value()){
+            const auto channelIndex{static_cast<int>(previewingChannel_.value()) - 1};
+            midiManager.setInstrument(previewingChannel_.value(), context_.machine.instruments[channelIndex]);
+            midiManager.setVolume(previewingChannel_.value(), context_.machine.volumes[channelIndex]);
+            midiManager.setArticulation(previewingChannel_.value(), context_.machine.articulations[channelIndex]);
+            
             midiManager.noteOff(previewingChannel_.value(), previewingNote_.value());
             previewingNote_ = std::nullopt;
             previewingChannel_ = std::nullopt;
@@ -81,10 +86,35 @@ void CanvasManager::handleNoteTools(ActionCenter &actionCenter, MidiManager &mid
     if(isPenMode && channelIndex.has_value() && isRightMouseButtonDown){
         const auto targetChannel{static_cast<command::Target>(channelIndex.value() + 1)};
         const auto hoveredNote{context_.interface.noteCanvas.cursorPosition.value().note};
+        const auto noteIndex{context_.interface.noteCanvas.cursorPosition.value().noteIndex};
 
         if(previewingNote_ != hoveredNote || previewingChannel_ != targetChannel){
             stopPreviewing();
             
+            const auto projectData{utilities::projectDataWithPagesFrom(context_.system)};
+            if(projectData){
+                const auto machineState{utilities::machineStateAt(
+                    *projectData,
+                    context_.system.project.currentPage,
+                    noteIndex
+                )};
+
+                midiManager.setInstrument(
+                    targetChannel,
+                    machineState.instruments[channelIndex.value()]
+                );
+
+                midiManager.setVolume(
+                    targetChannel,
+                    machineState.volumes[channelIndex.value()]
+                );
+
+                midiManager.setArticulation(
+                    targetChannel,
+                    machineState.articulations[channelIndex.value()]
+                );
+            }
+
             midiManager.noteOn(targetChannel, hoveredNote);
             previewingNote_ = hoveredNote;
             previewingChannel_ = targetChannel;
