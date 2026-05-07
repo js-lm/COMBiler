@@ -6,7 +6,7 @@
 
 namespace constants::midi{
 
-    constexpr int MaximumNotePerSecond{8};
+    constexpr float MaximumNotePerSecond{12.32f};
 
     constexpr size_t MaximumSimultaneousNotePerInstrument{16}; // 64 max / 4 channels
 

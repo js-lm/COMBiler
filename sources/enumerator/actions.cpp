@@ -81,7 +81,7 @@ Enumerator::EncodedInstruction Enumerator::encodeInstrumentData(const std::optio
             //     static_cast<units::enumerator::Color>(immediateDigit2)
             // };
             
-            return splitToBase5(noteValue);
+            return splitToBase5(noteValue - constants::interface_layout::note_canvas::FirstNoteOffsetFromC0);
 
         }else if constexpr(std::is_same_v<Type, music_data::Instrument>){
 

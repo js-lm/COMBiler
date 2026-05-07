@@ -188,7 +188,7 @@ void MainWindow::handleKeyboardEvent(){
         );
         machineState_.shouldResetPlayback = true;
     }
-    if(IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_S)){
+    if(IsKeyPressed(KEY_RIGHT) || (IsKeyPressed(KEY_S) && !IsKeyDown(KEY_LEFT_CONTROL))){
         const int maximumPageNumber{
             systemState_.project.data.lock()
                 ? static_cast<int>(systemState_.project.data.lock()->data->pages.size())

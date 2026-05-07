@@ -13,7 +13,7 @@ namespace command{
 namespace constants::interface_layout::note_canvas{
 
     constexpr int NumberOfRow{75};
-    constexpr int FirstNoteOffsetFromC0{11}; // B0
+    constexpr int FirstNoteOffsetFromC0{23}; // B1
 
     constexpr int NumberOfSemitoneInOctave{12};
 

@@ -85,6 +85,8 @@ void PlaybackManager::nextNote(MidiManager &midiManager){
 
         std::optional<music_data::Note> currentNote{};
 
+        std::optional<music_data::Instrument> switchInstrumentTo;
+
         if(currentPage.instrumentChannels[channel][playheadIndex]){
             // const auto &instrumentChannelData{currentPage.instrumentChannels[channel][playheadIndex].value()};
             
@@ -99,7 +101,8 @@ void PlaybackManager::nextNote(MidiManager &midiManager){
                     currentNote = noteData;
 
                 }else if constexpr(std::is_same_v<music_data::Instrument, Type>){
-                    midiManager.setInstrument(channelIndexToChannelTarget(channel), noteData);
+                    // midiManager.setInstrument(channelIndexToChannelTarget(channel), noteData);
+                    switchInstrumentTo = noteData;
                 }
 
             }, currentPage.instrumentChannels[channel][playheadIndex].value());
@@ -109,6 +112,8 @@ void PlaybackManager::nextNote(MidiManager &midiManager){
         }
 
         updateNoteState(channel, currentNote, midiManager);
+
+        if(switchInstrumentTo) midiManager.setInstrument(channelIndexToChannelTarget(channel), switchInstrumentTo.value());
 
     }
 

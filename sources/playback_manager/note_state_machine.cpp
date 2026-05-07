@@ -46,6 +46,9 @@ void PlaybackManager::updateNoteState(
             }
             
             midiManager.noteOn(targetChannel, note);
+
+            // context_.machine.activeNotes[channel].clear();
+            context_.machine.activeNotes[channel].add(note);
         } break;
         }
     }else{
@@ -61,7 +64,7 @@ void PlaybackManager::updateNoteState(
                 midiManager.noteOff(targetChannel, activeNote);
             }
         } break;
-        case units::machine::Articulation::Sustain:
+        case units::machine::Articulation::Sustain: {}
         case units::machine::Articulation::Infinite:
         default: break;
         }

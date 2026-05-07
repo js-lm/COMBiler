@@ -140,7 +140,7 @@ namespace program_states{
 
             bool notesValueBoxEditMode  {false};
             int notesValue              {32};
-            bool isShowCommandsEnabled  {false};
+            bool isShowCommandsEnabled  {true};
 
         } sidebar{};
 
