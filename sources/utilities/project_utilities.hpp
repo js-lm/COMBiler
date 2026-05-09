@@ -82,7 +82,8 @@ namespace utilities{
         int pageNumber,
         int noteIndex
     ){
-        program_states::Machine machine{}; // TODO: I want to be able to resume from the middle, don’t do a hard reset?
+        // TODO: I want to be able to resume from the middle, don't do a hard reset?
+        program_states::Machine machine{};
 
         bool isTempoFound{false};
         std::array<bool, constants::project_data::NumberOfInstrumentChannels> isInstrumentFound{};

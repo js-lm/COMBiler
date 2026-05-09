@@ -35,9 +35,10 @@ void PdfCanvas::drawRectangle(units::Mm x, units::Mm y, units::Mm width, units::
     );
 }
 
-void PdfCanvas::drawRectangleLines(units::Mm x, units::Mm y, units::Mm width, units::Mm height, units::enumerator::Color color){
+void PdfCanvas::drawRectangleLines(units::Mm x, units::Mm y, units::Mm width, units::Mm height, units::Mm thickness, units::enumerator::Color color){
     stream_ += fmt::format(
-        "{} {:.2f} {:.2f} {:.2f} {:.2f} re S\n", 
+        "{:.2f} w {} {:.2f} {:.2f} {:.2f} {:.2f} re S\n", 
+        constants::enumerator::millimeter2Point(thickness),
         toPdfStrokeColor(color), 
         constants::enumerator::millimeter2Point(x), 
         constants::enumerator::millimeter2Point(pageHeight_ - y - height), 
@@ -46,9 +47,10 @@ void PdfCanvas::drawRectangleLines(units::Mm x, units::Mm y, units::Mm width, un
     );
 }
 
-void PdfCanvas::drawLines(units::Mm startX, units::Mm startY, units::Mm endX, units::Mm endY, units::enumerator::Color color){
+void PdfCanvas::drawLines(units::Mm startX, units::Mm startY, units::Mm endX, units::Mm endY, units::Mm thickness, units::enumerator::Color color){
     stream_ += fmt::format(
-        "{} {:.2f} {:.2f} m {:.2f} {:.2f} l S\n", 
+        "{:.2f} w {} {:.2f} {:.2f} m {:.2f} {:.2f} l S\n", 
+        constants::enumerator::millimeter2Point(thickness),
         toPdfStrokeColor(color), 
         constants::enumerator::millimeter2Point(startX), 
         constants::enumerator::millimeter2Point(pageHeight_ - startY), 

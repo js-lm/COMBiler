@@ -175,8 +175,7 @@ Enumerator::EncodedInstruction Enumerator::encodeCommandData(
         }else if constexpr(std::is_same_v<Type, command::Volume>){
             
             int volumeValue{
-                data.volume / constants::enumerator::VolumeMultiplier 
-              - constants::enumerator::VolumeOffset
+                data.volume - constants::enumerator::VolumeOffset
             };
             
 

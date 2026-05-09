@@ -50,6 +50,7 @@ void Enumerator::drawBoundaryLine(PdfCanvas &canvas, units::Mm x, units::Mm y){
         x, y, 
         x + constants::enumerator::CellWidth, 
         y, 
+        constants::enumerator::LineWidth,
         units::enumerator::Color::Black
     );
 }
@@ -83,6 +84,7 @@ void Enumerator::drawCells(
             cellY, 
             constants::enumerator::CellWidth, 
             constants::enumerator::CellHeight, 
+            constants::enumerator::CellLineWidth,
             units::enumerator::Color::Black
         );
     }

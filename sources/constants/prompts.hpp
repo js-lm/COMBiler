@@ -35,7 +35,7 @@ namespace constants::prompts{
         }
     }
 
-    constexpr int TempoPercentageMinimumValue{2};
+    constexpr int TempoPercentageMinimumValue{4};
     constexpr int TempoPercentageMaximumValue{100};
     constexpr float OverlayDimAlpha{.35f};
 

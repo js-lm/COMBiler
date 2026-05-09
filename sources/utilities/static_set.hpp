@@ -12,7 +12,7 @@ namespace utilities{
         std::array<Type, Capacity> data_{};
         size_t size_{0};
 
-        // TODO: I can add a bitset to speed up the lookup, though it won’t be general anymore. Anyway, the size is so small that the entire array probably fits in the cache anyway. Too lazy :)
+        // TODO: Ok, it may not be necessary in a desktop app, but it's a different story in an embedded environment
     
     public:
         StaticSet() = default;

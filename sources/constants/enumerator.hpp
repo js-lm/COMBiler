@@ -13,7 +13,8 @@ namespace constants::enumerator{
     constexpr units::Mm CellWidth{5.85f};
     constexpr units::Mm CellHeight{5.84f};
     constexpr units::Mm OpticalMarkHeight{11.0f};
-    constexpr units::Mm CellStrokeWidth{.1f};
+    constexpr units::Mm CellLineWidth{.1f};
+    constexpr units::Mm LineWidth{.25f};
     constexpr units::Mm BottomLineOffset{1.0f};
     constexpr units::Mm WhiteBarWidth{CellWidth / 2.0f};
 
@@ -37,7 +38,7 @@ namespace constants::enumerator{
 
     constexpr int TempoMultiplier{2};
     constexpr int TempoOffset{1};
-    constexpr int VolumeMultiplier{10};
+    // constexpr int VolumeMultiplier{10};
     constexpr int VolumeOffset{1};
 
     constexpr const bool sevenSegment[][7]{

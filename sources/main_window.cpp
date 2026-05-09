@@ -56,7 +56,7 @@ void MainWindow::initialize(){
         constants::application_window::MinimalHeight
     );
 
-    // SetTargetFPS(constants::application_window::DefaultFPS);
+    SetTargetFPS(constants::application_window::DefaultFPS);
 
     std::memcpy(GuiGetIcons(), guiIcons, sizeof(guiIcons));
     GuiLoadStyleChromesthesia();
