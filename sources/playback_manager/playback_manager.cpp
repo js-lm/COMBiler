@@ -31,8 +31,16 @@ void PlaybackManager::updatePlayback(MidiManager &midiManager){
 
     timeSinceLastNote_ += GetFrameTime();
 
+    if(timeSinceLastNote_ >= (noteDuration * constants::midi::StaccatoReleaseDuration) 
+    && !halfStepProcessed_
+    ){
+        releaseStaccatoNotes(midiManager);
+        halfStepProcessed_ = true;
+    }
+
     if(timeSinceLastNote_ >= noteDuration){
         timeSinceLastNote_ -= noteDuration;
+        halfStepProcessed_ = false;
         nextNote(midiManager);
     }
     

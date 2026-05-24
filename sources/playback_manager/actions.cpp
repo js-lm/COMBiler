@@ -4,7 +4,7 @@
 #include <variant>
 
 #include "constants.hpp"
-#include "aliases.h"
+#include "aliases.hpp"
 
 #include "debug_utilities.hpp"
 
@@ -133,5 +133,20 @@ void PlaybackManager::nextNote(MidiManager &midiManager){
         }
     }else{
         playheadIndex++;
+    }
+}
+
+void PlaybackManager::releaseStaccatoNotes(MidiManager &midiManager){
+    for(int channel{0}; channel < constants::project_data::NumberOfInstrumentChannels; channel++){
+        if(context_.machine.articulations[channel] == units::machine::Articulation::Staccato){
+            
+            const auto targetChannel{channelIndexToChannelTarget(static_cast<units::midi::SoundFontChannel>(channel))};
+            const auto activeNotes{context_.machine.activeNotes[channel].toVector()};
+            
+            for(const auto &activeNote : activeNotes){
+                midiManager.noteOff(targetChannel, activeNote);
+                context_.machine.activeNotes[channel].remove(activeNote);
+            }
+        }
     }
 }

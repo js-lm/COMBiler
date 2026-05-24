@@ -15,6 +15,8 @@ private:
 
     float timeSinceLastNote_{.0f};
 
+    bool halfStepProcessed_{false};
+
 public:
     PlaybackManager(program_states::MidiContext context)
         : context_{context}
@@ -33,6 +35,8 @@ private:
 
     void nextNote(MidiManager &midiManager);
 
+    void releaseStaccatoNotes(MidiManager &midiManager);
+    
 private:
     void updateNoteState(
         units::midi::SoundFontChannel channel, 

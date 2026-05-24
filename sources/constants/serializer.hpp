@@ -12,7 +12,7 @@ namespace constants::serializer{
     constexpr const char *SaveFileExtension{"cmb"};
     constexpr const char *FilterDescription{"COMBiler save files (*.cmb)"};
 
-    constexpr const char *DefaultFilename{"my_music.cmb"};
+    constexpr const char *DefaultFilename{"COMBosition.cmb"};
 
 
 
