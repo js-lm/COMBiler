@@ -250,8 +250,11 @@ namespace program_states{
             int copiedWidthInCells{0};
             int copiedHeightInCells{0};
             int copiedCenterRowIndex{0};
+            int copiedTopLeftRowIndex{0};
             bool copiedFromAllChannels{false};
             int copiedInstrumentChannelIndex{constants::interface_layout::note_canvas::notes::NoInstrumentChannelIndex};
+            
+            std::array<bool, constants::project_data::NumberOfInstrumentChannels> isChannelCopied{false, false, false, false};
             
             bool hasPasteAnchor{false};
             int pasteAnchorNoteIndex{0};

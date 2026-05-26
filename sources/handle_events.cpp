@@ -181,7 +181,7 @@ void MainWindow::handleKeyboardEvent(){
     const bool isShiftDown{IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)};
     auto &window{systemState_.window};
 
-    if(IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_A)){
+    if(IsKeyPressed(KEY_LEFT) || (IsKeyPressed(KEY_A) && !isControlDown)){
         interfaceState_.navigationBar.requestedPageNumber = std::max(
             constants::interface_layout::timeline::FirstPageNumber,
             systemState_.project.currentPage - 1

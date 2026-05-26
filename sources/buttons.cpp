@@ -48,6 +48,7 @@ void MainWindow::handlePageChangeButtonsEvents(){
         );
         interfaceState_.navigationBar.requestedPageNumber = 0;
         interfaceState_.noteCanvas.isGridLayoutDirty = true;
+        if(canvasManager_) canvasManager_->cancelSelectionAndPasteMode();
     }
 
     if(interfaceState_.navigationBar.isPreviousPageButtonPressed){
@@ -56,6 +57,7 @@ void MainWindow::handlePageChangeButtonsEvents(){
         interfaceState_.noteCanvas.isGridLayoutDirty = true;
         // machineState_.isPlaying = false;
         machineState_.shouldResetPlayback = true;
+        if(canvasManager_) canvasManager_->cancelSelectionAndPasteMode();
     }
     if(interfaceState_.navigationBar.isNextPageButtonPressed){
         systemState_.project.currentPage = std::min(maximumPageNumber, systemState_.project.currentPage + 1);
@@ -63,6 +65,7 @@ void MainWindow::handlePageChangeButtonsEvents(){
         interfaceState_.noteCanvas.isGridLayoutDirty = true;
         // machineState_.isPlaying = false;
         machineState_.shouldResetPlayback = true;
+        if(canvasManager_) canvasManager_->cancelSelectionAndPasteMode();
     }
 
     // DEBUG_PRINT_IF_CHANGED("maximumPageNumber: {}", maximumPageNumber);

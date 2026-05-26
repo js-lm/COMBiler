@@ -53,7 +53,7 @@ private:
 
 private:
     void handleSelectAll();
-    void handleCopyAndPasteModeState();
+    void handleCopyAndPasteModeState(ActionCenter &actionCenter);
 
 private:
     void clearSelectionState();

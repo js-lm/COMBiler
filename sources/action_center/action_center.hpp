@@ -77,6 +77,13 @@ public:
 
     void commitConstantModification(const program_states::Interface::Prompts::ConstantsManagerDraft &draft);
 
+    void updateInstrumentChannelCell(
+        int pageNumber,
+        int channelIndex,
+        int noteIndex,
+        std::optional<music_data::InstrumentChannelData> cellValue
+    );
+
 public:
     void loadFile(program_states::ProjectData &projectData);
 
@@ -91,13 +98,6 @@ private:
     command::Target targetFromToggleIndex(int toggleIndex);
     units::machine::Articulation articulationFromToggleIndex(int toggleIndex);
     command::Command commandFromPromptState(const program_states::Interface::Prompts &promptState);
-
-    void updateInstrumentChannelCell(
-        int pageNumber,
-        int channelIndex,
-        int noteIndex,
-        std::optional<music_data::InstrumentChannelData> cellValue
-    );
 
     command::Command constantFromPromptState(const program_states::Interface::Prompts &promptState);
 };
