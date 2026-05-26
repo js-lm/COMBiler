@@ -31,8 +31,14 @@ void NoteCanvas::drawNotes(program_states::InterfaceContext &context){
 	const Vector2 mouseCursorPositionInWorld{
 		GetScreenToWorld2D(GetMousePosition(), context.system.noteCanvas.gridCamera)
 	};
+	const Rectangle expandedGridArea{
+		noteCanvasState.gridArea.x,
+		.0f,
+		noteCanvasState.gridArea.width,
+		context.layout.bounds.noteCanvas.groupBox.height
+	};
 	const bool isMouseCursorInsideGridArea{
-		CheckCollisionPointRec(mouseCursorPositionInWorld, noteCanvasState.gridArea)
+		CheckCollisionPointRec(mouseCursorPositionInWorld, expandedGridArea)
 	};
 
 	const int selectedChannelListViewIndex{context.interface.sidebar.selectedChannelListViewIndex};

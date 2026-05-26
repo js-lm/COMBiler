@@ -135,7 +135,7 @@ NoteCanvas::BigNote NoteCanvas::createCommandBigNote(
                 .baseColor{canvas_constants::commands::VolumeColor},
                 .iconIndex{canvas_constants::commands::VolumeIconIndex},
                 .firstTextLine{canvas_constants::commands::VolumeText},
-                .secondTextLine{TextFormat(canvas_constants::commands::UnsignedIntegerFormatText, command.volume)},
+                .secondTextLine{TextFormat(canvas_constants::commands::UnsignedIntegerFormatText, command.volume + 1)},
                 .thirdTextLine{targetTextForWidth(command.target, width, fontSize)}
             };
         // }else if constexpr(std::is_same_v<Type, command::Articulation>){

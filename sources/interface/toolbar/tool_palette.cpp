@@ -86,8 +86,7 @@ void Toolbar::drawToolPalette(program_states::InterfaceContext &context){
 		if(toolbarState.selectedTool == constants::toolbar::Tool::Change_Instrument){
 			GuiSetState(STATE_PRESSED);
 		}else{
-			// GuiSetState(STATE_DISABLED);
-			GuiSetState(STATE_NORMAL);
+			GuiSetState(context.machine.isPlaying ? STATE_DISABLED : STATE_NORMAL);
 		}
 
 		if(GuiButton(calculateBoundsAtAnchor(anchor, bounds.openInstrumentWindowButton), nullptr)){

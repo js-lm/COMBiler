@@ -46,6 +46,11 @@ void NoteCanvas::handleZoom(program_states::InterfaceContext &context){
 
 	// if(!CheckCollisionPointRec(GetMousePosition(), calculateBoundsAtAnchor(anchor, state.drawableArea))) return;
 
+    if(context.interface.prompts.isCommandWindowVisible 
+    || context.interface.prompts.isConstantsManagerWindowVisible
+    || context.interface.prompts.isConstantsManagerWarningWindowVisible
+    || context.interface.prompts.isConstantsManagerInfoWindowVisible) return;
+
 	const float mouseWheelMovement{GetMouseWheelMove()};
 	if(mouseWheelMovement == .0f) return;
 

@@ -92,10 +92,8 @@ void MainWindow::handleToolbarButtonsEvents(){
         if(interfaceState_.toolbar.isSaveAsFileButtonPressed) serializer_->save(*projectData->data, true);
 
         if(interfaceState_.toolbar.isLoadFileButtonPressed){
-
-            projectData->data.reset();
-
             if(auto loadedData{serializer_->load()}){
+                projectData->data.reset();
                 actionCenter_->loadFile(loadedData.value());
             }
         }

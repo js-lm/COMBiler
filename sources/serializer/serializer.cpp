@@ -56,10 +56,15 @@ std::optional<program_states::ProjectData> Serializer::load(){
         0
     )};
 
+    if(!saveFilePath){
+        DEBUG_PRINT("Cancel loading");
+        return std::nullopt;
+    }
+
     DEBUG_PRINT("Loading {}", saveFilePath);
 
     if(!FileExists(saveFilePath)){
-        DEBUG_PRINT("Cancel loading");
+        DEBUG_PRINT("File does not exist: {}", saveFilePath);
         return std::nullopt;
     }
 

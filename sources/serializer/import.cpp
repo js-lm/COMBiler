@@ -6,6 +6,7 @@
 program_states::ProjectData Serializer::toProjectData(const std::string &data) const{
 
     program_states::ProjectData projectData{};
+    projectData.pages.clear();
     std::istringstream  dataStream{data};
     std::string         currentLine{};
 
