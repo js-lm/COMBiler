@@ -10,6 +10,8 @@
 
 #include "constants.hpp"
 
+#include "external/raygui/raygui_wrapper.h"
+
 #include <algorithm>
 #include <cmath>
 
@@ -24,7 +26,7 @@ void NoteCanvas::drawScrollBar(program_states::InterfaceContext &context){
 	Vector2 scrollOffset{0, -state.verticalScrollInPixels};
 	Rectangle viewBounds{};
 
-	GuiScrollPanel(
+	GuiScrollPanelOffset(
 		state.verticalScrollBarBounds,
 		nullptr,
 		state.verticalScrollBarContentBounds,

@@ -17,6 +17,8 @@
 
 #include "timeline_manager/timeline_manager.hpp"
 
+#include "external/raygui/raygui_wrapper.h"
+
 using namespace interface;
 namespace bar_labels = constants::labels::navigation_bar;
 
@@ -548,7 +550,7 @@ void NavigationBar::drawTimeline(program_states::InterfaceContext &context){
 
     GuiGroupBox(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.groupBox), bar_labels::TimelineGroupBoxText);
     GuiStatusBar(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.statusBar), bar_labels::TimelineStatusBarText);
-    GuiScrollPanel(
+    GuiScrollPanelOffset(
         Rectangle{
             scrollPanelBounds.x,
             scrollPanelBounds.y,
@@ -587,10 +589,10 @@ void NavigationBar::drawTimeline(program_states::InterfaceContext &context){
 
 
     BeginScissorMode(
-        static_cast<int>(scrollPanelBounds.x),
-        static_cast<int>(scrollPanelBounds.y),
-        static_cast<int>(scrollPanelBounds.width),
-        static_cast<int>(scrollPanelBounds.height)
+        static_cast<int>(navigationBarState.timelineScrollPanelScrollView.x),
+        static_cast<int>(navigationBarState.timelineScrollPanelScrollView.y),
+        static_cast<int>(navigationBarState.timelineScrollPanelScrollView.width),
+        static_cast<int>(navigationBarState.timelineScrollPanelScrollView.height)
     ); {
 
         if(projectData){

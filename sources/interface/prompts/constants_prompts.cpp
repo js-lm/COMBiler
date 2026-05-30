@@ -7,7 +7,10 @@
 #include "constants.hpp"
 
 #include "labels.hpp"
+
 #include "interface/utilities.hpp"
+
+#include "external/raygui/raygui_wrapper.h"
 
 #include <magic_enum/magic_enum.hpp>
 
@@ -54,7 +57,7 @@ void Prompts::drawConstantsManagerPrompt(program_states::InterfaceContext &conte
 	auto &scrollOffset{state.constantsManagerScrollPanelScrollOffset};
 	auto &view{state.constantsManagerScrollPanelScrollView};
 
-	GuiScrollPanel(
+	GuiScrollPanelOffset(
 		calculateBoundsAtAnchor(anchor, bounds.constantsScrollPanel),
 		nullptr,
 		calculateBoundsAtAnchor(anchor, bounds.constantsContentPanel),

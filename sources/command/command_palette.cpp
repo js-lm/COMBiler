@@ -75,6 +75,7 @@ void CommandPalette::remove(ConstantIndex index){
     if(!names_[index].empty()){
         indicesMap_.erase(names_[index]);
         names_[index].clear();
+        commands_[index] = std::nullopt;
     }
 }
 
@@ -84,6 +85,7 @@ void CommandPalette::remove(const std::string &string){
     if(iterator != indicesMap_.end()){
         ConstantIndex index{iterator->second};
         names_[index].clear();
+        commands_[index] = std::nullopt;
         indicesMap_.erase(iterator);
     }
 }

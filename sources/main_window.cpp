@@ -160,7 +160,8 @@ void MainWindow::draw(){
             WHITE
         );
 #ifdef DEBUG
-        DrawFPS(0, 0);
+        // DrawFPS(0, 0);
+        DrawText("DEBUG MODE", 0, 0, 20, GREEN);
 #endif
 
     } EndDrawing();

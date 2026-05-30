@@ -233,6 +233,10 @@ void MainWindow::handleKeyboardEvent(){
         if(machineState_.isPlaying){
             if(canvasManager_) canvasManager_->cancelSelectionAndPasteMode();
             if(timelineManager_) timelineManager_->cancelActiveInteraction();
+            interfaceState_.navigationBar.isTimelineDragCandidate = false;
+            interfaceState_.navigationBar.isTimelineDraggingPage = false;
+            interfaceState_.navigationBar.timelineDragCandidatePageIndex = constants::interface_layout::timeline::InvalidIndex;
+            interfaceState_.navigationBar.timelineDraggedPageIndex = constants::interface_layout::timeline::InvalidIndex;
         }
     }
 
