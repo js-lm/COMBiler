@@ -29,6 +29,12 @@ void PlaybackManager::updatePlayback(MidiManager &midiManager){
 
     // DEBUG_PRINT_IF_CHANGED("tempoPercentage:{}, notePerSecond:{}, noteDuration:{}", tempoPercentage, notePerSecond, noteDuration);
 
+    if(needsToPlayCurrentNote_){
+        playCurrentNote(midiManager);
+        needsToPlayCurrentNote_ = false;
+        halfStepProcessed_ = false;
+    }
+
     timeSinceLastNote_ += GetFrameTime();
 
     if(timeSinceLastNote_ >= (noteDuration * constants::midi::StaccatoReleaseDuration) 
@@ -40,8 +46,7 @@ void PlaybackManager::updatePlayback(MidiManager &midiManager){
 
     if(timeSinceLastNote_ >= noteDuration){
         timeSinceLastNote_ -= noteDuration;
-        halfStepProcessed_ = false;
-        nextNote(midiManager);
+        advancePlayhead(midiManager);
     }
     
 }

@@ -14,6 +14,7 @@ void PlaybackManager::setupPlayback(MidiManager &midiManager){
     context_.machine.reset();
     context_.machine.playheadIndex = 0;
     timeSinceLastNote_ = .0f;
+    needsToPlayCurrentNote_ = true;
     // if(isHardRest) timeSinceLastNote_ = .0f;
 
     const auto projectDataSlot{context_.system.project.data.lock()};
@@ -47,7 +48,7 @@ void PlaybackManager::setupPlayback(MidiManager &midiManager){
 
 }
 
-void PlaybackManager::nextNote(MidiManager &midiManager){
+void PlaybackManager::playCurrentNote(MidiManager &midiManager){
     // TODO: duplications
     const auto projectDataSlot{context_.system.project.data.lock()};
     if(!projectDataSlot) return;
@@ -117,22 +118,37 @@ void PlaybackManager::nextNote(MidiManager &midiManager){
 
     }
 
+}
+
+void PlaybackManager::advancePlayhead(MidiManager &midiManager){
+    const auto projectDataSlot{context_.system.project.data.lock()};
+    if(!projectDataSlot) return;
+    const auto &projectData{projectDataSlot->data};
+
+    int currentPageIndex{context_.system.project.currentPage - 1};
+    const auto &currentPage{projectData->pages[currentPageIndex]};
+    const int currentPageNoteCount{currentPage.noteInThisPage.value_or(projectData->metadata.notePerPage)};
+
+    auto &machine{context_.machine};
+    auto &playheadIndex{machine.playheadIndex};
+
     if(playheadIndex >= currentPageNoteCount - 1){
         if(context_.interface.navigationBar.isPageRepeatEnabled){
-            // float previousTime{timeSinceLastNote_};
+            stopPlayback(midiManager);
             setupPlayback(midiManager);
-            // timeSinceLastNote_ = previousTime; 
         }else{
             if(context_.system.project.currentPage >= projectData->pages.size()){
                 machine.isPlaying = false;
             }else{
                 context_.interface.navigationBar.requestedPageNumber = context_.system.project.currentPage + 1;
+                needsToPlayCurrentNote_ = true;
             }
 
             playheadIndex = 0;
         }
     }else{
         playheadIndex++;
+        needsToPlayCurrentNote_ = true;
     }
 }
 
