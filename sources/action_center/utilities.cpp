@@ -29,7 +29,7 @@ void ActionCenter::commit(){
     commits_[nextIndex] = committedSnapshot;
     cursorIndex_ = nextIndex;
     historyHead_ = nextIndex;
-    stagedSlot_->data = committedSnapshot;
+    // stagedSlot_->data = committedSnapshot;
 
     if(isAdvancingTail){
         historyTail_ = (historyTail_ + 1) % maximumSize;
@@ -51,7 +51,7 @@ bool ActionCenter::redo(){
     cursorIndex_ = (cursorIndex_ + 1) % constants::action_center::MaximumHistory;
     if(!commits_[cursorIndex_]) return false;
     
-    stagedSlot_->data = commits_[cursorIndex_];
+    stagedSlot_->data = std::make_shared<program_states::ProjectData>(*commits_[cursorIndex_]);
 
     DEBUG_PRINT("redo | cursorIndex_: {}/{}", cursorIndex_, historyStackSize_);
 
@@ -61,6 +61,8 @@ bool ActionCenter::redo(){
 bool ActionCenter::undo(){
     if(!canUndo() || isInAction_) return false;
 
+    auto transientOfAction{commits_[cursorIndex_]->transient};
+
     if(cursorIndex_ == 0){
         cursorIndex_ = constants::action_center::MaximumHistory - 1;
     }else{
@@ -69,7 +71,9 @@ bool ActionCenter::undo(){
 
     if(!commits_[cursorIndex_]) return false;
 
-    stagedSlot_->data = commits_[cursorIndex_];
+    stagedSlot_->data = std::make_shared<program_states::ProjectData>(*commits_[cursorIndex_]);
+    
+    stagedSlot_->data->transient = transientOfAction;
 
     DEBUG_PRINT("undo | cursorIndex_: {}/{}", cursorIndex_, historyStackSize_);
     
