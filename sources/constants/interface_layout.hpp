@@ -72,6 +72,9 @@ namespace constants::interface_layout{
 
         constexpr float StaticCornerBorderThicknessInPixels{1.0f};
         constexpr float BlockBorderThicknessInPixels{2.0f};
+
+        constexpr float EdgeScrollThresholdInPixels{40.0f};
+        constexpr float EdgeScrollSpeedInPixelsPerSecond{500.0f};
     } // namespace timeline
 
 } // namespace constants::interface_layout

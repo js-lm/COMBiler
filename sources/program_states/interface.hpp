@@ -165,6 +165,7 @@ namespace program_states{
             bool isPageMoveRequested        {false};
             int requestedPageMoveSourceIndex{constants::action_center::InvalidPageInsertionIndex};
             int requestedPageMoveInsertionIndex{constants::action_center::InvalidPageInsertionIndex};
+            int previousCurrentPage         {1};
 
             bool isTimelineDragCandidate    {false};
             bool isTimelineDraggingPage     {false};

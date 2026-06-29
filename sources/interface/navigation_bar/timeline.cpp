@@ -447,6 +447,15 @@ void NavigationBar::updateTimelineDraggingState(
         return;
     }
 
+    if(mousePosition.x < scrollPanelBounds.x + constants::interface_layout::timeline::EdgeScrollThresholdInPixels){
+        navigationBarState.timelineScrollPanelScrollOffset.x += constants::interface_layout::timeline::EdgeScrollSpeedInPixelsPerSecond * GetFrameTime();
+    }else if(mousePosition.x > scrollPanelBounds.x + scrollPanelBounds.width - constants::interface_layout::timeline::EdgeScrollThresholdInPixels){
+        navigationBarState.timelineScrollPanelScrollOffset.x -= constants::interface_layout::timeline::EdgeScrollSpeedInPixelsPerSecond * GetFrameTime();
+    }
+    if(navigationBarState.timelineScrollPanelScrollOffset.x > .0f){
+        navigationBarState.timelineScrollPanelScrollOffset.x = .0f;
+    }
+
     navigationBarState.timelineDropInsertionIndex = timelineDropInsertionIndexFromMouseXInPixels(
         projectData,
         scrollPanelBounds,
@@ -546,6 +555,31 @@ void NavigationBar::drawTimeline(program_states::InterfaceContext &context){
 
     if(NavigationBar::timelineManager_){
         navigationBarState.timelineScrollPanelScrollOffset = NavigationBar::timelineManager_->viewState().scrollOffsetInPixels;
+    }
+
+    if(context.system.project.currentPage != navigationBarState.previousCurrentPage && projectData){
+        navigationBarState.previousCurrentPage = context.system.project.currentPage;
+
+        const int pageIndex{
+            std::clamp(
+                context.system.project.currentPage - constants::interface_layout::timeline::FirstPageNumber,
+                constants::interface_layout::timeline::MinimumIndex,
+                static_cast<int>(projectData->pages.size()) - constants::interface_layout::timeline::FirstPageNumber
+            )
+        };
+        const float blockX{timelineBlockPositionXInPixels(*projectData, pageIndex)};
+        const float blockWidth{timelineBlockWidthInPixels(*projectData, pageIndex)};
+        const float viewWidth{scrollPanelBounds.width - navigationBarState.timelineScrollPanelBoundsOffset.x};
+
+        if(blockX + navigationBarState.timelineScrollPanelScrollOffset.x < .0f){
+            navigationBarState.timelineScrollPanelScrollOffset.x = -blockX + constants::interface_layout::timeline::ContentLeftPaddingInPixels;
+        }else if(blockX + blockWidth + navigationBarState.timelineScrollPanelScrollOffset.x > viewWidth){
+            navigationBarState.timelineScrollPanelScrollOffset.x = viewWidth - (blockX + blockWidth) - constants::interface_layout::timeline::BlockSpacingInPixels;
+        }
+        
+        if(navigationBarState.timelineScrollPanelScrollOffset.x > .0f){
+            navigationBarState.timelineScrollPanelScrollOffset.x = .0f;
+        }
     }
 
     GuiGroupBox(calculateBoundsAtAnchor(timelineAnchor, timelineBounds.groupBox), bar_labels::TimelineGroupBoxText);
