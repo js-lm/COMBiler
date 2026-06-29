@@ -311,9 +311,11 @@ void CanvasManager::handleCopyAndPasteModeState(ActionCenter &actionCenter){
     const bool isControlDown{IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)};
     const bool isCopyShortcutPressed{!isPagesDomain && isControlDown && IsKeyPressed(KEY_C)};
     const bool isCutShortcutPressed{!isPagesDomain && isControlDown && IsKeyPressed(KEY_X)};
+    const bool isDeleteShortcutPressed{!isPagesDomain && (IsKeyPressed(KEY_DELETE) || IsKeyPressed(KEY_BACKSPACE))};
 
     const bool isCopyRequested{toolbarState.isCopyNoteButtonPressed || isCopyShortcutPressed};
     const bool isCutRequested{toolbarState.isCutNoteButtonPressed || isCutShortcutPressed};
+    const bool isDeleteRequested{isDeleteShortcutPressed};
     toolbarState.isCopyNoteButtonPressed = false;
     toolbarState.isPasteNoteButtonPressed = false;
     toolbarState.isCutNoteButtonPressed = false;
@@ -341,33 +343,32 @@ void CanvasManager::handleCopyAndPasteModeState(ActionCenter &actionCenter){
           - static_cast<int>(cursor.note);
     }
 
-    if((isCopyRequested || isCutRequested) && hasSelectionArea()){
+    if((isCopyRequested || isCutRequested || isDeleteRequested) && hasSelectionArea()){
         const auto projectData{utilities::projectDataWithPagesFrom(context_.system)};
         if(!projectData) return;
 
         const auto &selectionArea{clipboardState.selectionArea.value()};
         const auto &currentPage{utilities::pageByNumber(*projectData, context_.system.project.currentPage)};
 
-        clipboardState.copiedFromAllChannels = context_.interface.sidebar.selectedChannelListViewIndex == constants::sidebar::AllChannelsListViewIndex;
-        clipboardState.copiedInstrumentChannelIndex = constants::interface_layout::note_canvas::notes::NoInstrumentChannelIndex;
+        const bool fromAllChannels{context_.interface.sidebar.selectedChannelListViewIndex == constants::sidebar::AllChannelsListViewIndex};
+        const auto selectedInstrumentChannel{selectedInstrumentChannelIndex()};
 
-        if(!clipboardState.copiedFromAllChannels){
+        if(!fromAllChannels && !selectedInstrumentChannel.has_value()) return;
 
-            const auto selectedInstrumentChannel{selectedInstrumentChannelIndex()};
+        const int channelIndex{fromAllChannels ? constants::interface_layout::note_canvas::notes::NoInstrumentChannelIndex : selectedInstrumentChannel.value()};
 
-            if(!selectedInstrumentChannel.has_value()) return;
+        if(isCopyRequested || isCutRequested){
+            clipboardState.copiedFromAllChannels = fromAllChannels;
+            clipboardState.copiedInstrumentChannelIndex = channelIndex;
 
-            clipboardState.copiedInstrumentChannelIndex = selectedInstrumentChannel.value();
+            for(auto &instrumentChannel: clipboardState.instrumentChannels){
+                instrumentChannel.assign(selectionArea.widthInCells, std::nullopt);
+            }
+            clipboardState.commandChannel.assign(selectionArea.widthInCells, std::nullopt);
 
-        }
-
-        for(auto &instrumentChannel: clipboardState.instrumentChannels){
-            instrumentChannel.assign(selectionArea.widthInCells, std::nullopt);
-        }
-        clipboardState.commandChannel.assign(selectionArea.widthInCells, std::nullopt);
-
-        for(int instrumentChannelIndex{0}; instrumentChannelIndex < constants::project_data::NumberOfInstrumentChannels; instrumentChannelIndex++){
-            clipboardState.isChannelCopied[instrumentChannelIndex] = false;
+            for(int instrumentChannelIndex{0}; instrumentChannelIndex < constants::project_data::NumberOfInstrumentChannels; instrumentChannelIndex++){
+                clipboardState.isChannelCopied[instrumentChannelIndex] = false;
+            }
         }
 
         auto rowIndexFromNote{[](music_data::Note note){
@@ -412,47 +413,49 @@ void CanvasManager::handleCopyAndPasteModeState(ActionCenter &actionCenter){
             const int sourceColumnIndex{selectionArea.topLeftColumnIndex + selectionColumnOffset};
             if(sourceColumnIndex < 0 || sourceColumnIndex >= constants::project_data::MaximumNotePerPage) continue;
 
-            if(clipboardState.copiedFromAllChannels){
-                for(int instrumentChannelIndex{0}; instrumentChannelIndex < constants::project_data::NumberOfInstrumentChannels; instrumentChannelIndex++){
-                    const auto &cell{currentPage.instrumentChannels[instrumentChannelIndex][sourceColumnIndex]};
-                    
-                    if(!shouldCopyCell(cell)) continue;
+            if(isCopyRequested || isCutRequested){
+                if(clipboardState.copiedFromAllChannels){
+                    for(int instrumentChannelIndex{0}; instrumentChannelIndex < constants::project_data::NumberOfInstrumentChannels; instrumentChannelIndex++){
+                        const auto &cell{currentPage.instrumentChannels[instrumentChannelIndex][sourceColumnIndex]};
+                        
+                        if(!shouldCopyCell(cell)) continue;
+                        clipboardState.isChannelCopied[instrumentChannelIndex] = true;
+
+                        clipboardState.instrumentChannels[instrumentChannelIndex][selectionColumnOffset] = cell;
+
+                    }
+                }else{
+                    const int instrumentChannelIndex{clipboardState.copiedInstrumentChannelIndex};
                     clipboardState.isChannelCopied[instrumentChannelIndex] = true;
+                    const auto &cell{currentPage.instrumentChannels[instrumentChannelIndex][sourceColumnIndex]};
 
-                    clipboardState.instrumentChannels[instrumentChannelIndex][selectionColumnOffset] = cell;
+                    if(shouldCopyCell(cell)){
+                        clipboardState.instrumentChannels[instrumentChannelIndex][selectionColumnOffset] = cell;
+                    }
 
                 }
-            }else{
-                const int instrumentChannelIndex{clipboardState.copiedInstrumentChannelIndex};
-                clipboardState.isChannelCopied[instrumentChannelIndex] = true;
-                const auto &cell{currentPage.instrumentChannels[instrumentChannelIndex][sourceColumnIndex]};
 
-                if(shouldCopyCell(cell)){
-                    clipboardState.instrumentChannels[instrumentChannelIndex][selectionColumnOffset] = cell;
+                if(clipboardState.copiedFromAllChannels){
+                    clipboardState.commandChannel[selectionColumnOffset] = currentPage.commandChannel[sourceColumnIndex];
+                }else if(currentPage.commandChannel[sourceColumnIndex].has_value()){
+                    const auto &commandToken{currentPage.commandChannel[sourceColumnIndex].value()};
+                    const int instrumentChannelIndex{clipboardState.copiedInstrumentChannelIndex};
+
+                    if(commandAffectsChannel(commandToken, instrumentChannelIndex)){
+                        clipboardState.commandChannel[selectionColumnOffset] = commandToken;
+                    }
+                    
                 }
-
-            }
-
-            if(clipboardState.copiedFromAllChannels){
-                clipboardState.commandChannel[selectionColumnOffset] = currentPage.commandChannel[sourceColumnIndex];
-            }else if(currentPage.commandChannel[sourceColumnIndex].has_value()){
-                const auto &commandToken{currentPage.commandChannel[sourceColumnIndex].value()};
-                const int instrumentChannelIndex{clipboardState.copiedInstrumentChannelIndex};
-
-                if(commandAffectsChannel(commandToken, instrumentChannelIndex)){
-                    clipboardState.commandChannel[selectionColumnOffset] = commandToken;
-                }
-                
             }
         }
 
-        if(isCutRequested){
+        if(isCutRequested || isDeleteRequested){
             bool hasDeletedAny{false};
             for(int selectionColumnOffset{0}; selectionColumnOffset < selectionArea.widthInCells; selectionColumnOffset++){
                 const int sourceColumnIndex{selectionArea.topLeftColumnIndex + selectionColumnOffset};
                 if(sourceColumnIndex < 0 || sourceColumnIndex >= constants::project_data::MaximumNotePerPage) continue;
 
-                if(clipboardState.copiedFromAllChannels){
+                if(fromAllChannels){
                     for(int instrumentChannelIndex{0}; instrumentChannelIndex < constants::project_data::NumberOfInstrumentChannels; instrumentChannelIndex++){
                         if(shouldCopyCell(currentPage.instrumentChannels[instrumentChannelIndex][sourceColumnIndex])){
                             actionCenter.updateInstrumentChannelCell(context_.system.project.currentPage, instrumentChannelIndex, sourceColumnIndex, std::nullopt);
@@ -460,21 +463,21 @@ void CanvasManager::handleCopyAndPasteModeState(ActionCenter &actionCenter){
                         }
                     }
                 }else{
-                    const int instrumentChannelIndex{clipboardState.copiedInstrumentChannelIndex};
+                    const int instrumentChannelIndex{channelIndex};
                     if(shouldCopyCell(currentPage.instrumentChannels[instrumentChannelIndex][sourceColumnIndex])){
                         actionCenter.updateInstrumentChannelCell(context_.system.project.currentPage, instrumentChannelIndex, sourceColumnIndex, std::nullopt);
                         hasDeletedAny = true;
                     }
                 }
 
-                if(clipboardState.copiedFromAllChannels){
+                if(fromAllChannels){
                     if(currentPage.commandChannel[sourceColumnIndex].has_value()){
                         actionCenter.setCommandToken(context_.system.project.currentPage, sourceColumnIndex, constants::sidebar::SystemChannelListViewIndex, std::nullopt);
                         hasDeletedAny = true;
                     }
                 }else if(currentPage.commandChannel[sourceColumnIndex].has_value()){
                     const auto &commandToken{currentPage.commandChannel[sourceColumnIndex].value()};
-                    const int instrumentChannelIndex{clipboardState.copiedInstrumentChannelIndex};
+                    const int instrumentChannelIndex{channelIndex};
                     if(commandAffectsChannel(commandToken, instrumentChannelIndex)){
                         actionCenter.setCommandToken(context_.system.project.currentPage, sourceColumnIndex, constants::sidebar::SystemChannelListViewIndex, std::nullopt);
                         hasDeletedAny = true;
@@ -486,16 +489,18 @@ void CanvasManager::handleCopyAndPasteModeState(ActionCenter &actionCenter){
             }
         }
 
-        clipboardState.hasCopiedSelection = true;
-        clipboardState.isPasteModeEnabled = true;
-        clipboardState.copiedWidthInCells = selectionArea.widthInCells;
-        clipboardState.copiedHeightInCells = selectionArea.heightInCells;
-        clipboardState.copiedCenterRowIndex = selectionArea.topLeftRowIndex + (selectionArea.heightInCells / 2);
-        clipboardState.copiedTopLeftRowIndex = selectionArea.topLeftRowIndex;
+        if(isCopyRequested || isCutRequested){
+            clipboardState.hasCopiedSelection = true;
+            clipboardState.isPasteModeEnabled = true;
+            clipboardState.copiedWidthInCells = selectionArea.widthInCells;
+            clipboardState.copiedHeightInCells = selectionArea.heightInCells;
+            clipboardState.copiedCenterRowIndex = selectionArea.topLeftRowIndex + (selectionArea.heightInCells / 2);
+            clipboardState.copiedTopLeftRowIndex = selectionArea.topLeftRowIndex;
 
-        clipboardState.hasPasteAnchor = true;
-        clipboardState.pasteAnchorNoteIndex = selectionArea.topLeftColumnIndex + (selectionArea.widthInCells / 2);
-        clipboardState.pasteAnchorCenterRowIndex = clipboardState.copiedCenterRowIndex;
+            clipboardState.hasPasteAnchor = true;
+            clipboardState.pasteAnchorNoteIndex = selectionArea.topLeftColumnIndex + (selectionArea.widthInCells / 2);
+            clipboardState.pasteAnchorCenterRowIndex = clipboardState.copiedCenterRowIndex;
+        }
 
         // DEBUG_PRINT(
         //     "copy selection -> width:{}, height:{}, fromAllChannels:{}, instrumentChannelIndex:{}",
