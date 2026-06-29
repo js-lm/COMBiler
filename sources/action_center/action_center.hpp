@@ -62,9 +62,10 @@ public:
 
     void addPage(int requestedPageInsertionIndex);
     void movePage(int sourcePageIndex, int targetInsertionIndex);
-    void removePage();
-    void copyPage();
-    void pastePage();  
+    void removePage(int startIndex, int endIndex);
+    void copyPage(program_states::Interface &interface, int startIndex, int endIndex);
+    void pastePage(program_states::Interface &interface, int insertionIndex);
+    void cutPage(program_states::Interface &interface, int startIndex, int endIndex);
 
     void addCommand(int pageNumber, int noteIndex, const program_states::Interface::Prompts &promptState);
     void removeCommand(int pageNumber, int noteIndex);

@@ -12,6 +12,8 @@
 
 #include "command/command_type.hpp"
 
+#include "project_data.hpp"
+
 namespace program_states{
 
     struct Interface{
@@ -167,6 +169,9 @@ namespace program_states{
             int requestedPageMoveInsertionIndex{constants::action_center::InvalidPageInsertionIndex};
             int previousCurrentPage         {1};
 
+            int timelineSelectionStartIndex {constants::action_center::InvalidPageInsertionIndex};
+            int timelineSelectionEndIndex   {constants::action_center::InvalidPageInsertionIndex};
+
             bool isTimelineDragCandidate    {false};
             bool isTimelineDraggingPage     {false};
             int timelineDragCandidatePageIndex{-1};
@@ -268,6 +273,11 @@ namespace program_states{
 
             std::vector<std::optional<command::CommandToken>> commandChannel{};
         } clipboard{};
+
+        struct TimelineClipboard{
+            bool hasCopiedPages{false};
+            std::vector<program_states::ProjectData::Page> copiedPages{};
+        } timelineClipboard{};
 
     };
 

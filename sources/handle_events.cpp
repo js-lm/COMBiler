@@ -6,6 +6,7 @@
 #include <cmath>
 
 #include "debug_utilities.hpp"
+#include "utilities/project_utilities.hpp"
 
 void MainWindow::handleEvents(){
     
@@ -166,6 +167,11 @@ void MainWindow::handleKeyboardEvent(){
         }
         if(canvasManager_) canvasManager_->cancelSelectionAndPasteMode();
         if(timelineManager_) timelineManager_->cancelActiveInteraction();
+
+        interfaceState_.navigationBar.isPageSelectEnabled = false;
+        interfaceState_.navigationBar.timelineSelectionStartIndex = constants::action_center::InvalidPageInsertionIndex;
+        interfaceState_.navigationBar.timelineSelectionEndIndex = constants::action_center::InvalidPageInsertionIndex;
+        
         return;
     }
 
@@ -246,6 +252,50 @@ void MainWindow::handleKeyboardEvent(){
     window.scaleFactor = calculateScaleFactor();
     if(window.scaleFactor != previousScaleFactor) handleWindowSizeChangeEvent();
 
+    auto &navigationBarState{interfaceState_.navigationBar};
+    const bool isPagesDomain{interfaceState_.activeSelectionDomain == program_states::Interface::SelectionDomain::Pages};
+    
+    const bool isPageCopy{navigationBarState.isPageCopyButtonPressed || (isPagesDomain && isControlDown && IsKeyPressed(KEY_C))};
+    const bool isPageCut{navigationBarState.isPageCutButtonPressed || (isPagesDomain && isControlDown && IsKeyPressed(KEY_X))};
+    const bool isPagePaste{navigationBarState.isPagePasteButtonPressed || (isPagesDomain && isControlDown && IsKeyPressed(KEY_V))};
+    const bool isPageDelete{isPagesDomain && IsKeyPressed(KEY_DELETE)};
+
+    navigationBarState.isPageCopyButtonPressed = false;
+    navigationBarState.isPageCutButtonPressed = false;
+    navigationBarState.isPagePasteButtonPressed = false;
+
+    if((isPageCopy || isPageCut || isPageDelete) && actionCenter_){
+        const int startIndex{navigationBarState.isPageSelectEnabled ? navigationBarState.timelineSelectionStartIndex : systemState_.project.currentPage - constants::action_center::FirstPageNumber};
+        const int endIndex{navigationBarState.isPageSelectEnabled ? navigationBarState.timelineSelectionEndIndex : startIndex};
+
+        if(startIndex != constants::action_center::InvalidPageInsertionIndex && endIndex != constants::action_center::InvalidPageInsertionIndex){
+            if(isPageCopy) actionCenter_->copyPage(interfaceState_, startIndex, endIndex);
+            else if(isPageCut) actionCenter_->cutPage(interfaceState_, startIndex, endIndex);
+            else if(isPageDelete) actionCenter_->removePage(startIndex, endIndex);
+        }
+
+        if(navigationBarState.isPageSelectEnabled){
+            if(isPageCopy && startIndex != constants::action_center::InvalidPageInsertionIndex && endIndex != constants::action_center::InvalidPageInsertionIndex){
+                systemState_.project.currentPage = std::max(startIndex, endIndex) + constants::action_center::FirstPageNumber;
+            }
+            navigationBarState.isPageSelectEnabled = false;
+            navigationBarState.timelineSelectionStartIndex = constants::action_center::InvalidPageInsertionIndex;
+            navigationBarState.timelineSelectionEndIndex = constants::action_center::InvalidPageInsertionIndex;
+        }
+        
+        if(isPageCopy){
+            if(auto projectData{utilities::projectDataWithPagesFrom(systemState_)}){
+                projectData->transient.currentPageNumber = systemState_.project.currentPage;
+            }
+        }
+        
+        applyProjectTransientNavigationState();
+    }
+
+    if(isPagePaste && !navigationBarState.isPageSelectEnabled && actionCenter_){
+        actionCenter_->pastePage(interfaceState_, systemState_.project.currentPage - constants::action_center::FirstPageNumber + 1);
+        applyProjectTransientNavigationState();
+    }
 }
 
 void MainWindow::handleConstantsManagerEvents(){

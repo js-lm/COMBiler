@@ -2,6 +2,7 @@
 
 void CanvasManager::update(ActionCenter &actionCenter, MidiManager &midiManager){
     if(context_.interface.navigationBar.isTimelineDraggingPage) return;
+    if(context_.interface.navigationBar.isPageSelectEnabled) return;
     
 
     if(!hasInitializedSelectionTracking_){

@@ -300,12 +300,28 @@ float NavigationBar::drawTimelineBlocksAndMarkers(
                 )
             };
             drawTimelineBlockPreview(projectData.pages[pageIndex], blockBounds, noteCountInThisPage);
+
+            bool isSelected{false};
+            if(navigationBarState.isPageSelectEnabled && navigationBarState.timelineSelectionStartIndex != constants::action_center::InvalidPageInsertionIndex){
+                const int minSelection{std::min(navigationBarState.timelineSelectionStartIndex, navigationBarState.timelineSelectionEndIndex)};
+                const int maxSelection{std::max(navigationBarState.timelineSelectionStartIndex, navigationBarState.timelineSelectionEndIndex)};
+                if(static_cast<int>(pageIndex) >= minSelection && static_cast<int>(pageIndex) <= maxSelection){
+                    isSelected = true;
+                }
+            }
+
+            Color borderColor{GetColor(GuiGetStyle(DEFAULT, BORDER_COLOR_NORMAL))};
+            if(isSelected){
+                borderColor = ORANGE; // TODO: magic number
+                DrawRectangleRec(blockBounds, Fade(ORANGE, .2f));
+            }else if(static_cast<int>(pageIndex) + constants::interface_layout::timeline::FirstPageNumber == context.system.project.currentPage){
+                borderColor = constants::interface_layout::note_canvas::selection::BorderColor;
+            }
+
             DrawRectangleLinesEx(
                 blockBounds,
                 constants::interface_layout::timeline::BlockBorderThicknessInPixels,
-                (static_cast<int>(pageIndex) + constants::interface_layout::timeline::FirstPageNumber == context.system.project.currentPage)
-                    ? constants::interface_layout::note_canvas::selection::BorderColor
-                    : GetColor(GuiGetStyle(DEFAULT, BORDER_COLOR_NORMAL))
+                borderColor
             );
         }else{
             draggedBlockBounds = Rectangle{
@@ -361,14 +377,20 @@ void NavigationBar::handleTimelineMousePress(
     }
 
     if(navigationBarState.isPageSelectEnabled){
-        navigationBarState.requestedPageNumber = hoveredBlockIndex + constants::interface_layout::timeline::FirstPageNumber;
-        context.machine.shouldResetPlayback = true;
+        const bool isModifierDown{IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL) || IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)};
+        if(isModifierDown){
+            navigationBarState.timelineSelectionStartIndex = context.system.project.currentPage - constants::interface_layout::timeline::FirstPageNumber;
+            navigationBarState.timelineSelectionEndIndex = hoveredBlockIndex;
+        }else{
+            navigationBarState.requestedPageNumber = hoveredBlockIndex + constants::interface_layout::timeline::FirstPageNumber;
+            context.machine.shouldResetPlayback = true;
+            navigationBarState.timelineSelectionStartIndex = hoveredBlockIndex;
+            navigationBarState.timelineSelectionEndIndex = hoveredBlockIndex;
+        }
         return;
     }
 
-    if(hoveredBlockIndex >= constants::interface_layout::timeline::MinimumIndex
-    && !navigationBarState.isPageSelectEnabled
-    ){
+    if(!navigationBarState.isPageSelectEnabled){
         navigationBarState.isTimelineDragCandidate = true;
         navigationBarState.timelineDragCandidatePageIndex = hoveredBlockIndex;
         navigationBarState.timelineDragStartMouseScreenPosition = mousePosition;
@@ -557,6 +579,13 @@ void NavigationBar::drawTimeline(program_states::InterfaceContext &context){
         navigationBarState.timelineScrollPanelScrollOffset = NavigationBar::timelineManager_->viewState().scrollOffsetInPixels;
     }
 
+    const auto anchoredGroupBox{calculateBoundsAtAnchor(timelineAnchor, timelineBounds.groupBox)};
+    if(CheckCollisionPointRec(GetMousePosition(), anchoredGroupBox)){
+        if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) || GetMouseWheelMove() != .0f){
+            context.interface.activeSelectionDomain = program_states::Interface::SelectionDomain::Pages;
+        }
+    }
+
     if(context.system.project.currentPage != navigationBarState.previousCurrentPage && projectData){
         navigationBarState.previousCurrentPage = context.system.project.currentPage;
 
@@ -659,7 +688,11 @@ void NavigationBar::drawTimeline(program_states::InterfaceContext &context){
             isMouseInsideScrollPanel,
             hoveredBlockIndex
         );
-        if(!navigationBarState.isPageSelectEnabled){
+        if(navigationBarState.isPageSelectEnabled){
+            if(isMouseInsideScrollPanel && hoveredBlockIndex >= constants::interface_layout::timeline::MinimumIndex && IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
+                navigationBarState.timelineSelectionEndIndex = hoveredBlockIndex;
+            }
+        }else{
             updateTimelineDragCandidateState(context);
             updateTimelineDraggingState(context, *projectData, scrollPanelBounds, mousePosition, draggedBlockBounds);
         }

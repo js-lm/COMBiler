@@ -20,6 +20,14 @@ void NoteCanvas::draw(program_states::InterfaceContext &context){
 
 	if(state.isGridLayoutDirty) cleanGridLayout(context);
 
+    if(CheckCollisionPointRec(GetMousePosition(), groupBox)){
+        if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) || GetMouseWheelMove() != .0f){
+            if(!context.interface.navigationBar.isPageSelectEnabled){
+                context.interface.activeSelectionDomain = program_states::Interface::SelectionDomain::Notes;
+            }
+        }
+    }
+
 	// DEBUG_PRINT_IF_CHANGED(
 	// 	"dirtyLayout: {}",
 	// 	// groupBox.x,

@@ -307,9 +307,10 @@ void CanvasManager::handleCopyAndPasteModeState(ActionCenter &actionCenter){
     auto &toolbarState{context_.interface.toolbar};
     auto &clipboardState{context_.interface.clipboard};
 
+    const bool isPagesDomain{context_.interface.activeSelectionDomain == program_states::Interface::SelectionDomain::Pages};
     const bool isControlDown{IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)};
-    const bool isCopyShortcutPressed{isControlDown && IsKeyPressed(KEY_C)};
-    const bool isCutShortcutPressed{isControlDown && IsKeyPressed(KEY_X)};
+    const bool isCopyShortcutPressed{!isPagesDomain && isControlDown && IsKeyPressed(KEY_C)};
+    const bool isCutShortcutPressed{!isPagesDomain && isControlDown && IsKeyPressed(KEY_X)};
 
     const bool isCopyRequested{toolbarState.isCopyNoteButtonPressed || isCopyShortcutPressed};
     const bool isCutRequested{toolbarState.isCutNoteButtonPressed || isCutShortcutPressed};
