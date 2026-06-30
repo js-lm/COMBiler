@@ -73,7 +73,7 @@ void CanvasManager::handleNoteTools(ActionCenter &actionCenter, MidiManager &mid
     if(isLeftMouseButtonDown){
         switch(context_.interface.toolbar.selectedTool){
         case constants::toolbar::Tool::Cursor:  handleSelection(actionCenter); break;
-        case constants::toolbar::Tool::Pen:     handleNoteAdding(actionCenter); break;
+        case constants::toolbar::Tool::Pen:     handleNoteAdding(actionCenter, midiManager); break;
         case constants::toolbar::Tool::Eraser:  handleNoteDeletion(actionCenter); break;
         case constants::toolbar::Tool::Change_Instrument: handleInstrumentChange(actionCenter); break;
         }
@@ -179,7 +179,11 @@ bool CanvasManager::handlePastePlacement(ActionCenter &actionCenter){
                       - static_cast<int>(existingNote)
                     };
                     
-                    int destinationTopRowIndex{clipboardState.copiedTopLeftRowIndex - transposeSemitoneOffset};
+                    const int emptyCheckTransposeOffset{
+                        clipboardState.isChannelDrumSet[sourceChannelIndex][sourceColumnOffset] ? 0 : transposeSemitoneOffset
+                    };
+
+                    int destinationTopRowIndex{clipboardState.copiedTopLeftRowIndex - emptyCheckTransposeOffset};
                     int destinationBottomRowIndex{destinationTopRowIndex + clipboardState.copiedHeightInCells - 1};
                     
                     if(existingRowIndex >= destinationTopRowIndex && existingRowIndex <= destinationBottomRowIndex){
@@ -206,8 +210,12 @@ bool CanvasManager::handlePastePlacement(ActionCenter &actionCenter){
                 return;
             }
 
+            const int effectiveTransposeOffset{
+                clipboardState.isChannelDrumSet[sourceChannelIndex][sourceColumnOffset] ? 0 : transposeSemitoneOffset
+            };
+
             const int transposedSemitone{
-                static_cast<int>(std::get<music_data::Note>(cell.value())) + transposeSemitoneOffset
+                static_cast<int>(std::get<music_data::Note>(cell.value())) + effectiveTransposeOffset
             };
 
             const int transposedRowIndex{
@@ -368,6 +376,19 @@ void CanvasManager::handleCopyAndPasteModeState(ActionCenter &actionCenter){
 
             for(int instrumentChannelIndex{0}; instrumentChannelIndex < constants::project_data::NumberOfInstrumentChannels; instrumentChannelIndex++){
                 clipboardState.isChannelCopied[instrumentChannelIndex] = false;
+                clipboardState.isChannelDrumSet[instrumentChannelIndex].assign(selectionArea.widthInCells, false);
+            }
+        }
+
+        std::array<music_data::Instrument, constants::project_data::NumberOfInstrumentChannels> activeInstruments{};
+        if(isCopyRequested || isCutRequested){
+            const auto machineStateAtSelectionStart{utilities::machineStateAt(
+                *projectData,
+                context_.system.project.currentPage,
+                selectionArea.topLeftColumnIndex
+            )};
+            for(int i{0}; i < constants::project_data::NumberOfInstrumentChannels; i++){
+                activeInstruments[i] = machineStateAtSelectionStart.instruments[i];
             }
         }
 
@@ -412,6 +433,19 @@ void CanvasManager::handleCopyAndPasteModeState(ActionCenter &actionCenter){
         for(int selectionColumnOffset{0}; selectionColumnOffset < selectionArea.widthInCells; selectionColumnOffset++){
             const int sourceColumnIndex{selectionArea.topLeftColumnIndex + selectionColumnOffset};
             if(sourceColumnIndex < 0 || sourceColumnIndex >= constants::project_data::MaximumNotePerPage) continue;
+
+            if(isCopyRequested || isCutRequested){
+                for(int instrumentChannelIndex{0}; instrumentChannelIndex < constants::project_data::NumberOfInstrumentChannels; instrumentChannelIndex++){
+                    const auto &cell{currentPage.instrumentChannels[instrumentChannelIndex][sourceColumnIndex]};
+                    if(cell.has_value()){
+                        if(const auto *instrument = std::get_if<music_data::Instrument>(&cell.value())){
+                            activeInstruments[instrumentChannelIndex] = *instrument;
+                        }
+                    }
+                    clipboardState.isChannelDrumSet[instrumentChannelIndex][selectionColumnOffset] =
+                        (activeInstruments[instrumentChannelIndex] == music_data::Instrument::Drum_Sets);
+                }
+            }
 
             if(isCopyRequested || isCutRequested){
                 if(clipboardState.copiedFromAllChannels){
@@ -562,7 +596,7 @@ void CanvasManager::handleSelection(ActionCenter &actionCenter){
     };
 }
 
-void CanvasManager::handleNoteAdding(ActionCenter &actionCenter){
+void CanvasManager::handleNoteAdding(ActionCenter &actionCenter, MidiManager &midiManager){
     const auto &cursor{cursorPosition()};
 
     if(cursor.isHoveringNote) return;
@@ -579,6 +613,39 @@ void CanvasManager::handleNoteAdding(ActionCenter &actionCenter){
         cursor.note
     );
 
+    const auto targetChannel{static_cast<command::Target>(instrumentChannelIndex.value() + 1)};
+
+    if(previewingNote_ != cursor.note || previewingChannel_ != targetChannel){
+        if(previewingNote_.has_value() && previewingChannel_.has_value()){
+            midiManager.noteOff(previewingChannel_.value(), previewingNote_.value());
+        }
+
+        const auto projectData{utilities::projectDataWithPagesFrom(context_.system)};
+        if(projectData){
+            const auto machineState{utilities::machineStateAt(
+                *projectData,
+                context_.system.project.currentPage,
+                cursor.noteIndex
+            )};
+
+            midiManager.setInstrument(
+                targetChannel,
+                machineState.instruments[instrumentChannelIndex.value()]
+            );
+            midiManager.setVolume(
+                targetChannel,
+                machineState.volumes[instrumentChannelIndex.value()]
+            );
+            midiManager.setArticulation(
+                targetChannel,
+                machineState.articulations[instrumentChannelIndex.value()]
+            );
+        }
+
+        midiManager.noteOn(targetChannel, cursor.note);
+        previewingNote_ = cursor.note;
+        previewingChannel_ = targetChannel;
+    }
 }
 
 void CanvasManager::handleNoteDeletion(ActionCenter &actionCenter){

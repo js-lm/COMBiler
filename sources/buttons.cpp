@@ -145,7 +145,7 @@ void MainWindow::handleToolbarButtonsEvents(){
                 interfaceState_.prompts.activeCommandPrompt = interfaceState_.prompts.selectedCommandTool;
                 interfaceState_.prompts.isCommandWindowVisible = true;
             }
-        }else{
+        }else if(interfaceState_.sidebar.selectedChannelListViewIndex != constants::sidebar::AllChannelsListViewIndex){
             if(IsKeyPressed(KEY_Q)) interfaceState_.toolbar.selectedTool = constants::toolbar::Tool::Cursor;
             if(IsKeyPressed(KEY_W)) interfaceState_.toolbar.selectedTool = constants::toolbar::Tool::Pen;
             if(IsKeyPressed(KEY_E)) interfaceState_.toolbar.selectedTool = constants::toolbar::Tool::Eraser;
@@ -169,6 +169,13 @@ void MainWindow::handleToolbarButtonsEvents(){
         if(interfaceState_.prompts.activeCommandPrompt == constants::prompts::CommandPrompt::Constant){
             interfaceState_.prompts.activeCommandPrompt = constants::prompts::CommandPrompt::Tempo;
             interfaceState_.prompts.selectedCommandTool = constants::prompts::CommandPrompt::Tempo;
+        }
+
+        if(interfaceState_.sidebar.selectedChannelListViewIndex == constants::sidebar::AllChannelsListViewIndex){
+            interfaceState_.toolbar.savedToolBeforeAllChannel = interfaceState_.toolbar.selectedTool;
+            interfaceState_.toolbar.selectedTool = constants::toolbar::Tool::Cursor;
+        }else if(previousChannelIndex == constants::sidebar::AllChannelsListViewIndex){
+            interfaceState_.toolbar.selectedTool = interfaceState_.toolbar.savedToolBeforeAllChannel;
         }
     }
 }

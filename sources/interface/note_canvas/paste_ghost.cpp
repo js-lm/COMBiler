@@ -42,11 +42,11 @@ void NoteCanvas::drawPasteGhost(program_states::InterfaceContext &context){
         clipboardState.copiedFromAllChannels
     );
 
-    auto drawGhostNoteCell{[&](int destinationColumnIndex, music_data::Note note, Color color){
+    auto drawGhostNoteCell{[&](int destinationColumnIndex, music_data::Note note, Color color, int transposeOffset){
         if(destinationColumnIndex < 0 || destinationColumnIndex >= constants::project_data::MaximumNotePerPage) return;
 
         const int rowIndex{
-            canvas_constants::FirstNoteOffsetFromC0 + (canvas_constants::NumberOfRow - 1) - (static_cast<int>(note) + transposeSemitoneOffset)
+            canvas_constants::FirstNoteOffsetFromC0 + (canvas_constants::NumberOfRow - 1) - (static_cast<int>(note) + transposeOffset)
         };
         if(rowIndex < 0 || rowIndex >= canvas_constants::NumberOfRow) return;
 
@@ -152,10 +152,13 @@ void NoteCanvas::drawPasteGhost(program_states::InterfaceContext &context){
         if(!cell.has_value()) return;
 
         const Color channelColor{canvas_constants::notes::ChannelNoteColors[channelIndex]};
+        const int effectiveTransposeOffset{
+            clipboardState.isChannelDrumSet[channelIndex][sourceColumnOffset] ? 0 : transposeSemitoneOffset
+        };
 
         if(std::holds_alternative<music_data::Note>(cell.value())){
 
-            drawGhostNoteCell(destinationColumnIndex, std::get<music_data::Note>(cell.value()), channelColor);
+            drawGhostNoteCell(destinationColumnIndex, std::get<music_data::Note>(cell.value()), channelColor, effectiveTransposeOffset);
 
         // }else{
         //     drawGhostInstrumentCell(destinationColumnIndex, std::get<music_data::Instrument>(cell.value()), channelColor);
@@ -176,9 +179,12 @@ void NoteCanvas::drawPasteGhost(program_states::InterfaceContext &context){
             if(cell.has_value()){
 
                 const Color channelColor{canvas_constants::notes::ChannelNoteColors[destinationInstrumentChannelIndex]};
+                const int effectiveTransposeOffset{
+                    clipboardState.isChannelDrumSet[sourceInstrumentChannelIndex][sourceColumnOffset] ? 0 : transposeSemitoneOffset
+                };
 
                 if(std::holds_alternative<music_data::Note>(cell.value())){
-                    drawGhostNoteCell(destinationColumnIndex, std::get<music_data::Note>(cell.value()), channelColor);
+                    drawGhostNoteCell(destinationColumnIndex, std::get<music_data::Note>(cell.value()), channelColor, effectiveTransposeOffset);
                 // }else{
                 //     drawGhostInstrumentCell(destinationColumnIndex, std::get<music_data::Instrument>(cell.value()), channelColor);
 

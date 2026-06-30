@@ -40,7 +40,7 @@ private:
     void handleNoteTools(ActionCenter &actionCenter, MidiManager &midiManager);
 
     void handleSelection(ActionCenter &actionCenter);
-    void handleNoteAdding(ActionCenter &actionCenter);
+    void handleNoteAdding(ActionCenter &actionCenter, MidiManager &midiManager);
     void handleNoteDeletion(ActionCenter &actionCenter);
     void handleInstrumentChange(ActionCenter &actionCenter);
 

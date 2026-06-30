@@ -39,6 +39,7 @@ namespace program_states{
             bool isConstantsButtonPressed   {false};
 
             constants::toolbar::Tool selectedTool{constants::toolbar::Tool::Cursor};
+            constants::toolbar::Tool savedToolBeforeAllChannel{constants::toolbar::Tool::Cursor};
 
             bool isCutNoteButtonPressed     {false};
             bool isCopyNoteButtonPressed    {false};
@@ -272,6 +273,7 @@ namespace program_states{
             int copiedInstrumentChannelIndex{constants::interface_layout::note_canvas::notes::NoInstrumentChannelIndex};
             
             std::array<bool, constants::project_data::NumberOfInstrumentChannels> isChannelCopied{false, false, false, false};
+            std::array<std::vector<bool>, constants::project_data::NumberOfInstrumentChannels> isChannelDrumSet{};
             
             bool hasPasteAnchor{false};
             int pasteAnchorNoteIndex{0};

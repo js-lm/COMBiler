@@ -52,6 +52,13 @@ void Sidebar::drawInspector(program_states::InterfaceContext &context){
             context.interface.prompts.activeCommandPrompt = constants::prompts::CommandPrompt::Tempo;
             context.interface.prompts.selectedCommandTool = constants::prompts::CommandPrompt::Tempo;
         }
+
+        if(context.interface.sidebar.selectedChannelListViewIndex == constants::sidebar::AllChannelsListViewIndex){
+            context.interface.toolbar.savedToolBeforeAllChannel = context.interface.toolbar.selectedTool;
+            context.interface.toolbar.selectedTool = constants::toolbar::Tool::Cursor;
+        }else if(previousChannelIndex == constants::sidebar::AllChannelsListViewIndex){
+            context.interface.toolbar.selectedTool = context.interface.toolbar.savedToolBeforeAllChannel;
+        }
 	}
 
 	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.channelLabel), sidebar_constants::ChannelLabelText);

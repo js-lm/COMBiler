@@ -63,14 +63,18 @@ void Toolbar::drawToolPalette(program_states::InterfaceContext &context){
 
 
 	}else{
-		if(isAllChannelSelected) toolbarState.selectedTool = constants::toolbar::Tool::Cursor; // TODO: restore the tool after switching back to other channel
+		if(isAllChannelSelected){
+			toolbarState.selectedTool = constants::toolbar::Tool::Cursor;
+			GuiDisable();
+		}
 
 		int selectedToolIndex{constants::toolbar::toIndex(toolbarState.selectedTool)};
 
 		selectedToolIndex = std::clamp(selectedToolIndex, 0, constants::toolbar::ToolCount - 1);
 		GuiToggleGroup(calculateBoundsAtAnchor(anchor, bounds.toolsToggleGroup), toolbar_constants::ToolsToggleGroupNormalText, &selectedToolIndex);
 
-		toolbarState.selectedTool = constants::toolbar::toolFromIndex(selectedToolIndex);
+		if(isAllChannelSelected) GuiEnable();
+		else toolbarState.selectedTool = constants::toolbar::toolFromIndex(selectedToolIndex);
 		if(promptState.activeCommandPrompt != constants::prompts::CommandPrompt::Change_Instrument
 		){
 			promptState.isCommandWindowVisible = false;
@@ -85,8 +89,10 @@ void Toolbar::drawToolPalette(program_states::InterfaceContext &context){
 
 		if(toolbarState.selectedTool == constants::toolbar::Tool::Change_Instrument){
 			GuiSetState(STATE_PRESSED);
+		}else if(isAllChannelSelected || context.machine.isPlaying){
+			GuiSetState(STATE_DISABLED);
 		}else{
-			GuiSetState(context.machine.isPlaying ? STATE_DISABLED : STATE_NORMAL);
+			GuiSetState(STATE_NORMAL);
 		}
 
 		if(GuiButton(calculateBoundsAtAnchor(anchor, bounds.openInstrumentWindowButton), nullptr)){
