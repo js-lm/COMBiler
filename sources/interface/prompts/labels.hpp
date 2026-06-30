@@ -10,6 +10,11 @@ namespace constants::labels::prompts{
     constexpr const char *ConfirmButtonText{"#112#Confirm"};
     constexpr const char *BackButtonText{"#113#Back"};
 
+    constexpr const char *FileDropWarningWindowBoxText{"Warning"};
+    constexpr const char *OverwriteWarningText{"Are you sure you want to overwrite your project?"};
+    constexpr const char *YesButtonText{"#112#Yes"};
+    constexpr const char *NoButtonText{"#113#No"};
+
     constexpr const char *VolumeWindowBoxText{nullptr};
     constexpr const char *VolumeGroupBoxText{"Volume"};
     constexpr const char *VolumeLevelToggleGroupText{"1;2;3;4;5;6;7;8;9;10"};
@@ -78,13 +83,13 @@ namespace constants::labels::prompts{
 
     constexpr const char *LoadButtonText{"Load"};
     
-        constexpr const char *WarningWindowBoxText{"Unsaved changes"};
-        constexpr const char *WarningLabelText{"You haven't committed your changes. Commit now?"};
-        constexpr const char *WarningYesButtonText{"Yes"};
-        constexpr const char *WarningNoButtonText{"No"};
-    
-        constexpr const char *InfoWindowBoxText{"Undefined constant"};
-        constexpr const char *InfoLabelText{"The constant is not defined"};
-        constexpr const char *InfoOKButtonText{"OK"};
+    constexpr const char *WarningWindowBoxText{"Unsaved changes"};
+    constexpr const char *WarningLabelText{"You haven't committed your changes. Commit now?"};
+    constexpr const char *WarningYesButtonText{"Yes"};
+    constexpr const char *WarningNoButtonText{"No"};
+
+    constexpr const char *InfoWindowBoxText{"Undefined constant"};
+    constexpr const char *InfoLabelText{"The constant is not defined"};
+    constexpr const char *InfoOKButtonText{"OK"};
 
 } // namespace constants::labels::prompts

@@ -61,19 +61,23 @@ std::optional<program_states::ProjectData> Serializer::load(){
         return std::nullopt;
     }
 
-    DEBUG_PRINT("Loading {}", saveFilePath);
+    return load(std::string{saveFilePath});
+}
 
-    if(!FileExists(saveFilePath)){
-        DEBUG_PRINT("File does not exist: {}", saveFilePath);
+std::optional<program_states::ProjectData> Serializer::load(const std::string &filePath){
+    DEBUG_PRINT("Loading {}", filePath);
+
+    if(!FileExists(filePath.c_str())){
+        DEBUG_PRINT("File does not exist: {}", filePath);
         return std::nullopt;
     }
 
-    currentFilename_ = GetFileName(saveFilePath);
-    currentWorkingDirectory_ = GetDirectoryPath(saveFilePath);
+    currentFilename_ = GetFileName(filePath.c_str());
+    currentWorkingDirectory_ = GetDirectoryPath(filePath.c_str());
 
-    DEBUG_PRINT("PWD: {}\nFilename: {}\nOriginal: {}", currentWorkingDirectory_, currentFilename_, saveFilePath);
+    DEBUG_PRINT("PWD: {}\nFilename: {}\nOriginal: {}", currentWorkingDirectory_, currentFilename_, filePath);
 
-    char *loadedSaveFile{LoadFileText(const_cast<char*>(saveFilePath))};
+    char *loadedSaveFile{LoadFileText(filePath.c_str())};
 
     DEBUG_PRINT("{}", loadedSaveFile);
     

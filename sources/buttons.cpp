@@ -101,6 +101,11 @@ void MainWindow::handleToolbarButtonsEvents(){
             }
         }
 
+        if(interfaceState_.toolbar.isNewFileButtonPressed){
+            interfaceState_.prompts.isOverwritePromptVisible = true;
+            interfaceState_.prompts.overwriteAction = program_states::Interface::Prompts::OverwriteAction::NewFile;
+        }
+
         if(const auto filename{serializer_->getCurrentFilename()}; !filename.empty()){
             std::string newWindowTitle{
                 constants::application_window::Title 

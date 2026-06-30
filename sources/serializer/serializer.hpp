@@ -18,6 +18,7 @@ public:
 
     void save(const program_states::ProjectData &data, bool saveAsNewFile = false);
     std::optional<program_states::ProjectData> load();
+    std::optional<program_states::ProjectData> load(const std::string &filePath);
 
     std::string getCurrentFilename() const{ return GetFileNameWithoutExt(currentFilename_.c_str());}
 

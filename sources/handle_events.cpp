@@ -15,6 +15,43 @@ void MainWindow::handleEvents(){
 
     if(IsWindowResized()) handleWindowSizeChangeEvent();
 
+    if(IsFileDropped()){
+        FilePathList droppedFiles{LoadDroppedFiles()};
+        if(droppedFiles.count > 0){
+            interfaceState_.prompts.droppedFilePath = std::string{droppedFiles.paths[0]};
+            interfaceState_.prompts.isOverwritePromptVisible = true;
+            interfaceState_.prompts.overwriteAction = program_states::Interface::Prompts::OverwriteAction::LoadDroppedFile;
+        }
+        UnloadDroppedFiles(droppedFiles);
+    }
+
+    if(interfaceState_.prompts.isOverwriteConfirmed){
+        if(interfaceState_.prompts.overwriteAction == program_states::Interface::Prompts::OverwriteAction::LoadDroppedFile){
+            if(auto loadedData{serializer_->load(interfaceState_.prompts.droppedFilePath)}){
+                if(auto projectData{systemState_.project.data.lock()}){
+                    projectData->data.reset();
+                }
+                actionCenter_->loadFile(loadedData.value());
+
+                if(const auto filename{serializer_->getCurrentFilename()}; !filename.empty()){
+                    std::string newWindowTitle{
+                        constants::application_window::Title 
+                      + std::string{" - "} + filename
+                    };
+                    SetWindowTitle(newWindowTitle.c_str());
+                }
+            }
+        }else if(interfaceState_.prompts.overwriteAction == program_states::Interface::Prompts::OverwriteAction::NewFile){
+            program_states::ProjectData freshProjectData{};
+            actionCenter_->loadFile(freshProjectData);
+            SetWindowTitle(constants::application_window::Title);
+        }
+
+        interfaceState_.prompts.isOverwriteConfirmed = false;
+        interfaceState_.prompts.overwriteAction = program_states::Interface::Prompts::OverwriteAction::None;
+        interfaceState_.prompts.droppedFilePath = "";
+    }
+
     handleConstantsManagerEvents();
 }
 
@@ -136,6 +173,8 @@ void MainWindow::handleWindowSizeChangeEvent(){
         anchor.prompts.constantsManagerWindow = centeredPromptAnchorFrom(bounds.prompts.constantsManager.windowBox);
         anchor.prompts.constantsManagerWarningWindow = centeredPromptAnchorFrom(bounds.prompts.constantsManagerWarning.windowBox);
         anchor.prompts.constantsManagerInfoWindow = centeredPromptAnchorFrom(bounds.prompts.constantsManagerInfo.windowBox);
+
+        anchor.prompts.overwriteWarningWindow = centeredPromptAnchorFrom(bounds.prompts.overwriteWarning.windowBox);
     } /* prompts */
 
     /* ntoe canvas */ {

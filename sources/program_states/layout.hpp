@@ -42,6 +42,8 @@ namespace program_states{
                 Vector2 constantsManagerWindow          {0, 0};
                 Vector2 constantsManagerWarningWindow   {0, 0};
                 Vector2 constantsManagerInfoWindow      {0, 0};
+
+                Vector2 overwriteWarningWindow          {0, 0};
             } prompts{};
 
         } anchor{};
@@ -219,6 +221,13 @@ namespace program_states{
                     Rectangle label     { 8, 24, 152, 24};
                     Rectangle okButton  {48, 48,  64, 24};
                 } constantsManagerInfo{};
+
+                struct OverwriteWarning{
+                    Rectangle windowBox {  0,  0, 300, 120};
+                    Rectangle label     { 10, 35, 280,  30};
+                    Rectangle yesButton { 40, 80, 100,  30};
+                    Rectangle noButton  {160, 80, 100,  30};
+                } overwriteWarning{};
 
                 struct Tempo{
                     Rectangle windowBox         {  0,   0, 320, 136};

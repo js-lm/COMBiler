@@ -50,6 +50,17 @@ namespace program_states{
             constants::prompts::CommandPrompt selectedCommandTool{constants::prompts::CommandPrompt::Tempo};
 
             bool isCommandWindowVisible     {false};
+
+            bool isOverwritePromptVisible   {false};
+            bool isOverwriteConfirmed       {false};
+
+            enum class OverwriteAction{
+                None,
+                NewFile,
+                LoadDroppedFile
+            };
+            OverwriteAction overwriteAction{OverwriteAction::None};
+            std::string droppedFilePath{};
             constants::prompts::CommandPrompt activeCommandPrompt{constants::prompts::CommandPrompt::Tempo};
 
             int instrumentFamilyListViewScrollIndex{0};

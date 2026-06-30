@@ -23,6 +23,7 @@ void Prompts::draw(program_states::InterfaceContext &context){
     const bool isAnyPromptVisible{
         promptState.isCommandWindowVisible
      || promptState.isConstantsManagerWindowVisible
+     || promptState.isOverwritePromptVisible
     };
 
     if(!isAnyPromptVisible) return;
@@ -36,6 +37,11 @@ void Prompts::draw(program_states::InterfaceContext &context){
 
     if(promptState.isConstantsManagerWindowVisible){
         drawConstantsManagerPrompt(context);
+        return;
+    }
+
+    if(promptState.isOverwritePromptVisible){
+        drawOverwritePrompt(context);
         return;
     }
 
@@ -270,4 +276,28 @@ void Prompts::drawInstrumentPrompt(program_states::InterfaceContext &context){
         calculateBoundsAtPromptAnchor(context.layout, context.interface, promptBounds.memberLabel),
         prompts_constants::InstrumentMemberLabelText
     );
+}
+
+void Prompts::drawOverwritePrompt(program_states::InterfaceContext &context){
+    auto &promptState{context.interface.prompts};
+
+    const auto anchor{context.layout.anchor.prompts.overwriteWarningWindow};
+    const auto &bounds{context.layout.bounds.prompts.overwriteWarning};
+
+    if(GuiWindowBox(calculateBoundsAtAnchor(anchor, bounds.windowBox), prompts_constants::FileDropWarningWindowBoxText)){
+        promptState.isOverwritePromptVisible = false;
+        promptState.overwriteAction = program_states::Interface::Prompts::OverwriteAction::None;
+        return;
+    }
+
+    GuiLabel(calculateBoundsAtAnchor(anchor, bounds.label), prompts_constants::OverwriteWarningText);
+
+    if(GuiButton(calculateBoundsAtAnchor(anchor, bounds.yesButton), prompts_constants::YesButtonText)){
+        promptState.isOverwriteConfirmed = true;
+        promptState.isOverwritePromptVisible = false;
+    }
+    if(GuiButton(calculateBoundsAtAnchor(anchor, bounds.noButton), prompts_constants::NoButtonText)){
+        promptState.isOverwritePromptVisible = false;
+        promptState.overwriteAction = program_states::Interface::Prompts::OverwriteAction::None;
+    }
 }
