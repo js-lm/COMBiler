@@ -13,8 +13,8 @@ void ActionCenter::addCommand(int pageNumber, int noteIndex, const program_state
 
 	beginAction();
 
-	stagedSlot_->data->transient.currentPageNumber = pageNumber;
-	stagedSlot_->data->transient.selectedChannelListViewIndex = constants::sidebar::SystemChannelListViewIndex;
+	// stagedSlot_->data->transient.currentPageNumber = pageNumber;
+	// stagedSlot_->data->transient.selectedChannelListViewIndex = constants::sidebar::SystemChannelListViewIndex;
 
 	if(promptState.selectedCommandTool == constants::prompts::CommandPrompt::Constant){
 		page.commandChannel[noteIndex] = promptState.loadedConstantIndex;
@@ -35,8 +35,8 @@ void ActionCenter::removeCommand(int pageNumber, int noteIndex){
 
 	beginAction();
 
-	stagedSlot_->data->transient.currentPageNumber = pageNumber;
-	stagedSlot_->data->transient.selectedChannelListViewIndex = constants::sidebar::SystemChannelListViewIndex;
+	// stagedSlot_->data->transient.currentPageNumber = pageNumber;
+	// stagedSlot_->data->transient.selectedChannelListViewIndex = constants::sidebar::SystemChannelListViewIndex;
 
 	page.commandChannel[noteIndex] = std::nullopt;
 
@@ -57,8 +57,8 @@ void ActionCenter::setCommandToken(
 
 	beginAction();
 
-	stagedSlot_->data->transient.currentPageNumber = pageNumber;
-	stagedSlot_->data->transient.selectedChannelListViewIndex = selectedChannelListViewIndex;
+	// stagedSlot_->data->transient.currentPageNumber = pageNumber;
+	// stagedSlot_->data->transient.selectedChannelListViewIndex = selectedChannelListViewIndex;
 
 	page.commandChannel[noteIndex] = std::move(commandToken);
 }

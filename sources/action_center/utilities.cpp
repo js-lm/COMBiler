@@ -158,7 +158,7 @@ void ActionCenter::updateInstrumentChannelCell(
     
     auto &page{utilities::pageByNumber(*stagedSlot_->data, pageNumber)};
 
-    utilities::applyTransientSelection(stagedSlot_->data->transient, pageNumber, channelIndex);
+    // utilities::applyTransientSelection(stagedSlot_->data->transient, pageNumber, channelIndex);
 
     page.instrumentChannels[channelIndex][noteIndex] = std::move(cellValue);
 }

@@ -67,14 +67,14 @@ namespace utilities{
         return projectData.pages[pageNumber - 1];
     }
 
-    inline void applyTransientSelection(
-        program_states::ProjectData::Transient &transient,
-        int pageNumber,
-        int instrumentChannelIndex
-    ){
-        transient.currentPageNumber = pageNumber;
-        transient.selectedChannelListViewIndex = selectedChannelListIndexFromInstrumentChannelIndex(instrumentChannelIndex);
-    }
+    // inline void applyTransientSelection(
+    //     program_states::ProjectData::Transient &transient,
+    //     int pageNumber,
+    //     int instrumentChannelIndex
+    // ){
+    //     transient.currentPageNumber = pageNumber;
+    //     transient.selectedChannelListViewIndex = selectedChannelListIndexFromInstrumentChannelIndex(instrumentChannelIndex);
+    // }
 
 
     inline program_states::Machine machineStateAt(

@@ -22,6 +22,8 @@
 
 #include "debug_utilities.hpp"
 
+#include "utilities/project_utilities.hpp"
+
 int MainWindow::run(){
 
     initialize();
@@ -85,6 +87,11 @@ void MainWindow::update(){
     // midiManager_->update();
     canvasManager_->update(*actionCenter_, *midiManager_);
     playbackManager_->update(*midiManager_);
+
+    if(auto projectData{utilities::projectDataWithPagesFrom(systemState_)}){
+        projectData->transient.currentPageNumber = systemState_.project.currentPage;
+        projectData->transient.selectedChannelListViewIndex = interfaceState_.sidebar.selectedChannelListViewIndex;
+    }
 }
 
 void MainWindow::draw(){
