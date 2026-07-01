@@ -1,0 +1,21 @@
+#
+# rgl layout text file (v4.0) - raygui layout file generated using rGuiLayout
+#
+# Number of controls:     10
+#
+# Ref. window:    r <x> <y> <width> <height>
+# Anchor info:    a <id> <name> <posx> <posy> <enabled>
+# Control info:   c <id> <type> <name> <rectangle> <anchor_id> <text>
+#
+r 0 40 -1 -1
+a 001 InfoWindowAnchor 72 72 1
+c 000 0 InfoWindowBox 0 0 368 184 1 #191#About COMBiler
+c 001 4 TitleLabel 16 24 336 24 1 COMBiler - V0.2
+c 002 2 InfoLine 8 40 352 12 1 
+c 003 6 RepoLink1LabelButton 16 80 392 16 1 Hardware Repo: github.com/js-lm/COMB-Optical-Music-Box
+c 004 6 RepoLink2LabelButton 16 96 376 16 1 Software Repo: github.com/js-lm/COMBiler
+c 005 4 DescriptionLabel 16 48 360 24 1 A music "compiler" for COMB Optical Music Box
+c 006 4 PoweredByLabel 16 120 312 24 1 Powered by:
+c 007 4 LibrariesLabel 24 136 328 16 1 raylib, raygui, TinySoundFont, tinyfiledialog, magic_enum, & fmt.
+c 008 4 CompilationTimestampLabel 152 24 200 24 1 Compiled on 2000-00-00 @ 00:00:00
+c 009 19 CopyrightedBar 0 160 368 24 1 Copyright (C) 2026. Released under the GNU GPL v3.

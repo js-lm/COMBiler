@@ -6,6 +6,8 @@
 #include <cmath>
 #include <string>
 
+#include <fmt/core.h>
+
 #include "constants.hpp"
 
 #include "labels.hpp"
@@ -24,6 +26,7 @@ void Prompts::draw(program_states::InterfaceContext &context){
         promptState.isCommandWindowVisible
      || promptState.isConstantsManagerWindowVisible
      || promptState.isOverwritePromptVisible
+     || promptState.isInfoWindowVisible
     };
 
     if(!isAnyPromptVisible) return;
@@ -37,6 +40,11 @@ void Prompts::draw(program_states::InterfaceContext &context){
 
     if(promptState.isConstantsManagerWindowVisible){
         drawConstantsManagerPrompt(context);
+        return;
+    }
+
+    if(promptState.isInfoWindowVisible){
+        drawInfoPrompt(context);
         return;
     }
 
@@ -300,4 +308,40 @@ void Prompts::drawOverwritePrompt(program_states::InterfaceContext &context){
         promptState.isOverwritePromptVisible = false;
         promptState.overwriteAction = program_states::Interface::Prompts::OverwriteAction::None;
     }
+}
+
+void Prompts::drawInfoPrompt(program_states::InterfaceContext &context){
+    auto &promptState{context.interface.prompts};
+
+    const auto anchor{context.layout.anchor.prompts.infoWindow};
+    const auto &bounds{context.layout.bounds.prompts.infoWindow};
+
+    if(GuiWindowBox(calculateBoundsAtAnchor(anchor, bounds.windowBox), prompts_constants::AboutInfoWindowBoxText)){
+        promptState.isInfoWindowVisible = false;
+        return;
+    }
+
+    GuiLabel(calculateBoundsAtAnchor(anchor, bounds.titleLabel), constants::application_window::Title);
+    GuiLine(calculateBoundsAtAnchor(anchor, bounds.infoLine), nullptr);
+    
+    if(GuiLabelButton(calculateBoundsAtAnchor(anchor, bounds.repoLink1Button), prompts_constants::AboutHardwareRepoLabelText)){
+        OpenURL(prompts_constants::AboutHardwareRepoURL);
+    }
+    if(GuiLabelButton(calculateBoundsAtAnchor(anchor, bounds.repoLink2Button), prompts_constants::AboutSoftwareRepoLabelText)){
+        OpenURL(prompts_constants::AboutSoftwareRepoURL);
+    }
+
+    GuiLabel(calculateBoundsAtAnchor(anchor, bounds.descriptionLabel), prompts_constants::AboutDescriptionLabelText);
+    GuiLabel(calculateBoundsAtAnchor(anchor, bounds.poweredByLabel), prompts_constants::AboutPoweredByLabelText);
+    GuiLabel(calculateBoundsAtAnchor(anchor, bounds.librariesLabel), prompts_constants::AboutLibrariesLabelText);
+
+    const int previousLabelAlignment{GuiGetStyle(LABEL, TEXT_ALIGNMENT)};
+    GuiSetStyle(LABEL, TEXT_ALIGNMENT, TEXT_ALIGN_RIGHT);
+    GuiLabel(calculateBoundsAtAnchor(anchor, bounds.timestampLabel), fmt::format(prompts_constants::AboutTimestampFormatText, __DATE__, __TIME__).c_str());
+    GuiSetStyle(LABEL, TEXT_ALIGNMENT, previousLabelAlignment);
+
+    const int previousStatusBarAlignment{GuiGetStyle(STATUSBAR, TEXT_ALIGNMENT)};
+    GuiSetStyle(STATUSBAR, TEXT_ALIGNMENT, TEXT_ALIGN_CENTER);
+    GuiStatusBar(calculateBoundsAtAnchor(anchor, bounds.copyrightedBar), prompts_constants::AboutCopyrightedBarText);
+    GuiSetStyle(STATUSBAR, TEXT_ALIGNMENT, previousStatusBarAlignment);
 }

@@ -175,6 +175,7 @@ void MainWindow::handleWindowSizeChangeEvent(){
         anchor.prompts.constantsManagerInfoWindow = centeredPromptAnchorFrom(bounds.prompts.constantsManagerInfo.windowBox);
 
         anchor.prompts.overwriteWarningWindow = centeredPromptAnchorFrom(bounds.prompts.overwriteWarning.windowBox);
+        anchor.prompts.infoWindow = centeredPromptAnchorFrom(bounds.prompts.infoWindow.windowBox);
     } /* prompts */
 
     /* ntoe canvas */ {
@@ -200,6 +201,7 @@ void MainWindow::handleKeyboardEvent(){
         interfaceState_.prompts.isConstantsManagerWindowVisible = false;
         interfaceState_.prompts.isConstantsManagerWarningWindowVisible = false;
         interfaceState_.prompts.isConstantsManagerInfoWindowVisible = false;
+        interfaceState_.prompts.isInfoWindowVisible = false;
         if(interfaceState_.prompts.activeCommandPrompt == constants::prompts::CommandPrompt::Constant){
             interfaceState_.prompts.activeCommandPrompt = constants::prompts::CommandPrompt::Tempo;
             interfaceState_.prompts.selectedCommandTool = constants::prompts::CommandPrompt::Tempo;
@@ -219,6 +221,7 @@ void MainWindow::handleKeyboardEvent(){
      || interfaceState_.prompts.isConstantsManagerWindowVisible
      || interfaceState_.prompts.isConstantsManagerWarningWindowVisible
      || interfaceState_.prompts.isConstantsManagerInfoWindowVisible
+     || interfaceState_.prompts.isInfoWindowVisible
     };
     if(wasPromptWindowVisible) return;
 

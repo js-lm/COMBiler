@@ -21,6 +21,8 @@ namespace interface{
 		static void drawConstantsManagerNotDefinedPrompt(program_states::InterfaceContext &context);
 		
 		static void drawOverwritePrompt(program_states::InterfaceContext &context);
+		
+		static void drawInfoPrompt(program_states::InterfaceContext &context);
 
 	private:
 		static const Vector2 &windowAnchor(

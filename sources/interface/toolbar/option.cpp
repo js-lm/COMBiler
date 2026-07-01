@@ -17,6 +17,7 @@ void Toolbar::drawOption(program_states::InterfaceContext &context){
 
 	GuiGroupBox(groupBox, toolbar_constants::ToolOptionsGroupBoxText);
 	context.interface.toolbar.isInfoButtonPressed = GuiButton(calculateBoundsAtAnchor(anchor, bounds.infoButton), toolbar_constants::InfoButtonText);
-
-    
+	if(context.interface.toolbar.isInfoButtonPressed){
+		context.interface.prompts.isInfoWindowVisible = true;
+	}
 }

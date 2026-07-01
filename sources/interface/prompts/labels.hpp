@@ -92,4 +92,15 @@ namespace constants::labels::prompts{
     constexpr const char *InfoLabelText{"The constant is not defined"};
     constexpr const char *InfoOKButtonText{"OK"};
 
+    constexpr const char *AboutInfoWindowBoxText{"#043#About COMBiler"};
+    constexpr const char *AboutHardwareRepoLabelText{"Hardware Repo: github.com/js-lm/COMB-Optical-Music-Box"};
+    constexpr const char *AboutHardwareRepoURL{"https://github.com/js-lm/COMB-Optical-Music-Box"};
+    constexpr const char *AboutSoftwareRepoLabelText{"Software Repo: github.com/js-lm/COMBiler"};
+    constexpr const char *AboutSoftwareRepoURL{"https://github.com/js-lm/COMBiler"};
+    constexpr const char *AboutDescriptionLabelText{"A music \"compiler\" for COMB Optical Music Box"};
+    constexpr const char *AboutPoweredByLabelText{"Powered by:"};
+    constexpr const char *AboutLibrariesLabelText{"raylib, raygui, TinySoundFont, tinyfiledialog, magic_enum, & fmt."};
+    constexpr const char *AboutTimestampFormatText{"Compiled on {} @ {}"};
+    constexpr const char *AboutCopyrightedBarText{"Copyright (C) 2026. Released under the GNU GPL v3."};
+
 } // namespace constants::labels::prompts

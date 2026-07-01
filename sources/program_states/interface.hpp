@@ -143,6 +143,8 @@ namespace program_states{
             bool constantsManagerSwapLeftTextBoxEditMode{false};
             bool constantsManagerSwapRightTextBoxEditMode{false};
 
+            bool isInfoWindowVisible{false};
+
         } prompts{};
 
         struct Sidebar{

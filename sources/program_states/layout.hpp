@@ -44,6 +44,7 @@ namespace program_states{
                 Vector2 constantsManagerInfoWindow      {0, 0};
 
                 Vector2 overwriteWarningWindow          {0, 0};
+                Vector2 infoWindow                      {0, 0};
             } prompts{};
 
         } anchor{};
@@ -228,6 +229,19 @@ namespace program_states{
                     Rectangle yesButton { 40, 80, 100,  30};
                     Rectangle noButton  {160, 80, 100,  30};
                 } overwriteWarning{};
+
+                struct InfoWindow{
+                    Rectangle windowBox           {  0,   0, 368, 184};
+                    Rectangle titleLabel          { 16,  24, 336,  24};
+                    Rectangle infoLine            {  8,  40, 352,  12};
+                    Rectangle repoLink1Button     { 16,  80, 392,  16};
+                    Rectangle repoLink2Button     { 16,  96, 376,  16};
+                    Rectangle descriptionLabel    { 16,  48, 360,  24};
+                    Rectangle poweredByLabel      { 16, 120, 312,  24};
+                    Rectangle librariesLabel      { 24, 136, 328,  16};
+                    Rectangle timestampLabel      {152,  24, 200,  24};
+                    Rectangle copyrightedBar      {  0, 160, 368,  24};
+                } infoWindow{};
 
                 struct Tempo{
                     Rectangle windowBox         {  0,   0, 320, 136};
