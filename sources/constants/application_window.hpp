@@ -15,7 +15,7 @@ namespace constants::application_window{
     constexpr float MinimumScaleFactor{1.0f};
     constexpr float MaximumScaleFactor{4.0f};
 
-    constexpr const char *Title{"COMBiler"};
+    constexpr const char *Title{"COMBiler v" COMBILER_VERSION};
 
     constexpr Vector2 Origin{.0f, .0f};
 

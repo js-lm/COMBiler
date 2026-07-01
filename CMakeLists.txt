@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 
 set(PROJECT_TARGET COMBiler)
-project(${PROJECT_TARGET} CXX)
+project(${PROJECT_TARGET} VERSION 0.2 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -59,6 +59,7 @@ file(GLOB ASSET_ENTRIES
 
 target_compile_definitions(${PROJECT_TARGET} PRIVATE
 	$<$<CONFIG:Debug>:DEBUG>
+	COMBILER_VERSION="${PROJECT_VERSION}"
 )
 
 target_include_directories(${PROJECT_TARGET} PRIVATE
