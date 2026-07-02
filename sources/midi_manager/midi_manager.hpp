@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <mutex>
 
 #include <raylib.h>
 
@@ -18,6 +19,7 @@
 class MidiManager{
 public:
     inline static tsf *soundFont{nullptr};
+    inline static std::mutex audioMutex{};
 
 private:
     program_states::MidiContext context_;

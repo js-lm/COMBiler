@@ -134,6 +134,8 @@ void MainWindow::handleToolbarButtonsEvents(){
      || interfaceState_.prompts.isConstantsManagerWindowVisible
      || interfaceState_.prompts.isConstantsManagerWarningWindowVisible
      || interfaceState_.prompts.isConstantsManagerInfoWindowVisible
+     || interfaceState_.prompts.isInfoWindowVisible
+     || interfaceState_.prompts.isOverwritePromptVisible
     };
 
     if(!machineState_.isPlaying && !wasPromptWindowVisible){

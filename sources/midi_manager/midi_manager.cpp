@@ -37,8 +37,8 @@ void MidiManager::initialization(){
         constants::midi::OutputChannelCount
     );
 
-    // TODO: race condition risk
     SetAudioStreamCallback(outputAudioStream_, [](void *bufferData, unsigned int frames){
+        std::lock_guard<std::mutex> lock(MidiManager::audioMutex);
         tsf_render_short(MidiManager::soundFont, static_cast<int16_t*>(bufferData), frames, 0);
     });
 

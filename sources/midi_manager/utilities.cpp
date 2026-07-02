@@ -17,6 +17,7 @@ void MidiManager::activateNote(const units::midi::SoundFontChannel channel, cons
     const int midiNoteNumber{static_cast<int>(note)};
     const float velocity{normalizedVolume(context_.machine.volumes[channel])};
 
+    std::lock_guard<std::mutex> lock(MidiManager::audioMutex);
     tsf_channel_note_on(soundFont, soundFontChannel, midiNoteNumber, velocity);
 }
 
@@ -28,6 +29,7 @@ void MidiManager::deactivateNote(const units::midi::SoundFontChannel channel, co
     const int soundFontChannel{instrumentChannel(channel)};
     const int midiNoteNumber{static_cast<int>(note)};
 
+    std::lock_guard<std::mutex> lock(MidiManager::audioMutex);
     tsf_channel_note_off(soundFont, soundFontChannel, midiNoteNumber);
 }
 
@@ -36,6 +38,7 @@ void MidiManager::silenceChannel(const units::midi::SoundFontChannel channel){
 
     const int soundFontChannel{instrumentChannel(channel)};
 
+    std::lock_guard<std::mutex> lock(MidiManager::audioMutex);
     tsf_channel_note_off_all(soundFont, soundFontChannel);
     tsf_channel_sounds_off_all(soundFont, soundFontChannel);
 }
@@ -50,6 +53,7 @@ void MidiManager::applyInstrument(const units::midi::SoundFontChannel channel, c
     const bool isDrumInstrument{instrument == music_data::Instrument::Drum_Sets};
     const int soundPresetNumber{isDrumInstrument ? constants::midi::DrumSoundPresetNumber : soundPresetID};
 
+    std::lock_guard<std::mutex> lock(MidiManager::audioMutex);
     tsf_channel_set_presetnumber(soundFont, soundFontChannel, soundPresetNumber, isDrumInstrument ? 1 : 0);
 }
 
@@ -57,6 +61,7 @@ void MidiManager::applyVolume(const units::midi::SoundFontChannel channel){
     const int soundFontChannel{instrumentChannel(channel)};
     const float volume{normalizedVolume(context_.machine.volumes[channel])};
 
+    std::lock_guard<std::mutex> lock(MidiManager::audioMutex);
     tsf_channel_set_volume(soundFont, soundFontChannel, volume);
 }
 

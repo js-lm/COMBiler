@@ -13,7 +13,16 @@
 
 void CanvasManager::handleNoteTools(ActionCenter &actionCenter, MidiManager &midiManager){
 
-    if(!context_.machine.isPlaying){
+    const bool isAnyPromptVisible{
+        context_.interface.prompts.isCommandWindowVisible
+     || context_.interface.prompts.isConstantsManagerWindowVisible
+     || context_.interface.prompts.isConstantsManagerWarningWindowVisible
+     || context_.interface.prompts.isConstantsManagerInfoWindowVisible
+     || context_.interface.prompts.isInfoWindowVisible
+     || context_.interface.prompts.isOverwritePromptVisible
+    };
+
+    if(!context_.machine.isPlaying && !isAnyPromptVisible){
         handleSelectAll();
         handleCopyAndPasteModeState(actionCenter);
     }
@@ -31,10 +40,7 @@ void CanvasManager::handleNoteTools(ActionCenter &actionCenter, MidiManager &mid
         }
     }};
 
-    if(context_.interface.prompts.isCommandWindowVisible
-    || context_.interface.prompts.isConstantsManagerWindowVisible
-    || context_.machine.isPlaying
-    ){
+    if(isAnyPromptVisible || context_.machine.isPlaying){
         stopPreviewing();
         isSelectionDragInProgress_ = false;
         if(hasActionStarted_){
@@ -91,7 +97,7 @@ void CanvasManager::handleNoteTools(ActionCenter &actionCenter, MidiManager &mid
     const bool isPenMode{context_.interface.toolbar.selectedTool == constants::toolbar::Tool::Pen};
     const auto channelIndex{selectedInstrumentChannelIndex()};
 
-    if(isPenMode && channelIndex.has_value() && isRightMouseButtonDown){
+    if(isPenMode && channelIndex.has_value() && (isRightMouseButtonDown || isLeftMouseButtonDown)){
         const auto targetChannel{static_cast<command::Target>(channelIndex.value() + 1)};
         const auto hoveredNote{context_.interface.noteCanvas.cursorPosition.value().note};
         const auto noteIndex{context_.interface.noteCanvas.cursorPosition.value().noteIndex};
@@ -612,40 +618,6 @@ void CanvasManager::handleNoteAdding(ActionCenter &actionCenter, MidiManager &mi
         cursor.noteIndex,
         cursor.note
     );
-
-    const auto targetChannel{static_cast<command::Target>(instrumentChannelIndex.value() + 1)};
-
-    if(previewingNote_ != cursor.note || previewingChannel_ != targetChannel){
-        if(previewingNote_.has_value() && previewingChannel_.has_value()){
-            midiManager.noteOff(previewingChannel_.value(), previewingNote_.value());
-        }
-
-        const auto projectData{utilities::projectDataWithPagesFrom(context_.system)};
-        if(projectData){
-            const auto machineState{utilities::machineStateAt(
-                *projectData,
-                context_.system.project.currentPage,
-                cursor.noteIndex
-            )};
-
-            midiManager.setInstrument(
-                targetChannel,
-                machineState.instruments[instrumentChannelIndex.value()]
-            );
-            midiManager.setVolume(
-                targetChannel,
-                machineState.volumes[instrumentChannelIndex.value()]
-            );
-            midiManager.setArticulation(
-                targetChannel,
-                machineState.articulations[instrumentChannelIndex.value()]
-            );
-        }
-
-        midiManager.noteOn(targetChannel, cursor.note);
-        previewingNote_ = cursor.note;
-        previewingChannel_ = targetChannel;
-    }
 }
 
 void CanvasManager::handleNoteDeletion(ActionCenter &actionCenter){

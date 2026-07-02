@@ -41,7 +41,7 @@ int MainWindow::run(){
 
 void MainWindow::initialize(){
 
-    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_WINDOW_ALWAYS_RUN);
 
     InitWindow(
         constants::application_window::DefaultWidth, 
@@ -107,6 +107,10 @@ void MainWindow::draw(){
         const bool wasPromptWindowVisible{
             interfaceState_.prompts.isCommandWindowVisible
          || interfaceState_.prompts.isConstantsManagerWindowVisible
+         || interfaceState_.prompts.isConstantsManagerWarningWindowVisible
+         || interfaceState_.prompts.isConstantsManagerInfoWindowVisible
+         || interfaceState_.prompts.isInfoWindowVisible
+         || interfaceState_.prompts.isOverwritePromptVisible
         };
         if(wasPromptWindowVisible) GuiLock();
         interface::Toolbar::draw(context);
