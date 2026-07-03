@@ -16,7 +16,7 @@ namespace constants::labels::navigation_bar{
     constexpr const char *PagePasteButtonText   {"#010#"};
     constexpr const char *PageCutButtonText     {"#008#"};
     constexpr const char *PageSelectToggleText  {"#060#"};
-    constexpr const char *TimelineStatusBarText {"Line 1\nLine 2\nLine 3\nLine 4\nLine 5"};
+    constexpr const char *TimelineStatusBarText {"Channel: `, 1-4, 5\nTool Sel: Q, W, E, R\nPage Nav: A, S\nRepeat Mode: D\nPlay/Pause: Space"};
 
     constexpr const char *PerPageSettingsGroupBoxText   {nullptr};
     constexpr const char *NotePerPageSpinnerText        {"Note Per Page:"};
