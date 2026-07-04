@@ -92,6 +92,8 @@ void MainWindow::update(){
         projectData->transient.currentPageNumber = systemState_.project.currentPage;
         projectData->transient.selectedChannelListViewIndex = interfaceState_.sidebar.selectedChannelListViewIndex;
     }
+
+    updateWindowTitle();
 }
 
 void MainWindow::draw(){

@@ -32,9 +32,15 @@ void ActionCenter::commit(){
     // stagedSlot_->data = committedSnapshot;
 
     if(isAdvancingTail){
+        if(savedCursorIndex_.has_value() && savedCursorIndex_.value() == historyTail_){
+            savedCursorIndex_ = std::nullopt;
+        }
         historyTail_ = (historyTail_ + 1) % maximumSize;
         historyStackSize_ = maximumSize;
     }else{
+        if(cursorIndex_ != historyHead_ && savedCursorIndex_.has_value() && savedCursorIndex_.value() != cursorIndex_){
+            savedCursorIndex_ = std::nullopt;
+        }
         if(historyHead_ >= historyTail_){
             historyStackSize_ = historyHead_ - historyTail_ + 1;
         }else{
@@ -174,4 +180,6 @@ void ActionCenter::loadFile(program_states::ProjectData &projectData){
     cursorIndex_ = 0;
     historyStackSize_ = 1;
     isInAction_ = false;
+
+    markAsSaved();
 }

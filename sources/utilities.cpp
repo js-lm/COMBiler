@@ -90,3 +90,22 @@ void MainWindow::applyProjectTransientNavigationState(){
 
     interfaceState_.noteCanvas.isGridLayoutDirty = true;
 }
+
+void MainWindow::updateWindowTitle(){
+    static std::string previousTitle{};
+
+    std::string newWindowTitle{constants::application_window::Title};
+    if(serializer_){
+        if(const auto filename{serializer_->getCurrentFilename()}; !filename.empty()){
+            newWindowTitle += " - " + filename;
+        }
+    }
+    if(actionCenter_ && actionCenter_->isUnsaved()){
+        newWindowTitle += "*";
+    }
+
+    if(newWindowTitle != previousTitle){
+        SetWindowTitle(newWindowTitle.c_str());
+        previousTitle = newWindowTitle;
+    }
+}

@@ -55,6 +55,7 @@ private:
 
     void update();
     void draw();
+    void updateWindowTitle();
 
 private:
     void initializeInterfaceRenderTexture();

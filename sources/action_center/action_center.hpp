@@ -28,6 +28,12 @@ private:
 
     bool isInAction_{false};
 
+    std::optional<size_t> savedCursorIndex_{0};
+
+public:
+    void markAsSaved(){ savedCursorIndex_ = cursorIndex_; }
+    bool isUnsaved() const{ return !savedCursorIndex_.has_value() || savedCursorIndex_.value() != cursorIndex_; }
+
 public:
     ActionCenter(){
         commits_.resize(constants::action_center::MaximumHistory);
