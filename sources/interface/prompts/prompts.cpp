@@ -374,6 +374,7 @@ void Prompts::drawMusicSettingPrompt(program_states::InterfaceContext &context){
         promptState.musicSettingTitleTextBoxEditMode = !promptState.musicSettingTitleTextBoxEditMode;
         if(!promptState.musicSettingTitleTextBoxEditMode){
             DEBUG_PRINT("Updated Project Title: {}", projectData->metadata.title);
+            promptState.hasModifiedMetadata = true;
         }
     }
 
@@ -387,6 +388,7 @@ void Prompts::drawMusicSettingPrompt(program_states::InterfaceContext &context){
         promptState.musicSettingAuthorTextBoxEditMode = !promptState.musicSettingAuthorTextBoxEditMode;
         if(!promptState.musicSettingAuthorTextBoxEditMode){
             DEBUG_PRINT("Updated Project Author: {}", projectData->metadata.author);
+            promptState.hasModifiedMetadata = true;
         }
     }
 
@@ -417,6 +419,7 @@ void Prompts::drawMusicSettingPrompt(program_states::InterfaceContext &context){
         promptState.musicSettingMaximumTempoValueBoxEditMode = !promptState.musicSettingMaximumTempoValueBoxEditMode;
         if(!promptState.musicSettingMaximumTempoValueBoxEditMode){
             DEBUG_PRINT("Updated Maximum Tempo: {}", maximumTempoValue);
+            promptState.hasModifiedMetadata = true;
         }
     }
     projectData->metadata.maximumTempo = static_cast<float>(maximumTempoValue);
@@ -435,6 +438,7 @@ void Prompts::drawMusicSettingPrompt(program_states::InterfaceContext &context){
         promptState.musicSettingNotesValueBoxEditMode = !promptState.musicSettingNotesValueBoxEditMode;
         if(!promptState.musicSettingNotesValueBoxEditMode){
             DEBUG_PRINT("Updated Notes Per Page: {}", projectData->metadata.notePerPage);
+            promptState.hasModifiedMetadata = true;
         }
     }
 

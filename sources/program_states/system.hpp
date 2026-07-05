@@ -11,6 +11,12 @@
 namespace program_states{
 
     struct System{
+        enum class InitializationError{
+            None,
+            SoundFontMissing,
+            SoundFontLoadFailed
+        };
+        InitializationError initializationError{InitializationError::None};
 
         struct Window{
             int interfaceRenderTextureWidth{0};

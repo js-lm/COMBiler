@@ -101,9 +101,14 @@ void MainWindow::handleToolbarButtonsEvents(){
         }
 
         if(interfaceState_.toolbar.isLoadFileButtonPressed){
-            if(auto loadedData{serializer_->load()}){
-                projectData->data.reset();
-                actionCenter_->loadFile(loadedData.value());
+            if(actionCenter_->isUnsaved()){
+                interfaceState_.prompts.isOverwritePromptVisible = true;
+                interfaceState_.prompts.overwriteAction = program_states::Interface::Prompts::OverwriteAction::LoadFile;
+            }else{
+                if(auto loadedData{serializer_->load()}){
+                    projectData->data.reset();
+                    actionCenter_->loadFile(loadedData.value());
+                }
             }
         }
 

@@ -60,10 +60,12 @@ namespace program_states{
 
             bool isOverwritePromptVisible   {false};
             bool isOverwriteConfirmed       {false};
+            bool hasModifiedMetadata        {false};
 
             enum class OverwriteAction{
                 None,
                 NewFile,
+                LoadFile,
                 LoadDroppedFile
             };
             OverwriteAction overwriteAction{OverwriteAction::None};

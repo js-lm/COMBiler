@@ -8,18 +8,45 @@
 
 #include <magic_enum/magic_enum.hpp>
 
-void MidiManager::initialization(){
+program_states::System::InitializationError MidiManager::initialization(){
 
     DEBUG_PRINT("IsAudioDeviceReady(): {}", IsAudioDeviceReady());
 
     InitAudioDevice();
 
-    std::string soundFontPath{GetApplicationDirectory()};
-    soundFontPath += constants::midi::SoundFontPath;
+    // std::string soundFontPath{GetApplicationDirectory()};
+    // soundFontPath += constants::midi::SoundFontPath;
+    const std::string rootDirectory{GetApplicationDirectory()};
+    const std::string fontDirectory{rootDirectory + constants::midi::SoundFontDirectory};
+    const std::string targetFontFile{constants::midi::SoundFontFile};
+
+    std::string soundFontPath{fontDirectory + targetFontFile};
+
+    if(!FileExists(soundFontPath.c_str())){
+        FilePathList fontDirectoryFiles{LoadDirectoryFilesEx(fontDirectory.c_str(), constants::midi::SoundFontExtension, false)};
+        if(fontDirectoryFiles.count > 0){
+            soundFontPath = fontDirectoryFiles.paths[0];
+            UnloadDirectoryFiles(fontDirectoryFiles);
+        }else{
+            UnloadDirectoryFiles(fontDirectoryFiles);
+            FilePathList rootDirectoryFiles{LoadDirectoryFilesEx(rootDirectory.c_str(), constants::midi::SoundFontExtension, false)};
+            if(rootDirectoryFiles.count > 0){
+                soundFontPath = rootDirectoryFiles.paths[0];
+                UnloadDirectoryFiles(rootDirectoryFiles);
+            }else{
+                UnloadDirectoryFiles(rootDirectoryFiles);
+                return program_states::System::InitializationError::SoundFontMissing;
+            }
+        }
+    }
 
     DEBUG_PRINT("soundFontPath: {}", soundFontPath);
 
     soundFont = tsf_load_filename(soundFontPath.c_str());
+    
+    if(!soundFont){
+        return program_states::System::InitializationError::SoundFontLoadFailed;
+    }
 
     tsf_set_max_voices(soundFont, constants::midi::MaximumVoiceCount);
     tsf_set_output(soundFont, TSF_STEREO_INTERLEAVED, outputSampleRate_, constants::midi::GlobalGainInDecibel);
@@ -45,6 +72,8 @@ void MidiManager::initialization(){
     // interleavedSampleBuffer_.resize(streamChunkFrameCount_ * 2);
 
     PlayAudioStream(outputAudioStream_);
+
+    return program_states::System::InitializationError::None;
 }
 
 MidiManager::~MidiManager(){

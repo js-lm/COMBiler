@@ -39,6 +39,13 @@ void MainWindow::handleEvents(){
                 }
                 actionCenter_->loadFile(loadedData.value());
             }
+        }else if(interfaceState_.prompts.overwriteAction == program_states::Interface::Prompts::OverwriteAction::LoadFile){
+            if(auto loadedData{serializer_->load()}){
+                if(auto projectData{systemState_.project.data.lock()}){
+                    projectData->data.reset();
+                }
+                actionCenter_->loadFile(loadedData.value());
+            }
         }else if(interfaceState_.prompts.overwriteAction == program_states::Interface::Prompts::OverwriteAction::NewFile){
             program_states::ProjectData freshProjectData{};
             actionCenter_->loadFile(freshProjectData);
@@ -50,6 +57,11 @@ void MainWindow::handleEvents(){
     }
 
     handleConstantsManagerEvents();
+
+    if(interfaceState_.prompts.hasModifiedMetadata){
+        actionCenter_->markAsUnsaved();
+        interfaceState_.prompts.hasModifiedMetadata = false;
+    }
 }
 
 void MainWindow::handleButtonPressEvents(){

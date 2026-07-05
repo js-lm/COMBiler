@@ -27,8 +27,9 @@ namespace constants::midi{
     constexpr int DrumSoundFontChannel{9};
     constexpr int DrumSoundPresetNumber{0};
 
-    constexpr const char *SoundFontPath{"soundfonts/gm_bank.sf2"};
-
+    constexpr const char *SoundFontDirectory{"soundfonts/"};
+    constexpr const char *SoundFontFile{"gm_bank.sf2"};
+    constexpr const char *SoundFontExtension{".sf2"};
     constexpr utilities::EnumMap<music_data::Instrument, units::midi::SoundPresetID> InstrumentsMap{
         // Keyboards
         {music_data::Instrument::Grand_Piano, 0},

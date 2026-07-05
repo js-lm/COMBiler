@@ -70,7 +70,21 @@ void MainWindow::initialize(){
     actionCenter_ = std::make_unique<ActionCenter>();
     canvasManager_ = std::make_unique<CanvasManager>(getInterfaceContext());
     midiManager_ = std::make_unique<MidiManager>(getMidiContext());
-    midiManager_->initialization();
+    systemState_.initializationError = midiManager_->initialization();
+    
+    if(systemState_.initializationError != program_states::System::InitializationError::None){
+        SetWindowMinSize(
+            constants::application_window::ErrorWindowWidth, 
+            constants::application_window::ErrorWindowHeight
+        );
+        SetWindowSize(
+            constants::application_window::ErrorWindowWidth, 
+            constants::application_window::ErrorWindowHeight
+        );
+        
+        return;
+    }
+    
     playbackManager_ = std::make_unique<PlaybackManager>(getMidiContext());
     serializer_ = std::make_unique<Serializer>();
     // enumerator_ = std::make_unique<Enumerator>();
@@ -81,6 +95,9 @@ void MainWindow::initialize(){
 }
 
 void MainWindow::update(){
+    if(systemState_.initializationError != program_states::System::InitializationError::None){
+        return;
+    }
 
     handleEvents();
 
@@ -103,32 +120,58 @@ void MainWindow::update(){
 void MainWindow::draw(){
     auto context{getInterfaceContext()};
 
+    if(systemState_.initializationError != program_states::System::InitializationError::None){
+        BeginDrawing(); {
+            ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
+
+            const char *errorMessage{
+                systemState_.initializationError == program_states::System::InitializationError::SoundFontMissing
+                    ? constants::application_window::ErrorMessageSoundFontMissing
+                    : constants::application_window::ErrorMessageSoundFontLoadError
+            };
+
+            Rectangle bounds{
+                static_cast<float>(constants::application_window::ErrorWindowMargin),
+                static_cast<float>(constants::application_window::ErrorWindowMargin),
+                static_cast<float>(GetScreenWidth() - constants::application_window::ErrorWindowMargin * 2),
+                static_cast<float>(GetScreenHeight() - constants::application_window::ErrorWindowMargin * 2)
+            };
+            
+            const int previousTextAlignment{GuiGetStyle(TEXTBOX, TEXT_ALIGNMENT)};
+            GuiSetStyle(TEXTBOX, TEXT_ALIGNMENT, TEXT_ALIGN_CENTER);
+            
+            GuiTextBox(bounds, const_cast<char*>(errorMessage), 0, false);
+            
+            GuiSetStyle(TEXTBOX, TEXT_ALIGNMENT, previousTextAlignment);
+        } EndDrawing();
+        return;
+    }
+
     BeginTextureMode(interfaceRenderTexture_); {
         // ClearBackground(GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR)));
         ClearBackground(BLANK);
+            const bool shouldDisableToolbar(machineState_.isPlaying);
+            if(shouldDisableToolbar) GuiDisable();
 
-        const bool shouldDisableToolbar(machineState_.isPlaying);
-        if(shouldDisableToolbar) GuiDisable();
+            const bool isPromptActive{interfaceState_.prompts.isAnyPromptVisible()};
+            if(isPromptActive) GuiLock();
+            interface::Toolbar::draw(context);
+            if(isPromptActive) GuiUnlock();
+            if(shouldDisableToolbar) GuiEnable();
 
-        const bool isPromptActive{interfaceState_.prompts.isAnyPromptVisible()};
-        if(isPromptActive) GuiLock();
-        interface::Toolbar::draw(context);
-        if(isPromptActive) GuiUnlock();
-        if(shouldDisableToolbar) GuiEnable();
+            const bool shouldBlockUnderlyingUi{isPromptActive};
+            if(shouldBlockUnderlyingUi) GuiLock();
+            interface::Sidebar::draw(context);
+            interface::NavigationBar::draw(context);
+            interface::NoteCanvas::draw(context);
+            if(shouldBlockUnderlyingUi) GuiUnlock();
 
-        const bool shouldBlockUnderlyingUi{isPromptActive};
-        if(shouldBlockUnderlyingUi) GuiLock();
-        interface::Sidebar::draw(context);
-        interface::NavigationBar::draw(context);
-        interface::NoteCanvas::draw(context);
-        if(shouldBlockUnderlyingUi) GuiUnlock();
+            // DEBUG_PRINT_IF_CHANGED(
+            //     " shouldBlockUnderlyingUi: {}",
+            //     shouldBlockUnderlyingUi
+            // );
 
-        // DEBUG_PRINT_IF_CHANGED(
-        //     " shouldBlockUnderlyingUi: {}",
-        //     shouldBlockUnderlyingUi
-        // );
-
-        interface::Prompts::draw(context);
+            interface::Prompts::draw(context);
     } EndTextureMode();
 
     BeginDrawing(); {

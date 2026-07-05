@@ -10,7 +10,14 @@ namespace constants::application_window{
     constexpr int MinimalWidth{960};
     constexpr int MinimalHeight{544};
 
+    constexpr int ErrorWindowWidth{800};
+    constexpr int ErrorWindowHeight{150};
+    constexpr int ErrorWindowMargin{10};
+
     constexpr int DefaultFPS{300};
+
+    constexpr const char *ErrorMessageSoundFontMissing{"Please place a sound font (.sf2) in the soundfonts/ directory."};
+    constexpr const char *ErrorMessageSoundFontLoadError{"Error loading the sound font file."};
 
     constexpr float MinimumScaleFactor{1.0f};
     constexpr float MaximumScaleFactor{4.0f};

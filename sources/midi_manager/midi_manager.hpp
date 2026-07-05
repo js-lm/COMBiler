@@ -13,6 +13,7 @@
 #include "constants.hpp"
 
 #include "program_states/context.hpp"
+#include "program_states/system.hpp"
 
 #include "command/command_type.hpp"
 
@@ -41,7 +42,7 @@ public:
     MidiManager() = delete;
     ~MidiManager();
 
-    void initialization();
+    program_states::System::InitializationError initialization();
     
     void update();
 
