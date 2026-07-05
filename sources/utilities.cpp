@@ -109,3 +109,14 @@ void MainWindow::updateWindowTitle(){
         previousTitle = newWindowTitle;
     }
 }
+
+void MainWindow::loadProjectData(program_states::ProjectData &data){
+    machineState_.isPlaying = false;
+    machineState_.shouldResetPlayback = true;
+    machineState_.playheadIndex = 0;
+    
+    systemState_.project.currentPage = 1;
+    interfaceState_.navigationBar.requestedPageNumber = 1;
+    
+    actionCenter_->loadFile(data);
+}

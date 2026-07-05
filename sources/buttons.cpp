@@ -107,7 +107,7 @@ void MainWindow::handleToolbarButtonsEvents(){
             }else{
                 if(auto loadedData{serializer_->load()}){
                     projectData->data.reset();
-                    actionCenter_->loadFile(loadedData.value());
+                    loadProjectData(loadedData.value());
                 }
             }
         }
@@ -118,7 +118,7 @@ void MainWindow::handleToolbarButtonsEvents(){
                 interfaceState_.prompts.overwriteAction = program_states::Interface::Prompts::OverwriteAction::NewFile;
             }else{
                 program_states::ProjectData freshProjectData{};
-                actionCenter_->loadFile(freshProjectData);
+                loadProjectData(freshProjectData);
             }
         }
 

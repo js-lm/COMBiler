@@ -80,6 +80,9 @@ private:
 //     void load();
 
 private:
+    void loadProjectData(program_states::ProjectData &data);
+
+private:
     void applyProjectTransientNavigationState();
 
 private:
