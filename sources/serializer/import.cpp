@@ -2,6 +2,7 @@
 
 #include <string>
 #include <sstream>
+#include <cstring>
 
 program_states::ProjectData Serializer::toProjectData(const std::string &data) const{
 
@@ -22,6 +23,24 @@ program_states::ProjectData Serializer::toProjectData(const std::string &data) c
 
     while(std::getline(dataStream, currentLine)){
         if(currentLine.empty() || currentLine.find("# VERSION") == 0) continue;
+
+        if(currentLine.find("# TITLE ") == 0){
+            strncpy(projectData.metadata.title, currentLine.substr(8).c_str(), constants::project_data::MetadataTitleMaximumLength);
+            projectData.metadata.title[constants::project_data::MetadataTitleMaximumLength] = '\0';
+            continue;
+        }else if(currentLine.find("# AUTHOR ") == 0){
+            strncpy(projectData.metadata.author, currentLine.substr(9).c_str(), constants::project_data::MetadataAuthorMaximumLength);
+            projectData.metadata.author[constants::project_data::MetadataAuthorMaximumLength] = '\0';
+            continue;
+        }else if(currentLine.find("# CREATED ") == 0){
+            strncpy(projectData.metadata.creationDate, currentLine.substr(10).c_str(), constants::project_data::MetadataDateMaximumLength);
+            projectData.metadata.creationDate[constants::project_data::MetadataDateMaximumLength] = '\0';
+            continue;
+        }else if(currentLine.find("# MODIFIED ") == 0){
+            strncpy(projectData.metadata.modificationDate, currentLine.substr(11).c_str(), constants::project_data::MetadataDateMaximumLength);
+            projectData.metadata.modificationDate[constants::project_data::MetadataDateMaximumLength] = '\0';
+            continue;
+        }
 
         if(currentLine == "[METADATA]"){
             currentSection = Section::Metadata;
@@ -47,6 +66,8 @@ program_states::ProjectData Serializer::toProjectData(const std::string &data) c
                 lineStream >> projectData.metadata.numberOfPages;
             }else if(tokenString == "NOTES_PER_PAGE"){
                 lineStream >> projectData.metadata.notePerPage;
+            }else if(tokenString == "MAX_TEMPO"){
+                lineStream >> projectData.metadata.maximumTempo;
             }
         }else if(currentSection == Section::Constants){
             int constantIndexValue{std::stoi(tokenString)};

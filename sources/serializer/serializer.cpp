@@ -6,7 +6,26 @@
 
 #include "debug_utilities.hpp"
 
-void Serializer::save(const program_states::ProjectData &data, bool saveAsNewFile){
+#include <chrono>
+#include <ctime>
+#include <iomanip>
+#include <sstream>
+
+void Serializer::save(program_states::ProjectData &data, bool saveAsNewFile){
+
+    const auto now{std::chrono::system_clock::now()};
+    const std::time_t time{std::chrono::system_clock::to_time_t(now)};
+    std::stringstream timeStringStream{};
+    timeStringStream << std::put_time(std::localtime(&time), "%Y-%m-%d %H:%M:%S");
+    const std::string currentTimeString{timeStringStream.str()};
+
+    if(data.metadata.creationDate[0] == '\0'){
+        strncpy(data.metadata.creationDate, currentTimeString.c_str(), constants::project_data::MetadataDateMaximumLength);
+        data.metadata.creationDate[constants::project_data::MetadataDateMaximumLength] = '\0';
+    }
+    
+    strncpy(data.metadata.modificationDate, currentTimeString.c_str(), constants::project_data::MetadataDateMaximumLength);
+    data.metadata.modificationDate[constants::project_data::MetadataDateMaximumLength] = '\0';
 
     const std::string pattern{std::string{"*."} + constants::serializer::SaveFileExtension};
     const char *filterPattern[1]{pattern.c_str()};

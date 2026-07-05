@@ -173,6 +173,7 @@ void MainWindow::handleWindowSizeChangeEvent(){
 
         anchor.prompts.overwriteWarningWindow = centeredPromptAnchorFrom(bounds.prompts.overwriteWarning.windowBox);
         anchor.prompts.infoWindow = centeredPromptAnchorFrom(bounds.prompts.infoWindow.windowBox);
+        anchor.prompts.musicSettingWindow = centeredPromptAnchorFrom(bounds.prompts.musicSetting.windowBox);
     } /* prompts */
 
     /* ntoe canvas */ {
@@ -199,6 +200,7 @@ void MainWindow::handleKeyboardEvent(){
         interfaceState_.prompts.isConstantsManagerWarningWindowVisible = false;
         interfaceState_.prompts.isConstantsManagerInfoWindowVisible = false;
         interfaceState_.prompts.isInfoWindowVisible = false;
+        interfaceState_.prompts.isMusicSettingPromptVisible = false;
         if(interfaceState_.prompts.activeCommandPrompt == constants::prompts::CommandPrompt::Constant){
             interfaceState_.prompts.activeCommandPrompt = constants::prompts::CommandPrompt::Tempo;
             interfaceState_.prompts.selectedCommandTool = constants::prompts::CommandPrompt::Tempo;
@@ -213,14 +215,7 @@ void MainWindow::handleKeyboardEvent(){
         return;
     }
 
-    const bool wasPromptWindowVisible{
-        interfaceState_.prompts.isCommandWindowVisible
-     || interfaceState_.prompts.isConstantsManagerWindowVisible
-     || interfaceState_.prompts.isConstantsManagerWarningWindowVisible
-     || interfaceState_.prompts.isConstantsManagerInfoWindowVisible
-     || interfaceState_.prompts.isInfoWindowVisible
-    };
-    if(wasPromptWindowVisible) return;
+    if(interfaceState_.prompts.isAnyPromptVisible()) return;
 
     const bool isControlDown{IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)};
     const bool isShiftDown{IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)};

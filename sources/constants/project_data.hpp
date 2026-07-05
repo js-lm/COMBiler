@@ -11,4 +11,8 @@ namespace constants::project_data{
 
     constexpr int MaximumNumberOfConstants{32};
 
+    constexpr int MetadataTitleMaximumLength{32};
+    constexpr int MetadataAuthorMaximumLength{32};
+    constexpr int MetadataDateMaximumLength{32};
+
 } // namespace constants::project_data

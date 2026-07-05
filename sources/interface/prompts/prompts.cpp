@@ -9,9 +9,15 @@
 #include <fmt/core.h>
 
 #include "constants.hpp"
+#include "constants/serializer.hpp"
 
 #include "labels.hpp"
+
 #include "interface/utilities.hpp"
+
+#include "utilities/project_utilities.hpp"
+
+#include "external/raygui/raygui_wrapper.h"
 
 #include "debug_utilities.hpp"
 
@@ -22,14 +28,8 @@ namespace prompts_constants = constants::labels::prompts;
 
 void Prompts::draw(program_states::InterfaceContext &context){
     auto &promptState{context.interface.prompts};
-    const bool isAnyPromptVisible{
-        promptState.isCommandWindowVisible
-     || promptState.isConstantsManagerWindowVisible
-     || promptState.isOverwritePromptVisible
-     || promptState.isInfoWindowVisible
-    };
 
-    if(!isAnyPromptVisible) return;
+    if(!promptState.isAnyPromptVisible()) return;
 
     const Rectangle overlayBounds{
         0, 0,
@@ -37,6 +37,11 @@ void Prompts::draw(program_states::InterfaceContext &context){
         static_cast<float>(context.system.window.interfaceRenderTextureHeight)
     };
     DrawRectangleRec(overlayBounds, Fade(BLACK, constants::prompts::OverlayDimAlpha));
+
+    if(promptState.isMusicSettingPromptVisible){
+        drawMusicSettingPrompt(context);
+        return;
+    }
 
     if(promptState.isConstantsManagerWindowVisible){
         drawConstantsManagerPrompt(context);
@@ -344,4 +349,103 @@ void Prompts::drawInfoPrompt(program_states::InterfaceContext &context){
     GuiSetStyle(STATUSBAR, TEXT_ALIGNMENT, TEXT_ALIGN_CENTER);
     GuiStatusBar(calculateBoundsAtAnchor(anchor, bounds.copyrightedBar), prompts_constants::AboutCopyrightedBarText);
     GuiSetStyle(STATUSBAR, TEXT_ALIGNMENT, previousStatusBarAlignment);
+}
+
+void Prompts::drawMusicSettingPrompt(program_states::InterfaceContext &context){
+    auto &promptState{context.interface.prompts};
+    const auto anchor{context.layout.anchor.prompts.musicSettingWindow};
+    const auto &bounds{context.layout.bounds.prompts.musicSetting};
+    const auto projectData{utilities::projectDataFrom(context.system)};
+
+    if(!projectData) return;
+
+    if(GuiWindowBox(calculateBoundsAtAnchor(anchor, bounds.windowBox), prompts_constants::MusicSettingWindowBoxText)){
+        promptState.isMusicSettingPromptVisible = false;
+        return;
+    }
+
+    GuiLabel(calculateBoundsAtAnchor(anchor, bounds.titleLabel), prompts_constants::MusicSettingTitleLabelText);
+    if(GuiTextBoxFPSIndependent(
+        calculateBoundsAtAnchor(anchor, bounds.titleTextBox),
+        projectData->metadata.title,
+        constants::project_data::MetadataTitleMaximumLength + 1,
+        promptState.musicSettingTitleTextBoxEditMode
+    )){
+        promptState.musicSettingTitleTextBoxEditMode = !promptState.musicSettingTitleTextBoxEditMode;
+        if(!promptState.musicSettingTitleTextBoxEditMode){
+            DEBUG_PRINT("Updated Project Title: {}", projectData->metadata.title);
+        }
+    }
+
+    GuiLabel(calculateBoundsAtAnchor(anchor, bounds.authorLabel), prompts_constants::MusicSettingAuthorLabelText);
+    if(GuiTextBoxFPSIndependent(
+        calculateBoundsAtAnchor(anchor, bounds.authorTextBox),
+        projectData->metadata.author,
+        constants::project_data::MetadataAuthorMaximumLength + 1,
+        promptState.musicSettingAuthorTextBoxEditMode
+    )){
+        promptState.musicSettingAuthorTextBoxEditMode = !promptState.musicSettingAuthorTextBoxEditMode;
+        if(!promptState.musicSettingAuthorTextBoxEditMode){
+            DEBUG_PRINT("Updated Project Author: {}", projectData->metadata.author);
+        }
+    }
+
+    GuiLabel(calculateBoundsAtAnchor(anchor, bounds.createdLabel), prompts_constants::MusicSettingCreatedLabelText);
+    const std::string creationDateString{(projectData->metadata.creationDate[0] == '\0') ? prompts_constants::MusicSettingNotSavedYetText : projectData->metadata.creationDate};
+    GuiLabel(calculateBoundsAtAnchor(anchor, bounds.createdDateLabel), creationDateString.c_str());
+
+    GuiLabel(calculateBoundsAtAnchor(anchor, bounds.modifiedLabel), prompts_constants::MusicSettingModifiedLabelText);
+    const std::string modificationDateString{(projectData->metadata.modificationDate[0] == '\0') ? prompts_constants::MusicSettingNotSavedYetText : projectData->metadata.modificationDate};
+    GuiLabel(calculateBoundsAtAnchor(anchor, bounds.modifiedDateLabel), modificationDateString.c_str());
+
+    GuiLabel(calculateBoundsAtAnchor(anchor, bounds.versionLabel), prompts_constants::MusicSettingVersionLabelText);
+    const std::string versionString{fmt::format("{} ({})", constants::serializer::Version, COMBILER_VERSION)};
+    GuiLabel(calculateBoundsAtAnchor(anchor, bounds.versionDateLabel), versionString.c_str());
+
+    GuiLine(calculateBoundsAtAnchor(anchor, bounds.line), prompts_constants::MusicSettingLineText);
+
+    GuiLabel(calculateBoundsAtAnchor(anchor, bounds.tempoLabel), prompts_constants::MusicSettingNotesPerSecondLabelText);
+    
+    int maximumTempoValue{static_cast<int>(projectData->metadata.maximumTempo)};
+    if(GuiSpinner(
+        calculateBoundsAtAnchor(anchor, bounds.tempoValueBox),
+        nullptr,
+        &maximumTempoValue,
+        1, 100,
+        promptState.musicSettingMaximumTempoValueBoxEditMode
+    )){
+        promptState.musicSettingMaximumTempoValueBoxEditMode = !promptState.musicSettingMaximumTempoValueBoxEditMode;
+        if(!promptState.musicSettingMaximumTempoValueBoxEditMode){
+            DEBUG_PRINT("Updated Maximum Tempo: {}", maximumTempoValue);
+        }
+    }
+    projectData->metadata.maximumTempo = static_cast<float>(maximumTempoValue);
+
+    GuiLabel(calculateBoundsAtAnchor(anchor, bounds.notesLabel), prompts_constants::MusicSettingNotesPerPageLabelText);
+    
+    const int previousNotesValue{projectData->metadata.notePerPage};
+    if(GuiSpinner(
+        calculateBoundsAtAnchor(anchor, bounds.notesValueBox),
+        nullptr,
+        &projectData->metadata.notePerPage,
+        constants::project_data::MinimumNotePerPage,
+        constants::project_data::MaximumNotePerPage,
+        promptState.musicSettingNotesValueBoxEditMode
+    )){
+        promptState.musicSettingNotesValueBoxEditMode = !promptState.musicSettingNotesValueBoxEditMode;
+        if(!promptState.musicSettingNotesValueBoxEditMode){
+            DEBUG_PRINT("Updated Notes Per Page: {}", projectData->metadata.notePerPage);
+        }
+    }
+
+    if(projectData->metadata.notePerPage != previousNotesValue){
+        projectData->metadata.notePerPage = std::clamp(
+            projectData->metadata.notePerPage,
+            constants::project_data::MinimumNotePerPage,
+            constants::project_data::MaximumNotePerPage
+        );
+        const int currentPageNoteCount{utilities::currentPageNoteCountFrom(*projectData, context.system.project.currentPage)};
+        context.interface.navigationBar.notePerPageSpinnerValue = currentPageNoteCount;
+        context.interface.noteCanvas.isGridLayoutDirty = true;
+    }
 }

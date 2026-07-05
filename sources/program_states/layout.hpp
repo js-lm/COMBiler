@@ -45,6 +45,7 @@ namespace program_states{
 
                 Vector2 overwriteWarningWindow          {0, 0};
                 Vector2 infoWindow                      {0, 0};
+                Vector2 musicSettingWindow              {0, 0};
             } prompts{};
 
         } anchor{};
@@ -101,12 +102,11 @@ namespace program_states{
 
                     Rectangle channelListView   { 8,  32, 96, 224};
                     Rectangle channelLabel      {32,   8, 48,  24};
-                    Rectangle structureLine     { 8, 264, 96,  24};
-
-                    Rectangle tempoValueBox     {48, 288, 56, 24}; // TODO: remove this
-                    Rectangle notesValueBox     {48, 320, 56, 24}; // TODO: move it to the setting menu
-                    Rectangle sideSettingLine   { 8, 352, 96, 24};
-                    Rectangle showCommandsCheckBox{8,376, 24, 24};
+                    // Rectangle structureLine     { 8, 264, 96,  24}; // "Global" label
+                    // Rectangle tempoValueBox     {48, 288, 56, 24};
+                    // Rectangle notesValueBox     {48, 320, 56, 24};
+                    Rectangle sideSettingLine   { 8, 264, 96, 24};
+                    Rectangle showCommandsCheckBox{8,288, 24, 24};
                 } inspector{};
 
             } sidebar{};
@@ -242,6 +242,33 @@ namespace program_states{
                     Rectangle timestampLabel      {152,  24, 200,  24};
                     Rectangle copyrightedBar      {  0, 160, 368,  24};
                 } infoWindow{};
+
+                struct MusicSetting{
+                    Rectangle windowBox           {  0,   0, 248, 224};
+                    
+                    Rectangle titleLabel          {  8,  32, 120,  24};
+                    Rectangle titleTextBox        { 64,  32, 176,  24};
+
+                    Rectangle authorLabel         {  8,  56, 120,  24};
+                    Rectangle authorTextBox       { 64,  56, 176,  24};
+
+                    Rectangle createdLabel        {  8,  80, 120,  24};
+                    Rectangle createdDateLabel    { 64,  80, 176,  24};
+
+                    Rectangle modifiedLabel       {  8, 104, 120,  24};
+                    Rectangle modifiedDateLabel   { 64, 104, 176,  24};
+
+                    Rectangle versionLabel        {  8, 128, 120,  24};
+                    Rectangle versionDateLabel    { 64, 128, 120,  24};
+
+                    Rectangle line                {  8, 152, 232,  16};
+
+                    Rectangle tempoLabel          {  8, 168, 144,  24};
+                    Rectangle tempoValueBox       {152, 168,  88,  24};
+
+                    Rectangle notesLabel          {  8, 192, 144,  24};
+                    Rectangle notesValueBox       {152, 192,  88,  24};
+                } musicSetting{};
 
                 struct Tempo{
                     Rectangle windowBox         {  0,   0, 320, 136};

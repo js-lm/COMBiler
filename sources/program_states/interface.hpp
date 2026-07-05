@@ -51,6 +51,12 @@ namespace program_states{
             constants::prompts::CommandPrompt selectedCommandTool{constants::prompts::CommandPrompt::Tempo};
 
             bool isCommandWindowVisible     {false};
+            bool isMusicSettingPromptVisible{false};
+
+            bool musicSettingTitleTextBoxEditMode{false};
+            bool musicSettingAuthorTextBoxEditMode{false};
+            bool musicSettingMaximumTempoValueBoxEditMode{false};
+            bool musicSettingNotesValueBoxEditMode{false};
 
             bool isOverwritePromptVisible   {false};
             bool isOverwriteConfirmed       {false};
@@ -144,6 +150,16 @@ namespace program_states{
             bool constantsManagerSwapRightTextBoxEditMode{false};
 
             bool isInfoWindowVisible{false};
+
+            bool isAnyPromptVisible() const{
+                return isCommandWindowVisible
+                    || isMusicSettingPromptVisible
+                    || isConstantsManagerWindowVisible
+                    || isConstantsManagerWarningWindowVisible
+                    || isConstantsManagerInfoWindowVisible
+                    || isInfoWindowVisible
+                    || isOverwritePromptVisible;
+            }
 
         } prompts{};
 

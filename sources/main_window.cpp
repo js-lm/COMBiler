@@ -85,7 +85,11 @@ void MainWindow::update(){
     handleEvents();
 
     // midiManager_->update();
-    canvasManager_->update(*actionCenter_, *midiManager_);
+
+    if(!interfaceState_.prompts.isAnyPromptVisible()){
+        canvasManager_->update(*actionCenter_, *midiManager_);
+    }
+    
     playbackManager_->update(*midiManager_);
 
     if(auto projectData{utilities::projectDataWithPagesFrom(systemState_)}){
@@ -106,23 +110,13 @@ void MainWindow::draw(){
         const bool shouldDisableToolbar(machineState_.isPlaying);
         if(shouldDisableToolbar) GuiDisable();
 
-        const bool wasPromptWindowVisible{
-            interfaceState_.prompts.isCommandWindowVisible
-         || interfaceState_.prompts.isConstantsManagerWindowVisible
-         || interfaceState_.prompts.isConstantsManagerWarningWindowVisible
-         || interfaceState_.prompts.isConstantsManagerInfoWindowVisible
-         || interfaceState_.prompts.isInfoWindowVisible
-         || interfaceState_.prompts.isOverwritePromptVisible
-        };
-        if(wasPromptWindowVisible) GuiLock();
+        const bool isPromptActive{interfaceState_.prompts.isAnyPromptVisible()};
+        if(isPromptActive) GuiLock();
         interface::Toolbar::draw(context);
-        if(wasPromptWindowVisible) GuiUnlock();
+        if(isPromptActive) GuiUnlock();
         if(shouldDisableToolbar) GuiEnable();
 
-        const bool shouldBlockUnderlyingUi{
-            wasPromptWindowVisible 
-        //  || machineState_.isPlaying
-        };
+        const bool shouldBlockUnderlyingUi{isPromptActive};
         if(shouldBlockUnderlyingUi) GuiLock();
         interface::Sidebar::draw(context);
         interface::NavigationBar::draw(context);

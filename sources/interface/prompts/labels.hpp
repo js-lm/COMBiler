@@ -2,6 +2,17 @@
 
 namespace constants::labels::prompts{
 
+    constexpr const char *MusicSettingWindowBoxText{"Project Settings"};
+    constexpr const char *MusicSettingTitleLabelText{"Title:"};
+    constexpr const char *MusicSettingAuthorLabelText{"Author:"};
+    constexpr const char *MusicSettingCreatedLabelText{"Created:"};
+    constexpr const char *MusicSettingModifiedLabelText{"Modified:"};
+    constexpr const char *MusicSettingVersionLabelText{"Version:"};
+    constexpr const char *MusicSettingLineText{nullptr};
+    constexpr const char *MusicSettingNotesPerSecondLabelText{"Max Tempo (Notes/Sec):"};
+    constexpr const char *MusicSettingNotesPerPageLabelText{"Default Notes Per Page:"};
+    constexpr const char *MusicSettingNotSavedYetText{"Not saved yet"};
+
     constexpr const char *TempoWindowBoxText{nullptr};
     constexpr const char *TempoGroupBoxText{"Tempo"};
     constexpr const char *TempoSliderText{"Playback Speed"};

@@ -4,14 +4,22 @@
 #include <string>
 #include <variant>
 
+#include "constants/application_window.hpp"
+
 const std::string Serializer::toString(const program_states::ProjectData &data) const{
     std::stringstream savefile;
 
-    savefile << "# VERSION " << constants::serializer::Version << "\n\n";
-
-    savefile << "[METADATA]\n";
+    savefile << "# VERSION " << constants::serializer::Version << " " << COMBILER_VERSION << "\n";
+    
+    if(data.metadata.title[0] != '\0') savefile << "# TITLE " << data.metadata.title << "\n";
+    if(data.metadata.author[0] != '\0') savefile << "# AUTHOR " << data.metadata.author << "\n";
+    if(data.metadata.creationDate[0] != '\0') savefile << "# CREATED " << data.metadata.creationDate << "\n";
+    if(data.metadata.modificationDate[0] != '\0') savefile << "# MODIFIED " << data.metadata.modificationDate << "\n";
+    
+    savefile << "\n[METADATA]\n";
     savefile << "PAGES " << data.metadata.numberOfPages << "\n";
-    savefile << "NOTES_PER_PAGE " << data.metadata.notePerPage << "\n\n";
+    savefile << "NOTES_PER_PAGE " << data.metadata.notePerPage << "\n";
+    savefile << "MAX_TEMPO " << data.metadata.maximumTempo << "\n\n";
 
     savefile << "[CONSTANTS]\n";
     auto constantsList{data.commandPalette.getList()};

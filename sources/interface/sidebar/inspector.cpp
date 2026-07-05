@@ -62,42 +62,42 @@ void Sidebar::drawInspector(program_states::InterfaceContext &context){
 	}
 
 	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.channelLabel), sidebar_constants::ChannelLabelText);
-	GuiLine(calculateBoundsAtAnchor(anchor, bounds.structureLine), sidebar_constants::StructureLineText);
+	// GuiLine(calculateBoundsAtAnchor(anchor, bounds.structureLine), sidebar_constants::StructureLineText);
 
-	if(GuiValueBox(
-		calculateBoundsAtAnchor(anchor, bounds.tempoValueBox),
-		sidebar_constants::TempoValueBoxText,
-		&context.interface.sidebar.tempoValue,
-		0,
-		100, // TODO: magic numbers
-		context.interface.sidebar.tempoValueBoxEditMode
-	)){
-		context.interface.sidebar.tempoValueBoxEditMode = !context.interface.sidebar.tempoValueBoxEditMode;
-	}
+	// if(GuiValueBox(
+	// 	calculateBoundsAtAnchor(anchor, bounds.tempoValueBox),
+	// 	sidebar_constants::TempoValueBoxText,
+	// 	&context.interface.sidebar.tempoValue,
+	// 	0,
+	// 	100, // TODO: magic numbers
+	// 	context.interface.sidebar.tempoValueBoxEditMode
+	// )){
+	// 	context.interface.sidebar.tempoValueBoxEditMode = !context.interface.sidebar.tempoValueBoxEditMode;
+	// }
 
-	if(GuiValueBox(
-		calculateBoundsAtAnchor(anchor, bounds.notesValueBox),
-		sidebar_constants::NotesValueBoxText,
-		&context.interface.sidebar.notesValue,
-		constants::project_data::MinimumNotePerPage,
-		constants::project_data::MaximumNotePerPage,
-		context.interface.sidebar.notesValueBoxEditMode
-	)){
-		context.interface.sidebar.notesValueBoxEditMode = !context.interface.sidebar.notesValueBoxEditMode;
-	}
+	// if(GuiValueBox(
+	// 	calculateBoundsAtAnchor(anchor, bounds.notesValueBox),
+	// 	sidebar_constants::NotesValueBoxText,
+	// 	&context.interface.sidebar.notesValue,
+	// 	constants::project_data::MinimumNotePerPage,
+	// 	constants::project_data::MaximumNotePerPage,
+	// 	context.interface.sidebar.notesValueBoxEditMode
+	// )){
+	// 	context.interface.sidebar.notesValueBoxEditMode = !context.interface.sidebar.notesValueBoxEditMode;
+	// }
 
-	if(projectData && context.interface.sidebar.notesValue != previousNotesValue){
-		context.interface.sidebar.notesValue = std::clamp(
-			context.interface.sidebar.notesValue,
-			constants::project_data::MinimumNotePerPage,
-			constants::project_data::MaximumNotePerPage
-		);
+	// if(projectData && context.interface.sidebar.notesValue != previousNotesValue){
+	// 	context.interface.sidebar.notesValue = std::clamp(
+	// 		context.interface.sidebar.notesValue,
+	// 		constants::project_data::MinimumNotePerPage,
+	// 		constants::project_data::MaximumNotePerPage
+	// 	);
 
-		projectData->metadata.notePerPage = context.interface.sidebar.notesValue;
-		const int currentPageNoteCount{utilities::currentPageNoteCountFrom(*projectData, context.system.project.currentPage)};
-		context.interface.navigationBar.notePerPageSpinnerValue = currentPageNoteCount;
-		context.interface.noteCanvas.isGridLayoutDirty = true;
-	}
+	// 	projectData->metadata.notePerPage = context.interface.sidebar.notesValue;
+	// 	const int currentPageNoteCount{utilities::currentPageNoteCountFrom(*projectData, context.system.project.currentPage)};
+	// 	context.interface.navigationBar.notePerPageSpinnerValue = currentPageNoteCount;
+	// 	context.interface.noteCanvas.isGridLayoutDirty = true;
+	// }
 
 	GuiLine(calculateBoundsAtAnchor(anchor, bounds.sideSettingLine), sidebar_constants::SideSettingLineText);
 	GuiCheckBox(

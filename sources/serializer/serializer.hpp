@@ -16,7 +16,7 @@ public:
     Serializer() = default;
     ~Serializer() = default;
 
-    void save(const program_states::ProjectData &data, bool saveAsNewFile = false);
+    void save(program_states::ProjectData &data, bool saveAsNewFile = false);
     std::optional<program_states::ProjectData> load();
     std::optional<program_states::ProjectData> load(const std::string &filePath);
 

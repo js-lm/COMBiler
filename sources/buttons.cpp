@@ -117,6 +117,10 @@ void MainWindow::handleToolbarButtonsEvents(){
             }
         }
 
+        if(interfaceState_.toolbar.isMusicSettingButtonPressed){
+            interfaceState_.prompts.isMusicSettingPromptVisible = true;
+        }
+
         if(interfaceState_.toolbar.isExportFileButtonPressed){
             // TODO:
             Enumerator::print(
@@ -132,16 +136,9 @@ void MainWindow::handleToolbarButtonsEvents(){
         interfaceState_.sidebar.selectedChannelListViewIndex == constants::interface_layout::note_canvas::notes::SystemChannelListViewIndex
     };
 
-    const bool wasPromptWindowVisible{
-        interfaceState_.prompts.isCommandWindowVisible
-     || interfaceState_.prompts.isConstantsManagerWindowVisible
-     || interfaceState_.prompts.isConstantsManagerWarningWindowVisible
-     || interfaceState_.prompts.isConstantsManagerInfoWindowVisible
-     || interfaceState_.prompts.isInfoWindowVisible
-     || interfaceState_.prompts.isOverwritePromptVisible
-    };
+    const bool isPromptActive{interfaceState_.prompts.isAnyPromptVisible()};
 
-    if(!machineState_.isPlaying && !wasPromptWindowVisible){
+    if(!machineState_.isPlaying && !isPromptActive){
         if(isSystemChannelSelected){
             if(IsKeyPressed(KEY_Q)) interfaceState_.prompts.selectedCommandTool = constants::prompts::CommandPrompt::Tempo;
             if(IsKeyPressed(KEY_W)) interfaceState_.prompts.selectedCommandTool = constants::prompts::CommandPrompt::Volume;
@@ -160,7 +157,7 @@ void MainWindow::handleToolbarButtonsEvents(){
 
     const int previousChannelIndex{interfaceState_.sidebar.selectedChannelListViewIndex};
 
-    if(!wasPromptWindowVisible){
+    if(!isPromptActive){
         if(IsKeyPressed(KEY_GRAVE)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::AllChannelsListViewIndex;
         if(IsKeyPressed(KEY_ONE)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::FirstInstrumentChannelListViewIndex;
         if(IsKeyPressed(KEY_TWO)) interfaceState_.sidebar.selectedChannelListViewIndex = constants::sidebar::SecondInstrumentChannelListViewIndex;

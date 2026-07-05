@@ -4,6 +4,8 @@
 
 #include "debug_utilities.hpp"
 
+#include "utilities/project_utilities.hpp"
+
 void PlaybackManager::update(MidiManager &midiManager){
     auto &machine{context_.machine};
 
@@ -23,8 +25,12 @@ void PlaybackManager::updatePlayback(MidiManager &midiManager){
 
     if(!machine.isPlaying) return;
 
+    const auto projectData{utilities::projectDataFrom(context_.system)};
+    float maximumTempo{12.0f};
+    if(projectData) maximumTempo = projectData->metadata.maximumTempo;
+
     const float tempoPercentage{machine.tempo / static_cast<float>(constants::prompts::TempoPercentageMaximumValue)};
-    const float notePerSecond{constants::midi::MaximumNotePerSecond * tempoPercentage};
+    const float notePerSecond{maximumTempo * tempoPercentage};
     const float noteDuration{1.0f / notePerSecond};
 
     // DEBUG_PRINT_IF_CHANGED("tempoPercentage:{}, notePerSecond:{}, noteDuration:{}", tempoPercentage, notePerSecond, noteDuration);

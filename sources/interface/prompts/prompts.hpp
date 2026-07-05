@@ -24,6 +24,8 @@ namespace interface{
 		
 		static void drawInfoPrompt(program_states::InterfaceContext &context);
 
+		static void drawMusicSettingPrompt(program_states::InterfaceContext &context);
+
 	private:
 		static const Vector2 &windowAnchor(
             const program_states::Layout &layoutState, 

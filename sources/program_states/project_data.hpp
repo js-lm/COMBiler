@@ -16,6 +16,13 @@ namespace program_states{
         struct Metadata{
             int numberOfPages{1};
             int notePerPage{constants::project_data::MaximumNotePerPage};
+
+            char title[constants::project_data::MetadataTitleMaximumLength + 1]{""};
+            char author[constants::project_data::MetadataAuthorMaximumLength + 1]{""};
+            char creationDate[constants::project_data::MetadataDateMaximumLength + 1]{""};
+            char modificationDate[constants::project_data::MetadataDateMaximumLength + 1]{""};
+
+            float maximumTempo{12.0f};
         } metadata{};
 
         command::CommandPalette commandPalette;

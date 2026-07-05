@@ -6,7 +6,7 @@
 
 namespace constants::midi{
 
-    constexpr float MaximumNotePerSecond{12.0f};
+    // constexpr float MaximumNotePerSecond{12.0f};
     constexpr float StaccatoReleaseDuration{.33f};
     // constexpr float MinimumStaccatoReleaseDuration{.2f};
     // constexpr float MaximumStaccatoReleaseDuration{.5f};
