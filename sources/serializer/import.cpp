@@ -40,6 +40,9 @@ program_states::ProjectData Serializer::toProjectData(const std::string &data) c
             strncpy(projectData.metadata.modificationDate, currentLine.substr(11).c_str(), constants::project_data::MetadataDateMaximumLength);
             projectData.metadata.modificationDate[constants::project_data::MetadataDateMaximumLength] = '\0';
             continue;
+        }else if(currentLine == "# READ_ONLY"){
+            projectData.metadata.isReadOnly = true;
+            continue;
         }
 
         if(currentLine == "[METADATA]"){

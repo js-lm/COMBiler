@@ -91,6 +91,7 @@ namespace program_states{
                 struct ToolOption{
                     Rectangle groupBox      {  0, 0, 160, 40};
                     Rectangle infoButton    {120, 8,  24, 24};
+                    Rectangle readOnlyIcon  { 96, 8,  24, 24};
                 } toolOption{};
 
             } toolbar{};
@@ -224,10 +225,10 @@ namespace program_states{
                 } constantsManagerInfo{};
 
                 struct OverwriteWarning{
-                    Rectangle windowBox {  0,  0, 300, 120};
-                    Rectangle label     { 10, 35, 280,  30};
-                    Rectangle yesButton { 40, 80, 100,  30};
-                    Rectangle noButton  {160, 80, 100,  30};
+                    Rectangle windowBox {  0,  0, 272, 80};
+                    Rectangle label     {  8, 24, 256, 24};
+                    Rectangle yesButton {160, 48,  64, 24};
+                    Rectangle noButton  { 48, 48,  64, 24};
                 } overwriteWarning{};
 
                 struct InfoWindow{
@@ -260,6 +261,8 @@ namespace program_states{
 
                     Rectangle versionLabel        {  8, 128, 120,  24};
                     Rectangle versionDateLabel    { 64, 128, 120,  24};
+
+                    Rectangle readOnlyCheckBox    {152, 128,  24,  24};
 
                     Rectangle line                {  8, 152, 232,  16};
 

@@ -22,6 +22,7 @@ namespace constants::interface_layout{
 
     constexpr int PerPageSpinnerRightPadding{96};
     constexpr int ToolOptionInfoButtonRightPadding{16};
+    constexpr int ToolOptionReadOnlyIconRightPadding{8};
 
     constexpr int TransportControlsButtonsTotalWidth{168};
     constexpr int TransportControlsNextPageButtonOffset{28};

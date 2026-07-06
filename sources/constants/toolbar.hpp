@@ -24,4 +24,7 @@ namespace constants::toolbar{
         }
     }
 
+    constexpr float ReadOnlyBlinkDurationInSeconds{2.0f};
+    constexpr int ReadOnlyBlinkFrequency{10};
+
 } // namespace constants::toolbar

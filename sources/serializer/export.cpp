@@ -15,6 +15,7 @@ const std::string Serializer::toString(const program_states::ProjectData &data) 
     if(data.metadata.author[0] != '\0') savefile << "# AUTHOR " << data.metadata.author << "\n";
     if(data.metadata.creationDate[0] != '\0') savefile << "# CREATED " << data.metadata.creationDate << "\n";
     if(data.metadata.modificationDate[0] != '\0') savefile << "# MODIFIED " << data.metadata.modificationDate << "\n";
+    if(data.metadata.isReadOnly) savefile << "# READ_ONLY\n";
     
     savefile << "\n[METADATA]\n";
     savefile << "PAGES " << data.metadata.numberOfPages << "\n";

@@ -10,7 +10,7 @@ void ActionCenter::addPage(int requestedPageInsertionIndex){
     
 	if(!stagedSlot_->data) return;
 
-	beginAction();
+	if(!beginAction()) return;
 
 	auto &projectData{*stagedSlot_->data};
 	int insertionIndex{requestedPageInsertionIndex};
@@ -54,7 +54,7 @@ void ActionCenter::movePage(int sourcePageIndex, int targetInsertionIndex){
 	const int pageCount{static_cast<int>(stagedSlot_->data->pages.size())};
 	if(pageCount <= constants::action_center::FirstPageNumber) return;
 
-	beginAction();
+	if(!beginAction()) return;
 
 	auto &projectData{*stagedSlot_->data};
 
@@ -102,7 +102,7 @@ void ActionCenter::removePage(int startIndex, int endIndex){
     if(!stagedSlot_->data) return;
     const int pageCount{static_cast<int>(stagedSlot_->data->pages.size())};
 
-    beginAction();
+    if(!beginAction()) return;
 
     auto &projectData{*stagedSlot_->data};
     const int minIndex{std::max(0, std::min(startIndex, endIndex))};
@@ -158,7 +158,7 @@ void ActionCenter::pastePage(program_states::Interface &interface, int insertion
     auto &clipboard{interface.timelineClipboard};
     if(!clipboard.hasCopiedPages || clipboard.copiedPages.empty()) return;
 
-    beginAction();
+    if(!beginAction()) return;
     auto &projectData{*stagedSlot_->data};
 
     const int index{std::clamp(insertionIndex, 0, static_cast<int>(projectData.pages.size()))};

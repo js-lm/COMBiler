@@ -45,6 +45,8 @@ namespace program_states{
             bool isCopyNoteButtonPressed    {false};
             bool isPasteNoteButtonPressed   {false};
             bool isInfoButtonPressed        {false};
+
+            float readOnlyBlinkTimer{.0f};
         } toolbar{};
 
         struct Prompts{

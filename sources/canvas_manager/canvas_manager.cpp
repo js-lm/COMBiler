@@ -1,9 +1,9 @@
 #include "canvas_manager.hpp"
+#include "utilities/project_utilities.hpp"
 
 void CanvasManager::update(ActionCenter &actionCenter, MidiManager &midiManager){
     if(context_.interface.navigationBar.isTimelineDraggingPage) return;
     if(context_.interface.navigationBar.isPageSelectEnabled) return;
-    
 
     if(!hasInitializedSelectionTracking_){
         previousSelectedTool_ = context_.interface.toolbar.selectedTool;

@@ -2,6 +2,8 @@
 
 #include <raygui.h>
 
+#include "utilities/project_utilities.hpp"
+
 using namespace interface;
 
 void Toolbar::draw(program_states::InterfaceContext &context){
@@ -10,6 +12,7 @@ void Toolbar::draw(program_states::InterfaceContext &context){
     if(context.interface.navigationBar.isPageSelectEnabled) GuiDisable();
     drawStateControl(context);
     drawToolPalette(context);
-    drawOption(context);
     if(context.interface.navigationBar.isPageSelectEnabled) GuiEnable();
+
+    drawOption(context);
 }

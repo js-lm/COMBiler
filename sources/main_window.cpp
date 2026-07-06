@@ -92,6 +92,9 @@ void MainWindow::initialize(){
     // stagedObserver_ = actionCenter_.getStagedObserver();
     systemState_.project.data = actionCenter_->getStagedObserver();
 
+    actionCenter_->onReadOnlyViolation = [this](){
+        interfaceState_.toolbar.readOnlyBlinkTimer = constants::toolbar::ReadOnlyBlinkDurationInSeconds;
+    };
 }
 
 void MainWindow::update(){

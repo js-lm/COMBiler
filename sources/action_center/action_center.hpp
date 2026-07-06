@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include <functional>
 
 #include "program_states/project_data.hpp"
 #include "program_states/interface.hpp"
@@ -29,6 +30,9 @@ private:
     bool isInAction_{false};
 
     std::optional<size_t> savedCursorIndex_{0};
+
+public:
+    std::function<void()> onReadOnlyViolation{};
 
 public:
     void markAsSaved(){ savedCursorIndex_ = cursorIndex_;}
@@ -99,7 +103,7 @@ public:
     void finishAction();
 
 private:
-    void beginAction();
+    bool beginAction();
     void commit();
 
 private:

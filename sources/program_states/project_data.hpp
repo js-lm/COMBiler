@@ -23,6 +23,7 @@ namespace program_states{
             char modificationDate[constants::project_data::MetadataDateMaximumLength + 1]{""};
 
             float maximumTempo{12.0f};
+            bool isReadOnly{false};
         } metadata{};
 
         command::CommandPalette commandPalette;

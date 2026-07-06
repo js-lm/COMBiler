@@ -404,6 +404,10 @@ void Prompts::drawMusicSettingPrompt(program_states::InterfaceContext &context){
     const std::string versionString{fmt::format("{} ({})", constants::serializer::Version, COMBILER_VERSION)};
     GuiLabel(calculateBoundsAtAnchor(anchor, bounds.versionDateLabel), versionString.c_str());
 
+    if(GuiCheckBox(calculateBoundsAtAnchor(anchor, bounds.readOnlyCheckBox), prompts_constants::MusicSettingReadOnlyCheckBoxText, &projectData->metadata.isReadOnly)){
+        promptState.hasModifiedMetadata = true;
+    }
+
     GuiLine(calculateBoundsAtAnchor(anchor, bounds.line), prompts_constants::MusicSettingLineText);
 
     GuiLabel(calculateBoundsAtAnchor(anchor, bounds.tempoLabel), prompts_constants::MusicSettingNotesPerSecondLabelText);

@@ -164,6 +164,7 @@ void MainWindow::handleWindowSizeChangeEvent(){
 
         bounds.toolbar.toolOption.groupBox.width = window.interfaceRenderTextureWidth - anchor.toolbar.toolOption.x;
         bounds.toolbar.toolOption.infoButton.x = bounds.toolbar.toolOption.groupBox.width - bounds.toolbar.toolOption.infoButton.width - ToolOptionInfoButtonRightPadding;
+        bounds.toolbar.toolOption.readOnlyIcon.x = bounds.toolbar.toolOption.infoButton.x - bounds.toolbar.toolOption.readOnlyIcon.width - constants::interface_layout::ToolOptionReadOnlyIconRightPadding;
     } /* toolbar */
 
     /* prompts */ {

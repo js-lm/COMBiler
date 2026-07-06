@@ -1,0 +1,28 @@
+#
+# rgl layout text file (v4.0) - raygui layout file generated using rGuiLayout
+#
+# Number of controls:     17
+#
+# Ref. window:    r <x> <y> <width> <height>
+# Anchor info:    a <id> <name> <posx> <posy> <enabled>
+# Control info:   c <id> <type> <name> <rectangle> <anchor_id> <text>
+#
+r 0 40 -1 -1
+a 001 anchor01 72 72 1
+c 000 0 ProjectSettingsWindowBox 0 0 248 224 1 Project Settings
+c 001 4 TitleLabel 8 32 120 24 1 Title:
+c 002 4 AuthorLabel 8 56 120 24 1 Author:
+c 003 4 CreatedLabel 8 80 120 24 1 Created:
+c 004 4 ModifiedLabel 8 104 120 24 1 Modified:
+c 005 4 NotesPerSecLabel 80 240 144 24 0 Max Tempo (Notes/Sec):
+c 006 4 NotesPerPageLabel 8 192 144 24 1 Default Notes Per Page:
+c 007 4 CreatedDateLabel 64 80 176 24 1 2000-01-01 @ 01:01:01
+c 008 4 ModifiedDateLabel 64 104 176 24 1 2100-10-10 @ 10:10:10
+c 009 4 VersionLabel 8 128 120 24 1 Version:
+c 010 4 SavefileVersionAndProgramVersionLabel 64 128 120 24 1 1 (0.2)
+c 011 12 TitleTextBox 64 32 176 24 1 My Awesome Music
+c 012 12 AuthorTextBox 64 56 176 24 1 The One and Only, aka, Me
+c 013 15 MaximumTempoSpinner 152 168 88 24 1 
+c 014 15 DefaultNotesPerPageSpinner 152 192 88 24 1 
+c 015 2 ProjectSettingsLine 8 152 232 16 1 
+c 016 7 ReadOnlyCheckBox 152 128 24 24 1 Read-Only

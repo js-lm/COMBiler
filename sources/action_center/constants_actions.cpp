@@ -1,7 +1,7 @@
 #include "action_center.hpp"
 
 void ActionCenter::commitConstantModification(const program_states::Interface::Prompts::ConstantsManagerDraft &draft){
-    beginAction();
+    if(!beginAction()) return;
 
     auto &palette{stagedSlot_->data->commandPalette};
 

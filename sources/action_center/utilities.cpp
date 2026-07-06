@@ -52,10 +52,12 @@ void ActionCenter::commit(){
 }
 
 bool ActionCenter::redo(){
+    if(!stagedSlot_->data) return false;
+    if(stagedSlot_->data->metadata.isReadOnly){
+        if(onReadOnlyViolation) onReadOnlyViolation();
+        return false;
+    }
     if(!canRedo() || isInAction_) return false;
-    
-    cursorIndex_ = (cursorIndex_ + 1) % constants::action_center::MaximumHistory;
-    if(!commits_[cursorIndex_]) return false;
     
     stagedSlot_->data = std::make_shared<program_states::ProjectData>(*commits_[cursorIndex_]);
 
@@ -65,6 +67,11 @@ bool ActionCenter::redo(){
 }
 
 bool ActionCenter::undo(){
+    if(!stagedSlot_->data) return false;
+    if(stagedSlot_->data->metadata.isReadOnly){
+        if(onReadOnlyViolation) onReadOnlyViolation();
+        return false;
+    }
     if(!canUndo() || isInAction_) return false;
 
     auto transientOfAction{commits_[cursorIndex_]->transient};
@@ -87,11 +94,18 @@ bool ActionCenter::undo(){
     
 }
 
-void ActionCenter::beginAction(){
-    if(isInAction_) return;
+bool ActionCenter::beginAction(){
+    if(!stagedSlot_->data) return false;
+    if(stagedSlot_->data->metadata.isReadOnly){
+        if(onReadOnlyViolation) onReadOnlyViolation();
+        return false;
+    }
+
+    if(isInAction_) return true;
 
     stagedSlot_->data = std::make_shared<program_states::ProjectData>(*stagedSlot_->data);
     isInAction_ = true;
+    return true;
 }
 
 void ActionCenter::finishAction(){
@@ -160,7 +174,7 @@ void ActionCenter::updateInstrumentChannelCell(
     int noteIndex,
     std::optional<music_data::InstrumentChannelData> cellValue
 ){
-    beginAction();
+    if(!beginAction()) return;
     
     auto &page{utilities::pageByNumber(*stagedSlot_->data, pageNumber)};
 

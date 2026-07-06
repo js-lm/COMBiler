@@ -11,7 +11,7 @@
 void ActionCenter::addCommand(int pageNumber, int noteIndex, const program_states::Interface::Prompts &promptState){
 	auto &page{utilities::pageByNumber(*stagedSlot_->data, pageNumber)};
 
-	beginAction();
+	if(!beginAction()) return;
 
 	// stagedSlot_->data->transient.currentPageNumber = pageNumber;
 	// stagedSlot_->data->transient.selectedChannelListViewIndex = constants::sidebar::SystemChannelListViewIndex;
@@ -33,7 +33,7 @@ void ActionCenter::addCommand(int pageNumber, int noteIndex, const program_state
 void ActionCenter::removeCommand(int pageNumber, int noteIndex){
 	auto &page{utilities::pageByNumber(*stagedSlot_->data, pageNumber)};
 
-	beginAction();
+	if(!beginAction()) return;
 
 	// stagedSlot_->data->transient.currentPageNumber = pageNumber;
 	// stagedSlot_->data->transient.selectedChannelListViewIndex = constants::sidebar::SystemChannelListViewIndex;
@@ -55,7 +55,7 @@ void ActionCenter::setCommandToken(
 ){
 	auto &page{utilities::pageByNumber(*stagedSlot_->data, pageNumber)};
 
-	beginAction();
+	if(!beginAction()) return;
 
 	// stagedSlot_->data->transient.currentPageNumber = pageNumber;
 	// stagedSlot_->data->transient.selectedChannelListViewIndex = selectedChannelListViewIndex;
