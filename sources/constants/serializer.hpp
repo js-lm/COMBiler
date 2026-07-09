@@ -14,7 +14,8 @@ namespace constants::serializer{
 
     constexpr const char *DefaultFilename{"COMBosition.cmb"};
 
-
-
+    // web
+    constexpr const char *IdbfsMountPoint{"/local"};
+    constexpr const char *LastProjectFile{"/local/.last_project"};
 
 } // namespace constants::serializer

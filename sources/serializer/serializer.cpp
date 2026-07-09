@@ -1,6 +1,10 @@
 #include "serializer.hpp"
 
+#ifdef PLATFORM_WEB
+#include <emscripten.h>
+#else
 #include <external/tinyfiledialogs/tinyfiledialogs.h>
+#endif
 
 #include "constants.hpp"
 
@@ -32,6 +36,52 @@ void Serializer::save(program_states::ProjectData &data, bool saveAsNewFile){
 
     DEBUG_PRINT("currentFilename_: [{}]", currentFilename_);
 
+#ifdef PLATFORM_WEB
+    if(saveAsNewFile){
+        const std::string content{toString(data)};
+        const std::string filename{currentFilename_.empty() ? constants::serializer::DefaultFilename : currentFilename_};
+        
+        EM_ASM_({
+            var contentString = UTF8ToString($0);
+            var filenameString = UTF8ToString($1);
+            var dataBlob = new Blob([contentString], {type: 'text/plain'});
+            var objectUrl = URL.createObjectURL(dataBlob);
+            var anchorElement = document.createElement('a');
+            anchorElement.href = objectUrl;
+            anchorElement.download = filenameString;
+            document.body.appendChild(anchorElement);
+            anchorElement.click();
+            document.body.removeChild(anchorElement);
+            URL.revokeObjectURL(objectUrl);
+        }, content.c_str(), filename.c_str());
+
+        return;
+    }
+
+    if(currentFilename_.empty()){
+        currentFilename_ = constants::serializer::DefaultFilename;
+    }
+    
+    currentWorkingDirectory_ = constants::serializer::IdbfsMountPoint;
+    std::string saveFilePath{std::string{currentWorkingDirectory_} + "/" + currentFilename_};
+
+    DEBUG_PRINT("PWD: {}\nFilename: {}\nFinal: {}", currentWorkingDirectory_, currentFilename_, saveFilePath);
+
+    SaveFileText(saveFilePath.c_str(), const_cast<char*>(toString(data).c_str()));
+    SaveFileText(constants::serializer::LastProjectFile, const_cast<char*>(currentFilename_.c_str()));
+    
+    EM_ASM({
+        console.log("writing to IDBFS triggered from cpp");
+
+        FS.syncfs(false, function(error){
+            if(error){
+                console.error('Error syncing to IDBFS: ', error);
+            }else{
+                console.log('successfully synced to IDBFS');
+            }
+        });
+    });
+#else
     if(currentFilename_.empty() 
     || saveAsNewFile 
     || !FileExists(std::string{currentWorkingDirectory_ + "/" + currentFilename_}.c_str())
@@ -57,11 +107,37 @@ void Serializer::save(program_states::ProjectData &data, bool saveAsNewFile){
     DEBUG_PRINT("PWD: {}\nFilename: {}\nFinal: {}", currentWorkingDirectory_, currentFilename_, saveFilePath);
 
     SaveFileText(saveFilePath.c_str(), const_cast<char*>(toString(data).c_str()));
-
+#endif
 }
 
 std::optional<program_states::ProjectData> Serializer::load(){
 
+#ifdef PLATFORM_WEB
+    const std::string extensionPattern{std::string{"."} + std::string{constants::serializer::SaveFileExtension}};
+    EM_ASM_({
+        var extensionType = UTF8ToString($0);
+
+        var inputElement = document.createElement('input');
+        inputElement.type = 'file';
+        inputElement.accept = extensionType;
+        inputElement.onchange = function(event){
+            var selectedFile = event.target.files[0];
+            if(!selectedFile){
+                return;
+            }
+            var fileReader = new FileReader();
+            fileReader.onload = function(loadEvent){
+                var fileContent = new Uint8Array(loadEvent.target.result);
+                FS.writeFile('/' + selectedFile.name, fileContent);
+                Module.ccall('onWebFileLoaded', 'void', ['string'], [selectedFile.name]);
+            };
+            fileReader.readAsArrayBuffer(selectedFile);
+        };
+        inputElement.click();
+    }, extensionPattern.c_str());
+
+    return std::nullopt; // async load, handeld by callback
+#else
     std::string currentSaveFilePath{currentWorkingDirectory_ + "/" + currentFilename_};
 
     const std::string pattern{std::string{"*."} + constants::serializer::SaveFileExtension};
@@ -81,6 +157,7 @@ std::optional<program_states::ProjectData> Serializer::load(){
     }
 
     return load(std::string{saveFilePath});
+#endif
 }
 
 std::optional<program_states::ProjectData> Serializer::load(const std::string &filePath){

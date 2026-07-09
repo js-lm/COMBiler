@@ -7,7 +7,7 @@
 
 #include <algorithm>
 
-#include "serializer/serializer.hpp" 
+#include "serializer/serializer.hpp"
 
 void MainWindow::handlePageChangeButtonsEvents(){
     if(interfaceState_.navigationBar.isAddPageRequested){
@@ -88,6 +88,7 @@ void MainWindow::handleToolbarButtonsEvents(){
     }
 
     if(auto projectData{systemState_.project.data.lock()}){
+// #ifndef PLATFORM_WEB
         // DEBUG_PRINT("{}", Serializer::toString(*projectData.d));
         if((IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_S)) // TODO: move it out
         || interfaceState_.toolbar.isSaveFileButtonPressed

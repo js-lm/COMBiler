@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COMBiler</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; overflow: hidden; background: #000000; /* #f3f5f5; */ }
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            outline: none;
+        }
+        .loading {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #f3f5f5;
+            color: #111827;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 16px;
+            z-index: 10;
+        }
+        .loading-bar-container {
+            width: 300px;
+            height: 20px;
+            background: #f9fafb;
+            border: 2px solid #d1d5db;
+            margin-top: 16px;
+            border-radius: 0;
+            overflow: hidden;
+        }
+        .loading-bar {
+            width: 0%;
+            height: 100%;
+            background: #f03e3e;
+            border-radius: 0;
+            transition: width 0.2s;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        <div>Loading COMBiler...</div>
+        <div class="loading-bar-container">
+            <div class="loading-bar" id="loading-bar"></div>
+        </div>
+        <div id="loading-status" style="margin-top: 8px; font-size: 12px; color: #9ca3af;"></div>
+    </div>
+    <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex="0"></canvas>
+
+    <script type="text/javascript">
+        (function(){
+            var canvas = document.getElementById('canvas');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        })();
+
+        const originalFetch = window.fetch;
+        window.fetch = async function(){
+            // let url = arguments[0];
+
+            let inputArgument = arguments[0];
+            let resourceLocator = typeof inputArgument === 'string' ? inputArgument : (inputArgument instanceof URL ? inputArgument.href : (inputArgument && inputArgument.url ? inputArgument.url : ''));
+
+            // if(typeof url === 'string' && url.endsWith('COMBiler.data')){
+            if(resourceLocator && resourceLocator.endsWith('COMBiler.data')){
+                try{
+                    // let testResponse = await originalFetch(url + ".partaa", {method: 'HEAD'});
+
+                    let letters = "abcdefghijklmnopqrstuvwxyz";
+                    let suffixes = [];
+                    for(let firstIndex = 0; firstIndex < letters.length; firstIndex++){
+                        for(let secondIndex = 0; secondIndex < letters.length; secondIndex++){
+                            suffixes.push(letters[firstIndex] + letters[secondIndex]);
+                        }
+                    }
+
+                    // let chunks = [];
+                    // let totalLength = 0;
+
+                    // for(let index = 0; index < suffixes.length; index++){
+                    //     let chunkUrl = url + ".part" + suffixes[index];
+                    //     let response = await originalFetch(chunkUrl);
+
+                    //     if(!response.ok) break;
+
+                    //     let buffer = await response.arrayBuffer();
+                    //     chunks.push(new Uint8Array(buffer));
+                    //     totalLength += buffer.byteLength;
+                    // }
+
+                    let firstChunkResourceLocator = resourceLocator + ".part" + suffixes[0];
+                    let firstResponse = await originalFetch(firstChunkResourceLocator);
+                    
+                    if(!firstResponse.ok){
+                        return originalFetch.apply(this, arguments);
+                    }
+
+                    let preFetchQueue = [];
+                    let maximumConcurrentFetches = 6;
+                    let fetchIndex = 1;
+                    let hasFoundLastChunk = false;
+
+                    function triggerFetch(){
+                        while(!hasFoundLastChunk && preFetchQueue.length < maximumConcurrentFetches && fetchIndex < suffixes.length){
+                            let chunkResourceLocator = resourceLocator + ".part" + suffixes[fetchIndex];
+                            let fetchPromise = originalFetch(chunkResourceLocator).then(function(response){
+                                if(!response.ok){
+                                    hasFoundLastChunk = true;
+                                    return null;
+                                }
+                                return response.arrayBuffer();
+                            });
+                            preFetchQueue.push(fetchPromise);
+                            fetchIndex++;
+                        }
+                    }
+                    
+                    triggerFetch();
+
+                    let currentChunkIndex = 0;
+
+                    let stream = new ReadableStream({
+                        async pull(controller){
+                            if(currentChunkIndex === 0){
+                                let buffer = await firstResponse.arrayBuffer();
+                                controller.enqueue(new Uint8Array(buffer));
+                                currentChunkIndex++;
+                                return;
+                            }
+                            
+                            if(preFetchQueue.length === 0 && hasFoundLastChunk){
+                                controller.close();
+                                return;
+                            }
+                            
+                            if(preFetchQueue.length === 0){
+                                triggerFetch();
+                            }
+                            
+                            let buffer = await preFetchQueue.shift();
+                            triggerFetch();
+                            
+                            if(!buffer){
+                                hasFoundLastChunk = true;
+                                controller.close();
+                                return;
+                            }
+                            
+                            controller.enqueue(new Uint8Array(buffer));
+                            currentChunkIndex++;
+                        }
+                    });
+
+                    // let combined = new Uint8Array(totalLength);
+                    // let offset = 0;
+                    // for(let chunk of chunks){
+                    //     combined.set(chunk, offset);
+                    //     offset += chunk.length;
+                    // }
+
+                    return new Response(stream, {
+                        status: 200,
+                        headers: new Headers({
+                            "Content-Type": "application/octet-stream"
+                            // "Content-Length": totalLength.toString()
+                        })
+                    });
+                }catch(exception){
+                    console.warn("chunked fetch failed, falling back to original fetch:", exception);
+                }
+            }
+            return originalFetch.apply(this, arguments);
+        };
+
+        var Module = {
+            canvas: (function(){ return document.getElementById('canvas'); })(),
+            onRuntimeInitialized: function(){
+                document.getElementById('loading').style.display = 'none';
+                var canvas = document.getElementById('canvas');
+                canvas.focus();
+                canvas.addEventListener('click', function(){ this.focus(); });
+            },
+            setStatus: function(text){
+                var statusElement = document.getElementById('loading-status');
+                var barElement = document.getElementById('loading-bar');
+                
+                var match = text.match(/(\d+(\.\d+)?)\/(\d+)/);
+                if(match){
+                    var downloaded = parseFloat(match[1]);
+                    var total = parseFloat(match[3]);
+                    var progress = (downloaded / total) * 100;
+                    
+                    if(barElement) barElement.style.width = progress + '%';
+                    
+                    if(statusElement){
+                        var megabytesDownloaded = (downloaded / (1024 * 1024)).toFixed(2);
+                        var megabytesTotal = (total / (1024 * 1024)).toFixed(2);
+                        statusElement.innerText = "Downloading assets... " + megabytesDownloaded + " MB / " + megabytesTotal + " MB";
+                    }
+                }else{
+                    if(statusElement) statusElement.innerText = text;
+                    if(text === '' && barElement) barElement.style.width = '100%';
+                }
+            },
+            totalDependencies: 0,
+            monitorRunDependencies: function(left){
+                this.totalDependencies = Math.max(this.totalDependencies, left);
+            }
+        };
+
+        window.addEventListener('keydown', function(event){
+            if(event.ctrlKey && event.key === 's'){
+                event.preventDefault();
+            }
+
+            document.dispatchEvent(new Event('click'));
+            document.dispatchEvent(new Event('touchstart'));
+            
+        }, true);
+    </script>
+    {{{ SCRIPT }}}
+</body>
+</html>

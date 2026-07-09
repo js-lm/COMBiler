@@ -12,6 +12,10 @@ include(FetchContent)
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(BUILD_GAMES OFF CACHE BOOL "" FORCE)
 
+if(EMSCRIPTEN)
+	set(PLATFORM "Web" CACHE STRING "" FORCE)
+endif()
+
 FetchContent_Declare(
 	raylib
 	GIT_REPOSITORY https://github.com/raysan5/raylib
@@ -49,6 +53,10 @@ file(GLOB_RECURSE PROJECT_SOURCES
 	${CMAKE_CURRENT_LIST_DIR}/sources/*.cpp
 )
 
+if(EMSCRIPTEN)
+	list(FILTER PROJECT_SOURCES EXCLUDE REGEX "tinyfiledialogs\\.cpp$")
+endif()
+
 add_executable(${PROJECT_TARGET} ${PROJECT_SOURCES})
 
 file(GLOB ASSET_ENTRIES 
@@ -60,6 +68,7 @@ file(GLOB ASSET_ENTRIES
 target_compile_definitions(${PROJECT_TARGET} PRIVATE
 	$<$<CONFIG:Debug>:DEBUG>
 	COMBILER_VERSION="${PROJECT_VERSION}"
+	$<$<BOOL:${EMSCRIPTEN}>:PLATFORM_WEB>
 )
 
 target_include_directories(${PROJECT_TARGET} PRIVATE
@@ -74,7 +83,22 @@ target_link_libraries(${PROJECT_TARGET}
 	fmt::fmt
 )
 
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
+if(EMSCRIPTEN)
+	set_target_properties(${PROJECT_TARGET} PROPERTIES SUFFIX ".html")
+
+	target_link_options(${PROJECT_TARGET} PRIVATE
+		-sUSE_GLFW=3
+		-sASYNCIFY
+		-sINITIAL_MEMORY=268435456
+		-sSTACK_SIZE=1048576
+		"-lidbfs.js"
+		"-sEXPORTED_RUNTIME_METHODS=HEAPF32,ccall"
+		"-sEXPORTED_FUNCTIONS=_main,_onWebFileLoaded,_onIdbfsReady"
+		"--preload-file=${CMAKE_CURRENT_LIST_DIR}/assets/soundfonts@soundfonts"
+		"--shell-file=${CMAKE_CURRENT_LIST_DIR}/sources/shell.html"
+	)
+
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
 	set_target_properties(${PROJECT_TARGET} PROPERTIES
 		RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/release"
 	)

@@ -22,7 +22,15 @@ namespace constants::application_window{
     constexpr float MinimumScaleFactor{1.0f};
     constexpr float MaximumScaleFactor{4.0f};
 
+#ifdef PLATFORM_WEB
+    constexpr const char *Title{"COMBiler v" COMBILER_VERSION " (Web)"};
+#else
     constexpr const char *Title{"COMBiler v" COMBILER_VERSION};
+#endif
+    // constexpr const char *WebEditionSuffix{" (Web)"};
+
+    constexpr const char *CanvasId{"canvas"};
+    constexpr const char *CanvasSelector{"#canvas"};
 
     constexpr Vector2 Origin{.0f, .0f};
 

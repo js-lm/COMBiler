@@ -95,11 +95,13 @@ void MainWindow::updateWindowTitle(){
     static std::string previousTitle{};
 
     std::string newWindowTitle{constants::application_window::Title};
+// #ifndef PLATFORM_WEB
     if(serializer_){
         if(const auto filename{serializer_->getCurrentFilename()}; !filename.empty()){
             newWindowTitle += " - " + filename;
         }
     }
+// #endif
     if(actionCenter_ && actionCenter_->isUnsaved()){
         newWindowTitle += "*";
     }

@@ -14,6 +14,23 @@ program_states::System::InitializationError MidiManager::initialization(){
 
     InitAudioDevice();
 
+#ifdef PLATFORM_WEB
+    const std::string fontDirectory{constants::midi::SoundFontDirectory};
+    const std::string targetFontFile{constants::midi::SoundFontFile};
+
+    std::string soundFontPath{fontDirectory + targetFontFile};
+
+    if(!FileExists(soundFontPath.c_str())){
+        FilePathList fontDirectoryFiles{LoadDirectoryFilesEx(fontDirectory.c_str(), constants::midi::SoundFontExtension, false)};
+        if(fontDirectoryFiles.count > 0){
+            soundFontPath = fontDirectoryFiles.paths[0];
+            UnloadDirectoryFiles(fontDirectoryFiles);
+        }else{
+            UnloadDirectoryFiles(fontDirectoryFiles);
+            return program_states::System::InitializationError::SoundFontMissing;
+        }
+    }
+#else
     // std::string soundFontPath{GetApplicationDirectory()};
     // soundFontPath += constants::midi::SoundFontPath;
     const std::string rootDirectory{GetApplicationDirectory()};
@@ -39,6 +56,7 @@ program_states::System::InitializationError MidiManager::initialization(){
             }
         }
     }
+#endif
 
     DEBUG_PRINT("soundFontPath: {}", soundFontPath);
 

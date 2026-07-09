@@ -326,7 +326,12 @@ void Prompts::drawInfoPrompt(program_states::InterfaceContext &context){
         return;
     }
 
+// #ifdef PLATFORM_WEB
+//     const std::string windowTitle{std::string{constants::application_window::Title} + constants::application_window::WebEditionSuffix};
+//     GuiLabel(calculateBoundsAtAnchor(anchor, bounds.titleLabel), windowTitle.c_str());
+// #else
     GuiLabel(calculateBoundsAtAnchor(anchor, bounds.titleLabel), constants::application_window::Title);
+// #endif
     GuiLine(calculateBoundsAtAnchor(anchor, bounds.infoLine), nullptr);
     
     if(GuiLabelButton(calculateBoundsAtAnchor(anchor, bounds.repoLink1Button), prompts_constants::AboutHardwareRepoLabelText)){

@@ -111,7 +111,7 @@ namespace constants::labels::prompts{
     constexpr const char *AboutSoftwareRepoURL{"https://github.com/js-lm/COMBiler"};
     constexpr const char *AboutDescriptionLabelText{"A music \"compiler\" for COMB Optical Music Box"};
     constexpr const char *AboutPoweredByLabelText{"Powered by:"};
-    constexpr const char *AboutLibrariesLabelText{"raylib, raygui, TinySoundFont, tinyfiledialog, magic_enum, & fmt."};
+    constexpr const char *AboutLibrariesLabelText{"raylib, TinySoundFont, tinyfiledialog, magic_enum, & fmt."};
     constexpr const char *AboutTimestampFormatText{"Compiled on {} @ {}"};
     constexpr const char *AboutCopyrightedBarText{"Copyright (C) 2026. Released under the GNU GPL v3."};
 

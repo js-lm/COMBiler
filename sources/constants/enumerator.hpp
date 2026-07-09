@@ -96,7 +96,7 @@ namespace constants::enumerator{
     constexpr const char *SaveFileExtensionPattern{"*.pdf"};
     constexpr const char *FilterDescription{"PDF document (*.pdf)"};
 
-    constexpr const char *DefaultFilename{"my_paper_strip.pdf"};
+    constexpr const char *DefaultFilename{"COMBosition.pdf"};
 
     constexpr units::Mm GapBetweenSegments{10.0f};
     constexpr units::Mm GapBetweenDigitAndStrip{1.0f};

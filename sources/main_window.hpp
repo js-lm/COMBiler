@@ -10,8 +10,9 @@
 #include "timeline_manager/timeline_manager.hpp"
 #include "midi_manager/midi_manager.hpp"
 #include "playback_manager/playback_manager.hpp"
-#include "serializer/serializer.hpp"
 #include "enumerator/enumerator.hpp"
+
+#include "serializer/serializer.hpp"
 
 #include "program_states/context.hpp"
 
@@ -43,6 +44,11 @@ public:
     ~MainWindow() = default;
 
     int run();
+
+#ifdef PLATFORM_WEB
+    static void webMainLoopCallback(void *argument);
+    void webLoopBody();
+#endif
 
 public:
     program_states::InterfaceContext getInterfaceContext();

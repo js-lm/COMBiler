@@ -1,9 +1,15 @@
 #include "enumerator.hpp"
 
+#ifdef PLATFORM_WEB
+#include <emscripten.h>
+#endif
+
 #include "pdf_canvas.hpp"
 #include "pdf_document.hpp"
 
+#ifndef PLATFORM_WEB
 #include <external/tinyfiledialogs/tinyfiledialogs.h>
+#endif
 
 #include "debug_utilities.hpp"
 
@@ -14,6 +20,9 @@ void Enumerator::print(
 ){
     const char *filterPattern[]{constants::enumerator::SaveFileExtensionPattern};
 
+#ifdef PLATFORM_WEB
+    const char *saveFilePath{constants::enumerator::DefaultFilename};
+#else
     const char *saveFilePath{tinyfd_saveFileDialog(
         constants::enumerator::SaveDialogTitle,
         constants::enumerator::DefaultFilename,
@@ -22,6 +31,7 @@ void Enumerator::print(
     )};
 
     if(!saveFilePath) return;
+#endif
 
     const auto compiledPaperStrip{compileProjectData(projectData)};
     if(compiledPaperStrip.empty()) return;
@@ -41,14 +51,36 @@ void Enumerator::print(
     pdf.save();
 
     if(FileExists(saveFilePath)){
-#if defined(__linux__)
-        std::string command{"xdg-open \"" + std::string{saveFilePath} + "\""};
+#if defined(__EMSCRIPTEN__)
+        EM_ASM_({
+            var filePath = UTF8ToString($0);
+            var fileName = UTF8ToString($1);
+            try{
+                var fileData = FS.readFile(filePath);
+                var dataBlob = new Blob([fileData], {type: 'application/pdf'});
+                var objectUrl = URL.createObjectURL(dataBlob);
+                var anchorElement = document.createElement('a');
+                anchorElement.href = objectUrl;
+                anchorElement.download = fileName;
+                document.body.appendChild(anchorElement);
+                anchorElement.click();
+                document.body.removeChild(anchorElement);
+                URL.revokeObjectURL(objectUrl);
+            }catch(error){
+                // console.error('Failed to export PDF', error);
+            }
+        }, saveFilePath, constants::enumerator::DefaultFilename);
+
+#elif defined(__linux__)
+        std::string openCommand{"xdg-open \"" + std::string{saveFilePath} + "\""};
+        std::system(openCommand.c_str());
 #elif defined(__APPLE__)
-        std::string command{"open \"" + std::string{saveFilePath} + "\""};
+        std::string openCommand{"open \"" + std::string{saveFilePath} + "\""};
+        std::system(openCommand.c_str());
 #elif defined(_WIN32)
-        std::string command{"start \"\" \"" + std::string{saveFilePath} + "\""};
+        std::string openCommand{"start \"\" \"" + std::string{saveFilePath} + "\""};
+        std::system(openCommand.c_str());
 #endif
-        std::system(command.c_str());
     }
 }
 
