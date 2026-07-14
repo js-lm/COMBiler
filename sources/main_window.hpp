@@ -91,10 +91,18 @@ private:
 private:
     void applyProjectTransientNavigationState();
 
-private:
-    float calculateMaximumScaleFactor() const;
-    float calculateScaleFactor() const;
+public:
+    static float calculateMaximumScaleFactor();
+    static float calculateScaleFactor(const program_states::System &systemState);
+    static bool isScaleFactorIntegral(const program_states::System &systemState);
 
-    bool isScaleFactorIntegral() const;
+    void saveConfiguration();
+    void loadConfiguration();
+
+private:
+    // float calculateMaximumScaleFactor() const;
+    // float calculateScaleFactor() const;
+
+    // bool isScaleFactorIntegral() const;
     void applyTextureFilter();
 };

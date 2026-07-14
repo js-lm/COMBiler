@@ -8,6 +8,8 @@
 #include "debug_utilities.hpp"
 #include "utilities/project_utilities.hpp"
 
+#include <raymath.h>
+
 void MainWindow::handleEvents(){
     
     handleKeyboardEvent();
@@ -78,7 +80,7 @@ void MainWindow::handleWindowSizeChangeEvent(){
     const int screenWidth{GetScreenWidth()};
     const int screenHeight{GetScreenHeight()};
 
-    window.scaleFactor = calculateScaleFactor();
+    window.scaleFactor = calculateScaleFactor(systemState_);
 
     SetMouseScale(1.0f / window.scaleFactor, 1.0f / window.scaleFactor);
 
@@ -187,6 +189,7 @@ void MainWindow::handleWindowSizeChangeEvent(){
         anchor.prompts.overwriteWarningWindow = centeredPromptAnchorFrom(bounds.prompts.overwriteWarning.windowBox);
         anchor.prompts.infoWindow = centeredPromptAnchorFrom(bounds.prompts.infoWindow.windowBox);
         anchor.prompts.musicSettingWindow = centeredPromptAnchorFrom(bounds.prompts.musicSetting.windowBox);
+        anchor.prompts.menuWindow = centeredPromptAnchorFrom(bounds.prompts.menu.windowBox);
     } /* prompts */
 
     /* ntoe canvas */ {
@@ -296,7 +299,7 @@ void MainWindow::handleKeyboardEvent(){
     // if(IsKeyPressed(KEY_UP)) window.scaleFactor += .1f;
     // if(IsKeyPressed(KEY_DOWN)) window.scaleFactor -= .1f;
 
-    window.scaleFactor = calculateScaleFactor();
+    window.scaleFactor = calculateScaleFactor(systemState_);
     if(window.scaleFactor != previousScaleFactor) handleWindowSizeChangeEvent();
 
     auto &navigationBarState{interfaceState_.navigationBar};

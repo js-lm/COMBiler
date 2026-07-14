@@ -54,11 +54,15 @@ namespace program_states{
 
             bool isCommandWindowVisible     {false};
             bool isMusicSettingPromptVisible{false};
+            bool isMenuWindowVisible        {false};
 
             bool musicSettingTitleTextBoxEditMode{false};
             bool musicSettingAuthorTextBoxEditMode{false};
             bool musicSettingMaximumTempoValueBoxEditMode{false};
             bool musicSettingNotesValueBoxEditMode{false};
+
+            bool menuUiScalingValueBoxEditMode{false};
+            bool menuMasterVolumeValueBoxEditMode{false};
 
             bool isOverwritePromptVisible   {false};
             bool isOverwriteConfirmed       {false};
@@ -158,6 +162,7 @@ namespace program_states{
             bool isAnyPromptVisible() const{
                 return isCommandWindowVisible
                     || isMusicSettingPromptVisible
+                    || isMenuWindowVisible
                     || isConstantsManagerWindowVisible
                     || isConstantsManagerWarningWindowVisible
                     || isConstantsManagerInfoWindowVisible

@@ -115,4 +115,18 @@ namespace constants::labels::prompts{
     constexpr const char *AboutTimestampFormatText{"Compiled on {} @ {}"};
     constexpr const char *AboutCopyrightedBarText{"Copyright (C) 2026. Released under the GNU GPL v3."};
 
+    constexpr const char *MenuWindowBoxText{"#014#Menu"};
+    constexpr const char *ScalingGroupBoxText{"Scaling"};
+    constexpr const char *IntegerScalingCheckBoxText{"Integer"};
+    constexpr const char *UiScalingSliderText{"UI Scaling"};
+    constexpr const char *AutoMaximumToggleText{"Auto"};
+    
+    constexpr const char *PerformanceGroupBoxText{"Performance"};
+    constexpr const char *LimitFpsTo60CheckBoxText{"Limit FPS to 60"};
+    constexpr const char *IdleDuringEventWaitingCheckBoxText{"[Beta] Idle During Event Waiting"};
+    
+    constexpr const char *SoundGroupBoxText{"Sound"};
+    constexpr const char *MasterVolumeSliderText{"Master Volume"};
+    constexpr const char *MasterVolumeDecorationLabelText{"%"};
+
 } // namespace constants::labels::prompts

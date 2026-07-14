@@ -46,6 +46,7 @@ namespace program_states{
                 Vector2 overwriteWarningWindow          {0, 0};
                 Vector2 infoWindow                      {0, 0};
                 Vector2 musicSettingWindow              {0, 0};
+                Vector2 menuWindow                      {0, 0};
             } prompts{};
 
         } anchor{};
@@ -101,13 +102,10 @@ namespace program_states{
                 struct Inspector{
                     Rectangle groupBox          { 0,  0, 112, 408};
 
-                    Rectangle channelListView   { 8,  32, 96, 224};
+                    Rectangle channelListView   { 8,  32, 96, 184};
                     Rectangle channelLabel      {32,   8, 48,  24};
-                    // Rectangle structureLine     { 8, 264, 96,  24}; // "Global" label
-                    // Rectangle tempoValueBox     {48, 288, 56, 24};
-                    // Rectangle notesValueBox     {48, 320, 56, 24};
-                    Rectangle sideSettingLine   { 8, 264, 96, 24};
-                    Rectangle showCommandsCheckBox{8,288, 24, 24};
+                    Rectangle sideSettingLine   { 8, 224, 96, 24};
+                    Rectangle showCommandsCheckBox{8,248, 24, 24};
                 } inspector{};
 
             } sidebar{};
@@ -271,7 +269,28 @@ namespace program_states{
 
                     Rectangle notesLabel          {  8, 192, 144,  24};
                     Rectangle notesValueBox       {152, 192,  88,  24};
+
+                    Rectangle readOnlyLabel       { 64, 184, 72, 24};
                 } musicSetting{};
+
+                struct Menu{
+                    Rectangle windowBox{0, 0, 368, 152};
+                    
+                    Rectangle soundGroupBox         {  8, 32, 352, 32};
+                    Rectangle masterVolumeSlider    { 96, 40, 216, 16};
+                    Rectangle masterVolumeValueBox  {312, 40,  32, 16};
+                    Rectangle masterVolumeDecoration{344, 40,  32, 16};
+                    
+                    Rectangle scalingGroupBox           {  8, 72, 352, 32};
+                    Rectangle uiScalingSlider           { 72, 80, 136, 16};
+                    Rectangle autoScalingToggle         {208, 80,  48, 16};
+                    Rectangle uiScalingValueBox         {256, 80,  32, 16};
+                    Rectangle isIntegerScalingCheckBox  {296, 80,  16, 16};
+                    
+                    Rectangle performanceGroupBox {  8, 112, 352, 32};
+                    Rectangle limitFpsCheckBox    { 16, 120,  16, 16};
+                    Rectangle idleEventCheckBox   {152, 120,  16, 16};
+                } menu{};
 
                 struct Tempo{
                     Rectangle windowBox         {  0,   0, 320, 136};

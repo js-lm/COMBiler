@@ -15,6 +15,7 @@ namespace constants::application_window{
     constexpr int ErrorWindowMargin{10};
 
     constexpr int DefaultFPS{300};
+    constexpr int LimitedFPS{60};
 
     constexpr const char *ErrorMessageSoundFontMissing{"Please place a sound font (.sf2) in the soundfonts/ directory."};
     constexpr const char *ErrorMessageSoundFontLoadError{"Error loading the sound font file."};

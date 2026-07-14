@@ -15,6 +15,10 @@ namespace interface{
 		static void drawInstrumentPrompt(program_states::InterfaceContext &context);
 
 	private:
+		static void drawConstantsManagerInfoPrompt(program_states::InterfaceContext &context);
+
+		static void drawMenuPrompt(program_states::InterfaceContext &context);
+
 		static void drawConstantsManagerPrompt(program_states::InterfaceContext &context);
 		
 		static void drawConstantsManagerCommitPrompt(program_states::InterfaceContext &context);

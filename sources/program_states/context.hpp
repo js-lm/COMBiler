@@ -8,7 +8,7 @@
 namespace program_states{
 
     struct InterfaceContext{
-        const System &system;
+        System &system;
         const Layout &layout;
         
         Interface   &interface;
@@ -16,7 +16,7 @@ namespace program_states{
     };
 
     struct MidiContext{
-        const System &system;
+        System &system;
 
         Interface   &interface;
         Machine     &machine;

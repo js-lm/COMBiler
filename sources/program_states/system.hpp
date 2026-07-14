@@ -26,6 +26,8 @@ namespace program_states{
 
             bool isAlwaysScalingToMaximum{true};
             bool isIntegerScaling{true};
+
+            bool isLayoutDirty{false};
         } window{};
 
         struct Project{
@@ -45,11 +47,16 @@ namespace program_states{
             };
         } noteCanvas{};
 
-        // struct Machine{
-        //     bool isPlaying{false};
+        struct Audio{
+            float masterVolume{1.0f};
+        } audio{};
 
-        // } machine{};
+        struct Performance{
+            bool limitFpsTo60{false};
+            bool idleDuringEventWaiting{false};
+        } performance{};
 
+        bool isConfigurationDirty{false};
     };
 
 } // namespace program_states

@@ -138,6 +138,12 @@ void MainWindow::initialize(){
     
     initializeInterfaceRenderTexture();
 
+#ifndef PLATFORM_WEB
+    loadConfiguration();
+    SetMasterVolume(systemState_.audio.masterVolume);
+    if(systemState_.performance.limitFpsTo60) SetTargetFPS(constants::application_window::LimitedFPS);
+#endif
+
     handleWindowSizeChangeEvent();
 
     actionCenter_ = std::make_unique<ActionCenter>();
@@ -196,9 +202,26 @@ void MainWindow::update(){
 
     handleEvents();
 
+    if(systemState_.window.isLayoutDirty){
+        systemState_.window.isLayoutDirty = false;
+        handleWindowSizeChangeEvent();
+    }
+
+    if(systemState_.isConfigurationDirty){
+        systemState_.isConfigurationDirty = false;
+        saveConfiguration();
+    }
+
 #ifdef PLATFORM_WEB
     if(web_file_loading::isIdbfsReady){
         web_file_loading::isIdbfsReady = false;
+
+        loadConfiguration();
+        SetMasterVolume(systemState_.audio.masterVolume);
+        if(systemState_.performance.limitFpsTo60){
+            SetTargetFPS(constants::application_window::LimitedFPS);
+        }
+
         std::string filenameToLoad{constants::serializer::DefaultFilename};
         if(FileExists(constants::serializer::LastProjectFile)){
             char *lastProjectContent{LoadFileText(constants::serializer::LastProjectFile)};

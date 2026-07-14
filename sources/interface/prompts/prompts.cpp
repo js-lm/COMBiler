@@ -1,6 +1,7 @@
 #include "prompts.hpp"
 
 #include <raygui.h>
+#include <raymath.h>
 
 #include <algorithm>
 #include <cmath>
@@ -23,7 +24,12 @@
 
 #include <magic_enum/magic_enum.hpp>
 
+#include "main_window.hpp"
+#include "constants/application_window.hpp"
+
+
 using namespace interface;
+
 namespace prompts_constants = constants::labels::prompts;
 
 void Prompts::draw(program_states::InterfaceContext &context){
@@ -40,6 +46,11 @@ void Prompts::draw(program_states::InterfaceContext &context){
 
     if(promptState.isMusicSettingPromptVisible){
         drawMusicSettingPrompt(context);
+        return;
+    }
+    
+    if(promptState.isMenuWindowVisible){
+        drawMenuPrompt(context);
         return;
     }
 
@@ -461,4 +472,108 @@ void Prompts::drawMusicSettingPrompt(program_states::InterfaceContext &context){
         context.interface.navigationBar.notePerPageSpinnerValue = currentPageNoteCount;
         context.interface.noteCanvas.isGridLayoutDirty = true;
     }
+}
+void Prompts::drawMenuPrompt(program_states::InterfaceContext &context){
+	auto &promptState{context.interface.prompts};
+	auto &systemState{context.system};
+	const auto &bounds{context.layout.bounds.prompts.menu};
+	const auto &anchor{context.layout.anchor.prompts.menuWindow};
+
+	bool stateChanged{false};
+
+	promptState.isMenuWindowVisible = !GuiWindowBox(
+		calculateBoundsAtAnchor(anchor, bounds.windowBox), 
+		prompts_constants::MenuWindowBoxText
+	);
+
+	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.soundGroupBox), prompts_constants::SoundGroupBoxText);
+
+	float oldMasterVolume{systemState.audio.masterVolume * 100.0f};
+	float newMasterVolume{oldMasterVolume};
+	GuiSlider(calculateBoundsAtAnchor(anchor, bounds.masterVolumeSlider), prompts_constants::MasterVolumeSliderText, nullptr, &newMasterVolume, .0f, 100.0f);
+	if(newMasterVolume != oldMasterVolume){
+		systemState.audio.masterVolume = newMasterVolume / 100.0f;
+		SetMasterVolume(systemState.audio.masterVolume);
+		stateChanged = true;
+	}
+
+	int masterVolumeValue{static_cast<int>(newMasterVolume)};
+	if(GuiValueBox(calculateBoundsAtAnchor(anchor, bounds.masterVolumeValueBox), nullptr, &masterVolumeValue, 0, 100, promptState.menuMasterVolumeValueBoxEditMode)){
+		promptState.menuMasterVolumeValueBoxEditMode = !promptState.menuMasterVolumeValueBoxEditMode;
+		systemState.audio.masterVolume = static_cast<float>(masterVolumeValue) / 100.0f;
+		SetMasterVolume(systemState.audio.masterVolume);
+		stateChanged = true;
+	}
+	
+	GuiLabel(calculateBoundsAtAnchor(anchor, bounds.masterVolumeDecoration), prompts_constants::MasterVolumeDecorationLabelText);
+
+	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.scalingGroupBox), prompts_constants::ScalingGroupBoxText);
+
+	bool previousIsIntegerScaling{systemState.window.isIntegerScaling};
+	bool currentIsIntegerScaling{previousIsIntegerScaling};
+	GuiCheckBox(calculateBoundsAtAnchor(anchor, bounds.isIntegerScalingCheckBox), prompts_constants::IntegerScalingCheckBoxText, &currentIsIntegerScaling);
+	if(currentIsIntegerScaling != previousIsIntegerScaling){
+		systemState.window.isIntegerScaling = currentIsIntegerScaling;
+		systemState.window.isLayoutDirty = true;
+		stateChanged = true;
+	}
+
+	const float minimumScale{constants::application_window::MinimumScaleFactor};
+	const float maximumScale{MainWindow::calculateMaximumScaleFactor()};
+
+	bool shouldDisableScalingUserInterface{systemState.window.isAlwaysScalingToMaximum || FloatEquals(minimumScale, maximumScale)};
+	if(shouldDisableScalingUserInterface) GuiDisable();
+
+	float previousScalePercentage{systemState.window.scaleFactor * 100.0f};
+	float currentScalePercentage{previousScalePercentage};
+
+	GuiSlider(calculateBoundsAtAnchor(anchor, bounds.uiScalingSlider), prompts_constants::UiScalingSliderText, nullptr, &currentScalePercentage, minimumScale * 100.0f, maximumScale * 100.0f);
+	if(currentScalePercentage != previousScalePercentage){
+		systemState.window.scaleFactor = currentScalePercentage / 100.0f;
+		systemState.window.isLayoutDirty = true;
+		stateChanged = true;
+	}
+
+	int userInterfaceScalingValue{static_cast<int>(currentScalePercentage)};
+	if(GuiValueBox(calculateBoundsAtAnchor(anchor, bounds.uiScalingValueBox), nullptr, &userInterfaceScalingValue, static_cast<int>(minimumScale * 100.0f), static_cast<int>(maximumScale * 100.0f), promptState.menuUiScalingValueBoxEditMode)){
+		promptState.menuUiScalingValueBoxEditMode = !promptState.menuUiScalingValueBoxEditMode;
+		systemState.window.scaleFactor = static_cast<float>(userInterfaceScalingValue) / 100.0f;
+		systemState.window.isLayoutDirty = true;
+		stateChanged = true;
+	}
+
+	if(shouldDisableScalingUserInterface) GuiEnable();
+
+	bool previousAutoScaling{systemState.window.isAlwaysScalingToMaximum};
+	bool currentAutoScaling{previousAutoScaling};
+	GuiToggle(calculateBoundsAtAnchor(anchor, bounds.autoScalingToggle), prompts_constants::AutoMaximumToggleText, &currentAutoScaling);
+	if(currentAutoScaling != previousAutoScaling){
+		systemState.window.isAlwaysScalingToMaximum = currentAutoScaling;
+		systemState.window.isLayoutDirty = true;
+		stateChanged = true;
+	}
+
+	GuiGroupBox(calculateBoundsAtAnchor(anchor, bounds.performanceGroupBox), prompts_constants::PerformanceGroupBoxText);
+
+	bool previousLimitFramesPerSecond{systemState.performance.limitFpsTo60};
+	bool currentLimitFramesPerSecond{previousLimitFramesPerSecond};
+	GuiCheckBox(calculateBoundsAtAnchor(anchor, bounds.limitFpsCheckBox), prompts_constants::LimitFpsTo60CheckBoxText, &currentLimitFramesPerSecond);
+	if(currentLimitFramesPerSecond != previousLimitFramesPerSecond){
+		systemState.performance.limitFpsTo60 = currentLimitFramesPerSecond;
+		if(currentLimitFramesPerSecond) SetTargetFPS(constants::application_window::LimitedFPS);
+		else SetTargetFPS(constants::application_window::DefaultFPS);
+		stateChanged = true;
+	}
+
+	bool previousIdleDuringEventWaiting{systemState.performance.idleDuringEventWaiting};
+	bool currentIdleDuringEventWaiting{previousIdleDuringEventWaiting};
+	GuiCheckBox(calculateBoundsAtAnchor(anchor, bounds.idleEventCheckBox), prompts_constants::IdleDuringEventWaitingCheckBoxText, &currentIdleDuringEventWaiting);
+	if(currentIdleDuringEventWaiting != previousIdleDuringEventWaiting){
+		systemState.performance.idleDuringEventWaiting = currentIdleDuringEventWaiting;
+		stateChanged = true;
+	}
+
+	if(stateChanged){
+		systemState.isConfigurationDirty = true;
+	}
 }
