@@ -5,7 +5,7 @@ void PlaybackManager::updateNoteState(
     std::optional<music_data::Note> currentNote, 
     MidiManager &midiManager
 ){
-    const auto articulation{context_.machine.articulations[channel]};
+    const auto articulation{threadState_.internalMachine.articulations[channel]};
     const auto targetChannel{static_cast<command::Target>(channel + 1)};
 
     if(currentNote.has_value()){
@@ -13,9 +13,9 @@ void PlaybackManager::updateNoteState(
 
         switch(articulation){
         case units::machine::Articulation::Infinite: {
-            const bool isCurrentlyPlaying{context_.machine.activeNotes[channel].remove(note)};
+            const bool isCurrentlyPlaying{threadState_.internalMachine.activeNotes[channel].remove(note)};
             if(isCurrentlyPlaying){
-                context_.machine.activeNotes[channel].add(note);
+                threadState_.internalMachine.activeNotes[channel].add(note);
                 midiManager.noteOff(targetChannel, note);
             }else{
                 midiManager.noteOn(targetChannel, note);
@@ -24,11 +24,11 @@ void PlaybackManager::updateNoteState(
         
         case units::machine::Articulation::Sustain:
         case units::machine::Articulation::Legato: {
-            const bool isCurrentlyPlaying{context_.machine.activeNotes[channel].remove(note)};
+            const bool isCurrentlyPlaying{threadState_.internalMachine.activeNotes[channel].remove(note)};
             if(isCurrentlyPlaying){
-                context_.machine.activeNotes[channel].add(note);
+                threadState_.internalMachine.activeNotes[channel].add(note);
             }else{
-                const auto activeNotes{context_.machine.activeNotes[channel].toVector()};
+                const auto activeNotes{threadState_.internalMachine.activeNotes[channel].toVector()};
                 for(const auto &activeNote : activeNotes){
                     midiManager.noteOff(targetChannel, activeNote);
                 }
@@ -40,15 +40,15 @@ void PlaybackManager::updateNoteState(
         case units::machine::Articulation::Normal:
         case units::machine::Articulation::Staccato:
         default: {
-            const auto activeNotes{context_.machine.activeNotes[channel].toVector()};
+            const auto activeNotes{threadState_.internalMachine.activeNotes[channel].toVector()};
             for(const auto &activeNote : activeNotes){
                 midiManager.noteOff(targetChannel, activeNote);
             }
             
             midiManager.noteOn(targetChannel, note);
 
-            // context_.machine.activeNotes[channel].clear();
-            context_.machine.activeNotes[channel].add(note);
+            // context_.internalMachine.activeNotes[channel].clear();
+            threadState_.internalMachine.activeNotes[channel].add(note);
         } break;
         }
     }else{
@@ -59,7 +59,7 @@ void PlaybackManager::updateNoteState(
 
         case units::machine::Articulation::Normal:
         case units::machine::Articulation::Legato: {
-            const auto activeNotes{context_.machine.activeNotes[channel].toVector()};
+            const auto activeNotes{threadState_.internalMachine.activeNotes[channel].toVector()};
             for(const auto &activeNote : activeNotes){
                 midiManager.noteOff(targetChannel, activeNote);
             }

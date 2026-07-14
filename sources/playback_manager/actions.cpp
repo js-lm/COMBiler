@@ -11,10 +11,9 @@
 #include "utilities/project_utilities.hpp"
 
 void PlaybackManager::setupPlayback(MidiManager &midiManager){
-    context_.machine.reset();
-    context_.machine.playheadIndex = 0;
+    threadState_.internalMachine.reset();
+    threadState_.internalMachine.playheadIndex = 0;
     timeSinceLastNote_ = .0f;
-    needsToPlayCurrentNote_ = true;
     // if(isHardRest) timeSinceLastNote_ = .0f;
 
     const auto projectDataSlot{context_.system.project.data.lock()};
@@ -25,21 +24,21 @@ void PlaybackManager::setupPlayback(MidiManager &midiManager){
 
     const auto machineState{utilities::machineStateAt(
         *projectData,
-        context_.system.project.currentPage,
-        context_.machine.playheadIndex
+        threadState_.internalCurrentPage,
+        threadState_.internalMachine.playheadIndex
     )};
 
-    context_.machine.tempo = machineState.tempo;
-    context_.machine.instruments = machineState.instruments;
-    context_.machine.volumes = machineState.volumes;
-    context_.machine.articulations = machineState.articulations;
+    threadState_.internalMachine.tempo = machineState.tempo;
+    threadState_.internalMachine.instruments = machineState.instruments;
+    threadState_.internalMachine.volumes = machineState.volumes;
+    threadState_.internalMachine.articulations = machineState.articulations;
 
-    midiManager.setTempo(command::Tempo{context_.machine.tempo});
+    midiManager.setTempo(command::Tempo{threadState_.internalMachine.tempo});
 
     for(size_t channel{0}; channel < constants::project_data::NumberOfInstrumentChannels; channel++){
-        midiManager.setInstrument(channelIndexToChannelTarget(channel), context_.machine.instruments[channel]);
-        midiManager.setVolume(channelIndexToChannelTarget(channel), context_.machine.volumes[channel]);
-        midiManager.setArticulation(channelIndexToChannelTarget(channel), context_.machine.articulations[channel]);
+        midiManager.setInstrument(channelIndexToChannelTarget(channel), threadState_.internalMachine.instruments[channel]);
+        midiManager.setVolume(channelIndexToChannelTarget(channel), threadState_.internalMachine.volumes[channel]);
+        midiManager.setArticulation(channelIndexToChannelTarget(channel), threadState_.internalMachine.articulations[channel]);
     }
 
     // while(context_.system.project.currentPage > 1 && )
@@ -54,12 +53,12 @@ void PlaybackManager::playCurrentNote(MidiManager &midiManager){
     if(!projectDataSlot) return;
     const auto &projectData{projectDataSlot->data};
 
-    int currentPageIndex{context_.system.project.currentPage - 1};
+    int currentPageIndex{threadState_.internalCurrentPage - 1};
 
     const auto &currentPage{projectData->pages[currentPageIndex]};
     const int currentPageNoteCount{currentPage.noteInThisPage.value_or(projectData->metadata.notePerPage)};
 
-    auto &machine{context_.machine};
+    auto &machine{threadState_.internalMachine};
     auto &playheadIndex{machine.playheadIndex};
 
     if(currentPage.commandChannel[playheadIndex]){
@@ -125,22 +124,22 @@ void PlaybackManager::advancePlayhead(MidiManager &midiManager){
     if(!projectDataSlot) return;
     const auto &projectData{projectDataSlot->data};
 
-    int currentPageIndex{context_.system.project.currentPage - 1};
+    int currentPageIndex{threadState_.internalCurrentPage - 1};
     const auto &currentPage{projectData->pages[currentPageIndex]};
     const int currentPageNoteCount{currentPage.noteInThisPage.value_or(projectData->metadata.notePerPage)};
 
-    auto &machine{context_.machine};
+    auto &machine{threadState_.internalMachine};
     auto &playheadIndex{machine.playheadIndex};
 
     if(playheadIndex >= currentPageNoteCount - 1){
-        if(context_.interface.navigationBar.isPageRepeatEnabled){
+        if(threadState_.internalIsPageRepeatEnabled){
             stopPlayback(midiManager);
             setupPlayback(midiManager);
         }else{
-            if(context_.system.project.currentPage >= projectData->pages.size()){
+            if(threadState_.internalCurrentPage >= projectData->pages.size()){
                 machine.isPlaying = false;
             }else{
-                context_.interface.navigationBar.requestedPageNumber = context_.system.project.currentPage + 1;
+                threadState_.internalCurrentPage = threadState_.internalCurrentPage + 1;
                 needsToPlayCurrentNote_ = true;
             }
 
@@ -154,14 +153,14 @@ void PlaybackManager::advancePlayhead(MidiManager &midiManager){
 
 void PlaybackManager::releaseStaccatoNotes(MidiManager &midiManager){
     for(int channel{0}; channel < constants::project_data::NumberOfInstrumentChannels; channel++){
-        if(context_.machine.articulations[channel] == units::machine::Articulation::Staccato){
+        if(threadState_.internalMachine.articulations[channel] == units::machine::Articulation::Staccato){
             
             const auto targetChannel{channelIndexToChannelTarget(static_cast<units::midi::SoundFontChannel>(channel))};
-            const auto activeNotes{context_.machine.activeNotes[channel].toVector()};
+            const auto activeNotes{threadState_.internalMachine.activeNotes[channel].toVector()};
             
             for(const auto &activeNote : activeNotes){
                 midiManager.noteOff(targetChannel, activeNote);
-                context_.machine.activeNotes[channel].remove(activeNote);
+                threadState_.internalMachine.activeNotes[channel].remove(activeNote);
             }
         }
     }

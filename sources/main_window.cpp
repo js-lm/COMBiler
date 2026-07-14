@@ -166,7 +166,7 @@ void MainWindow::initialize(){
         return;
     }
     
-    playbackManager_ = std::make_unique<PlaybackManager>(getMidiContext());
+    playbackManager_ = std::make_unique<PlaybackManager>(getMidiContext(), *midiManager_);
     serializer_ = std::make_unique<Serializer>();
     // enumerator_ = std::make_unique<Enumerator>();
 

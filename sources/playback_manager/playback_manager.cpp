@@ -1,27 +1,51 @@
 #include "playback_manager.hpp"
 
 #include <raylib.h>
+#include <chrono>
 
 #include "debug_utilities.hpp"
 
 #include "utilities/project_utilities.hpp"
 
+PlaybackManager::PlaybackManager(program_states::MidiContext context, MidiManager &midiManager)
+    : context_{context}
+{
+    threadState_.internalCurrentPage = context.system.project.currentPage;
+    sequencerThread_ = std::thread(&PlaybackManager::sequencerLoop, this, std::ref(midiManager));
+}
+
+PlaybackManager::~PlaybackManager(){
+    shouldStopThread_ = true;
+    if(sequencerThread_.joinable()){
+        sequencerThread_.join();
+    }
+}
+
+void PlaybackManager::initialization(){
+
+}
+
 void PlaybackManager::update(MidiManager &midiManager){
     auto &machine{context_.machine};
 
-    if(machine.isPlaying != wasPlaying_ || machine.shouldResetPlayback){
-        stopPlayback(midiManager);
-        if(machine.isPlaying) setupPlayback(midiManager);
-        machine.shouldResetPlayback = false;
-    }
+    /* UI -> Sequencer */ {
+        std::lock_guard<std::mutex> lock(stateMutex_);
+        
 
-    wasPlaying_ = machine.isPlaying;
+    } /* UI -> Sequencer */
 
-    updatePlayback(midiManager);
+    /* Sequencer -> UI */ {
+        std::lock_guard<std::mutex> lock(stateMutex_);
+
+    } /* Sequencer -> UI */
 }
 
-void PlaybackManager::updatePlayback(MidiManager &midiManager){
-    auto &machine{context_.machine};
+void PlaybackManager::sequencerLoop(MidiManager &midiManager){
+
+}
+
+void PlaybackManager::updatePlayback(MidiManager &midiManager, float deltaTime){
+    auto &machine{threadState_.internalMachine};
 
     if(!machine.isPlaying) return;
 
@@ -41,7 +65,7 @@ void PlaybackManager::updatePlayback(MidiManager &midiManager){
         halfStepProcessed_ = false;
     }
 
-    timeSinceLastNote_ += GetFrameTime();
+    timeSinceLastNote_ += deltaTime;
 
     if(timeSinceLastNote_ >= (noteDuration * constants::midi::StaccatoReleaseDuration) 
     && !halfStepProcessed_
@@ -54,7 +78,6 @@ void PlaybackManager::updatePlayback(MidiManager &midiManager){
         timeSinceLastNote_ -= noteDuration;
         advancePlayhead(midiManager);
     }
-    
 }
 
 void PlaybackManager::stopPlayback(MidiManager &midiManager){

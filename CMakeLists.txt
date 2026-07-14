@@ -86,9 +86,14 @@ target_link_libraries(${PROJECT_TARGET}
 if(EMSCRIPTEN)
 	set_target_properties(${PROJECT_TARGET} PROPERTIES SUFFIX ".html")
 
+	target_compile_options(${PROJECT_TARGET} PRIVATE -pthread)
+
 	target_link_options(${PROJECT_TARGET} PRIVATE
 		-sUSE_GLFW=3
 		-sASYNCIFY
+		-pthread
+		-sSHARED_MEMORY=1
+		-sPTHREAD_POOL_SIZE=4
 		-sINITIAL_MEMORY=268435456
 		-sSTACK_SIZE=1048576
 		"-lidbfs.js"
