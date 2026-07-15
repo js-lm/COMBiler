@@ -22,7 +22,7 @@ namespace program_states{
             char creationDate[constants::project_data::MetadataDateMaximumLength + 1]{""};
             char modificationDate[constants::project_data::MetadataDateMaximumLength + 1]{""};
 
-            float maximumTempo{12.0f};
+            float maximumTempo{constants::project_data::DefaultMaximumTempo};
             bool isReadOnly{false};
         } metadata{};
 

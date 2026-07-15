@@ -19,6 +19,7 @@ void PlaybackManager::updateNoteState(
                 midiManager.noteOff(targetChannel, note);
             }else{
                 midiManager.noteOn(targetChannel, note);
+                threadState_.internalMachine.activeNotes[channel].add(note);
             }
         } break;
         
@@ -34,6 +35,8 @@ void PlaybackManager::updateNoteState(
                 }
                 
                 midiManager.noteOn(targetChannel, note);
+                threadState_.internalMachine.activeNotes[channel].clear();
+                threadState_.internalMachine.activeNotes[channel].add(note);
             }
         } break;
 
@@ -47,7 +50,7 @@ void PlaybackManager::updateNoteState(
             
             midiManager.noteOn(targetChannel, note);
 
-            // context_.internalMachine.activeNotes[channel].clear();
+            threadState_.internalMachine.activeNotes[channel].clear();
             threadState_.internalMachine.activeNotes[channel].add(note);
         } break;
         }
@@ -63,6 +66,7 @@ void PlaybackManager::updateNoteState(
             for(const auto &activeNote : activeNotes){
                 midiManager.noteOff(targetChannel, activeNote);
             }
+            threadState_.internalMachine.activeNotes[channel].clear();
         } break;
         case units::machine::Articulation::Sustain: {}
         case units::machine::Articulation::Infinite:

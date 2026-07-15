@@ -108,7 +108,7 @@ namespace utilities{
 
             int startHead{
                 (currentPageIndex == pageNumber - 1) 
-                    ? noteIndex
+                    ? noteIndex + 1
                     : currentPageNoteCount
             };
 

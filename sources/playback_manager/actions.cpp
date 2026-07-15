@@ -14,6 +14,7 @@ void PlaybackManager::setupPlayback(MidiManager &midiManager){
     threadState_.internalMachine.reset();
     threadState_.internalMachine.playheadIndex = 0;
     timeSinceLastNote_ = .0f;
+    needsToPlayCurrentNote_ = true;
     // if(isHardRest) timeSinceLastNote_ = .0f;
 
     const auto projectDataSlot{context_.system.project.data.lock()};
@@ -72,10 +73,21 @@ void PlaybackManager::playCurrentNote(MidiManager &midiManager){
 
                 if constexpr(std::is_same_v<command::Tempo, Type>){
                     midiManager.setTempo(command);
+                    machine.tempo = command.tempo;
                 }else if constexpr(std::is_same_v<command::Volume, Type>){
                     midiManager.setVolume(command.target, command.volume);
+                    if(command.target == command::Target::All_Channels){
+                        machine.volumes.fill(command.volume);
+                    }else{
+                        machine.volumes[static_cast<size_t>(command.target) - 1] = command.volume;
+                    }
                 }else if constexpr(std::is_same_v<command::Articulation, Type>){
                     midiManager.setArticulation(command.target, command.articulation);
+                    if(command.target == command::Target::All_Channels){
+                        machine.articulations.fill(command.articulation);
+                    }else{
+                        machine.articulations[static_cast<size_t>(command.target) - 1] = command.articulation;
+                    }
                 }
             }, commandOptional.value());
         }
@@ -138,6 +150,7 @@ void PlaybackManager::advancePlayhead(MidiManager &midiManager){
         }else{
             if(threadState_.internalCurrentPage >= projectData->pages.size()){
                 machine.isPlaying = false;
+                stopPlayback(midiManager);
             }else{
                 threadState_.internalCurrentPage = threadState_.internalCurrentPage + 1;
                 needsToPlayCurrentNote_ = true;

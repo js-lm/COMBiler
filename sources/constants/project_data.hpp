@@ -9,6 +9,8 @@ namespace constants::project_data{
     
     constexpr int NumberOfInstrumentChannels{4};
 
+    constexpr float DefaultMaximumTempo{12.0f};
+
     constexpr int MaximumNumberOfConstants{32};
 
     constexpr int MetadataTitleMaximumLength{32};

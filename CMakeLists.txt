@@ -14,6 +14,7 @@ set(BUILD_GAMES OFF CACHE BOOL "" FORCE)
 
 if(EMSCRIPTEN)
 	set(PLATFORM "Web" CACHE STRING "" FORCE)
+	add_compile_options(-pthread)
 endif()
 
 FetchContent_Declare(
@@ -85,8 +86,6 @@ target_link_libraries(${PROJECT_TARGET}
 
 if(EMSCRIPTEN)
 	set_target_properties(${PROJECT_TARGET} PROPERTIES SUFFIX ".html")
-
-	target_compile_options(${PROJECT_TARGET} PRIVATE -pthread)
 
 	target_link_options(${PROJECT_TARGET} PRIVATE
 		-sUSE_GLFW=3
