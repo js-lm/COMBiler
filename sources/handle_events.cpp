@@ -233,7 +233,7 @@ void MainWindow::handleKeyboardEvent(){
 
     if(interfaceState_.prompts.isAnyPromptVisible()) return;
 
-    const bool isControlDown{IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)};
+    const bool isControlDown{IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL) || IsKeyDown(KEY_LEFT_SUPER) || IsKeyDown(KEY_RIGHT_SUPER)};
     const bool isShiftDown{IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)};
     auto &window{systemState_.window};
 
@@ -270,18 +270,29 @@ void MainWindow::handleKeyboardEvent(){
                 constants::application_window::MinimumScaleFactor, std::floor(calculateMaximumScaleFactor())
             ), std::floor(window.scaleFactor) + 1.0f);
         }
+#ifdef PLATFORM_WEB
         if(isZoomOutPressed) window.scaleFactor = std::max(constants::application_window::MinimumScaleFactor, std::ceil(window.scaleFactor) - 1.0f);
-
-        if(!machineState_.isPlaying){
-            if(IsKeyPressed(KEY_Z) && actionCenter_ && actionCenter_->redo()) applyProjectTransientNavigationState();
-        }
     }else if(isControlDown){
-        if(isZoomInPressed) window.scaleFactor += .1f; // TODO: magic numbers
-        if(isZoomOutPressed) window.scaleFactor -= .1f;
+        if(isZoomInPressed) window.scaleFactor += constants::application_window::ScaleFactorStep;
+        if(isZoomOutPressed) window.scaleFactor -= constants::application_window::ScaleFactorStep;
+    }
 
-        if(!machineState_.isPlaying){
-            if(IsKeyPressed(KEY_Z) && actionCenter_ && actionCenter_->undo()) applyProjectTransientNavigationState();
-        }
+    bool isRedoShortcut{isControlDown && isShiftDown && IsKeyPressed(KEY_Z)};
+    bool isUndoShortcut{isControlDown && !isShiftDown && IsKeyPressed(KEY_Z)};
+#else
+        if(isZoomOutPressed) window.scaleFactor = std::max(constants::application_window::MinimumScaleFactor, std::ceil(window.scaleFactor) - 1.0f);
+    }else if(isControlDown){
+        if(isZoomInPressed) window.scaleFactor += constants::application_window::ScaleFactorStep;
+        if(isZoomOutPressed) window.scaleFactor -= constants::application_window::ScaleFactorStep;
+    }
+
+    bool isRedoShortcut{isControlDown && isShiftDown && IsKeyPressed(KEY_Z)};
+    bool isUndoShortcut{isControlDown && !isShiftDown && IsKeyPressed(KEY_Z)};
+#endif
+
+    if(!machineState_.isPlaying){
+        if(isRedoShortcut && actionCenter_ && actionCenter_->redo()) applyProjectTransientNavigationState();
+        else if(isUndoShortcut && actionCenter_ && actionCenter_->undo()) applyProjectTransientNavigationState();
     }
 
     if(IsKeyPressed(KEY_SPACE)){

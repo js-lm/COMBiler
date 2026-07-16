@@ -59,6 +59,10 @@ bool ActionCenter::redo(){
     }
     if(!canRedo() || isInAction_) return false;
     
+    cursorIndex_ = (cursorIndex_ + 1) % constants::action_center::MaximumHistory;
+    if(!commits_[cursorIndex_]) return false;
+
+    // stagedSlot_->data = commits_[cursorIndex_];
     stagedSlot_->data = std::make_shared<program_states::ProjectData>(*commits_[cursorIndex_]);
 
     DEBUG_PRINT("redo | cursorIndex_: {}/{}", cursorIndex_, historyStackSize_);

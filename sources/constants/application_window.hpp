@@ -22,6 +22,7 @@ namespace constants::application_window{
 
     constexpr float MinimumScaleFactor{1.0f};
     constexpr float MaximumScaleFactor{4.0f};
+    constexpr float ScaleFactorStep{.1f};
 
 #ifdef PLATFORM_WEB
     constexpr const char *Title{"COMBiler v" COMBILER_VERSION " (Web)"};
