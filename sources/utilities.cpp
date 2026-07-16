@@ -283,4 +283,6 @@ void MainWindow::loadConfiguration(){
             // ignore parsing errors for individual keys
         }
     }
+
+    systemState_.window.isLayoutDirty = true;
 }
